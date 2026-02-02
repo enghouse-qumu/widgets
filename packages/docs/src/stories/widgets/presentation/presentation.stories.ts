@@ -827,14 +827,14 @@ export const Playground: Story = {
   <head>
     <meta charset="UTF-8"/>
     <title>Presentation Widget</title>
-    <link rel="stylesheet" href="https://unpkg.com/@enghouse-qumu/widget@${version}/presentation-widget.css">
+    <link rel="stylesheet" href="https://unpkg.com/@enghouse-qumu/widgets@${version}/presentation-widget.css">
   </head>
   <body>
     <div id="widget"></div>
-    
+
     <script type="module">
-      import { PresentationWidget } from 'https://unpkg.com/@enghouse-qumu/widget@${version}/presentation-widget.js';
-      
+      import { PresentationWidget } from 'https://unpkg.com/@enghouse-qumu/widgets@${version}/presentation-widget.js';
+
       PresentationWidget.create(${
         JSON.stringify(configuration, null, 2)
           .split('\n')
