@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@enghouse-qumu/widgets",
-  "version": "1.1.0",
+  "version": "1.1.1-0",
   "description": "Qumu Cloud widget library",
   "engines": {
     "node": ">=24"
