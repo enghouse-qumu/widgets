@@ -1,4 +1,4 @@
-import{R as r,s as l}from"./blocks-C9-jQ3ZF.js";const t={info:{backgroundColor:"#f0f8ff",borderColor:"#4994fc",color:"#002760",titleColor:"#0955c9"},warning:{backgroundColor:"#fffcdf",borderColor:"#f7c735",color:"#784618",titleColor:"#b47921"}},i=l.div`
+import{R as r,s as l}from"./blocks-D3dToMsS.js";const t={info:{backgroundColor:"#f0f8ff",borderColor:"#4994fc",color:"#002760",titleColor:"#0955c9"},warning:{backgroundColor:"#fffcdf",borderColor:"#f7c735",color:"#784618",titleColor:"#b47921"}},i=l.div`
   background-color: ${o=>t[o.color].backgroundColor};
   border-left: 5px solid ${o=>t[o.color].borderColor};
   color: ${o=>t[o.color].color};

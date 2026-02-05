@@ -1,4 +1,4 @@
-import{v as i,S as d,p as c,j as a,i as l,f as g,e as m,d as u}from"./package-Df0J6pep.js";const p={component:"localization"},t={parameters:{docs:{source:{code:`<!DOCTYPE html>
+import{v as i,S as d,p as c,j as a,i as l,f as g,e as m,d as u}from"./package-BwQv5pWs.js";const p={component:"localization"},t={parameters:{docs:{source:{code:`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8"/>
