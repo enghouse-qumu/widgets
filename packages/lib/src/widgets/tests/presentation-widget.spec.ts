@@ -3,6 +3,7 @@ import { PresentationWidget } from '@/widgets/presentation-widget';
 import { WidgetConfiguration } from '@/interfaces/widget-configuration';
 import { PresentationService } from '@/services/presentation.service';
 import { Presentation } from '@/interfaces/presentation';
+import { version } from '../../../../../package.json' with { type: 'json' };
 
 vi.mock('@/services/presentation.service');
 vi.mock('../../../../package.json', () => ({
@@ -88,7 +89,7 @@ describe('PresentationWidget', () => {
     it('should return the widget\'s version', async () => {
       const widget = await PresentationWidget.create(mockConfiguration);
 
-      expect(widget.version).toEqual('1.0.0');
+      expect(widget.version).toEqual(version);
     });
   });
 
@@ -155,7 +156,7 @@ describe('PresentationWidget', () => {
         sortBy: 'created',
         sortOrder: 'DESCENDING',
         type: 'presentation',
-        version: '1.0.0',
+        version,
         widgetOptions: {
           playbackMode: 'inline',
           // eslint-disable-next-line sort-keys
@@ -208,7 +209,7 @@ describe('PresentationWidget', () => {
         sortBy: 'created',
         sortOrder: 'DESCENDING',
         type: 'presentation',
-        version: '1.0.0',
+        version,
         widgetOptions: {
           playbackMode: 'inline',
           // eslint-disable-next-line sort-keys
