@@ -20,30 +20,24 @@ declare enum MetadataType {
 }
 
 export declare interface PlayerParameters {
+    audio: string;
     captions: string;
     debug: boolean;
     loop: boolean;
     playerConfigurationGuid: string;
     pv: 'pipls' | 'pipss' | 'sbs';
     quality: 'auto' | 'best' | '1440p' | '1080p' | '720p' | '480p' | '240p';
+    reporting: boolean;
+    reportingId: string;
     showControlPanel: boolean;
     sidebar: boolean;
     speech: string;
     speechTerm: string;
     start: number;
     volume: number;
-    reporting: boolean;
-    reportingId: string;
 }
 
-declare interface PlayIcon {
-    height: number | string;
-    position: PlayIconPosition;
-    url: string;
-    width: number | string;
-}
-
-declare type PlayIconPosition = 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right';
+declare type Position = 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right';
 
 declare interface Presentation {
     audioOnly?: boolean;
@@ -88,11 +82,15 @@ export declare class PresentationWidget {
     private presentation;
     private container;
     private destroyed;
+    get version(): string;
     static create(configuration: WidgetConfiguration): Promise<PresentationWidget>;
     constructor(initialConfiguration: WidgetConfiguration);
     destroy(): void;
-    init(): Promise<void>;
+    private init;
     private mount;
+    private mapCssValue;
+    private setStyles;
+    private sendTelemetry;
 }
 
 declare interface QcImage {
@@ -119,9 +117,58 @@ export declare interface WidgetConfiguration {
 
 export declare interface WidgetOptions {
     playbackMode: 'inline' | 'inline-autoload' | 'inline-autoplay' | 'modal';
-    playIcon: Partial<PlayIcon>;
+    playIconUrl: string;
+    style: Partial<WidgetStyle>;
     onIframeLoad(iframe: HTMLIFrameElement): void;
     onThumbnailClick(presentation: Presentation): void;
+}
+
+export declare interface WidgetStyle {
+    borderRadius: string;
+    closeButton: Partial<{
+        activeBackgroundColor: string;
+        activeColor: string;
+        backgroundColor: string;
+        boxShadow: string;
+        color: string;
+        hoverBackgroundColor: string;
+        hoverColor: string;
+        iconSize: string;
+        padding: string;
+    }>;
+    dialog: Partial<{
+        backdropColor: string;
+        backgroundColor: string;
+        border: string;
+        borderRadius: string;
+        maxWidth: string;
+        padding: string;
+        width: string;
+    }>;
+    height: string;
+    notFound: Partial<{
+        backgroundColor: string;
+        border: string;
+        color: string;
+        iconColor: string;
+    }>;
+    playButton: Partial<{
+        activeBackgroundColor: string;
+        activeColor: string;
+        backgroundColor: string;
+        color: string;
+        height: string;
+        hoverBackgroundColor: string;
+        hoverColor: string;
+        margin: string;
+        padding: string;
+        position: Position;
+        width: string;
+    }>;
+    thumbnail: Partial<{
+        imageFit: string;
+    }>;
+    width: string;
 }
 
 export { }
