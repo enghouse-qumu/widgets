@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "@enghouse-qumu/eslint-config": "1.0.2",
-    "@storybook/addon-docs": "10.1.11",
-    "@storybook/web-components-vite": "10.1.11",
+    "@storybook/addon-docs": "10.2.13",
+    "@storybook/web-components-vite": "10.2.13",
     "remark-gfm": "4.0.1",
-    "storybook": "10.2.10",
+    "storybook": "10.2.13",
     "typescript": "5.9.3",
     "vite": "7.3.1"
   },
