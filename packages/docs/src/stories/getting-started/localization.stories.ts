@@ -36,7 +36,7 @@ export const Localization: Story = {
     <script type="module">
       import { PresentationWidget } from 'https://unpkg.com/@qumu/widgets@${version}/dist/presentation-widget.js';
 
-      const fr = await fetch('https://unpkg.com/@qumu/widget@${version}/dist/locales/fr.json').then((res) => res.json());      
+      const fr = await fetch('https://unpkg.com/@qumu/widgets@${version}/dist/locales/fr.json').then((res) => res.json());      
       
       PresentationWidget.create({
         host:'demo.qumucloud.com',
