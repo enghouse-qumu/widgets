@@ -24,7 +24,7 @@ export const Localization: Story = {
   <head>
     <meta charset="UTF-8"/>
     <title>Presentation Widget</title>
-    <link rel="stylesheet" href="https://unpkg.com/@enghouse-qumu/widgets@${version}/dist/presentation-widget.css">
+    <link rel="stylesheet" href="https://unpkg.com/@qumu/widgets@${version}/dist/presentation-widget.css">
   </head>
   <body>
     <p>The widget below uses the lang attribute from the html tag</p>
@@ -34,9 +34,9 @@ export const Localization: Story = {
     <div id="widget2" lang="fr"></div>
 
     <script type="module">
-      import { PresentationWidget } from 'https://unpkg.com/@enghouse-qumu/widgets@${version}/dist/presentation-widget.js';
+      import { PresentationWidget } from 'https://unpkg.com/@qumu/widgets@${version}/dist/presentation-widget.js';
 
-      const fr = await fetch('https://unpkg.com/@enghouse-qumu/widgets@1.0.0/dist/locales/fr.json').then((res) => res.json());      
+      const fr = await fetch('https://unpkg.com/@qumu/widgets@1.0.0/dist/locales/fr.json').then((res) => res.json());      
       
       PresentationWidget.create({
         host:'demo.qumucloud.com',

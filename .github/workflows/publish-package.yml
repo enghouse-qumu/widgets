@@ -1,0 +1,50 @@
+name: Publish Package
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish-package:
+    name: Release package to NPM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build --workspace packages/lib
+
+      - name: Publish to NPM
+        run: |
+          VERSION_TAG="${GITHUB_REF#refs/tags/}"
+          
+          if [[ "$VERSION_TAG" == *"-alpha."* ]]; then
+            TAG="alpha"
+          elif [[ "$VERSION_TAG" == *"-beta."* ]]; then
+            TAG="beta"
+          elif [[ "$VERSION_TAG" == *"-rc."* ]]; then
+            TAG="next"
+          else
+            TAG="latest"
+          fi
+          
+          npm publish --workspace packages/lib --tag $TAG --access public

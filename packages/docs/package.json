@@ -8,11 +8,11 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@enghouse-qumu/player-sdk": "3.2.1",
+    "@qumu/player-sdk": "3.3.2",
     "lit": "3.3.2"
   },
   "devDependencies": {
-    "@enghouse-qumu/eslint-config": "1.0.2",
+    "@qumu/eslint-config": "1.0.6",
     "@storybook/addon-docs": "10.2.13",
     "@storybook/web-components-vite": "10.2.13",
     "remark-gfm": "4.0.1",

@@ -1,5 +1,5 @@
 import { defineConfig } from 'eslint/config';
-import { javascript, typescript } from '@enghouse-qumu/eslint-config';
+import { javascript, typescript } from '@qumu/eslint-config';
 
 export default defineConfig([
   {

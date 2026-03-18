@@ -12,7 +12,7 @@ A Qumu Widget library that provides the following widgets:
   <link rel="stylesheet" type="text/css" href="./your-assets-path/presentation-widget.css" />
 
   <script type="module">
-    import { PresentationWidget } from '@enghouse-qumu/widgets/presentation-widget.js';
+    import { PresentationWidget } from '@qumu/widgets/presentation-widget.js';
 
     const presentationWidget = await PresentationWidget.create({
       // CSS selector for the container element where the widget will be rendered

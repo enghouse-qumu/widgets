@@ -14,7 +14,7 @@ Use this method if you do not use a bundler.
 <Tip title="Versioning">
   For stability, we recommend specifying a fixed version of the widget in your project. This ensures that updates to the widget won’t accidentally break your implementation.
 
-  You can find the available versions here: [@enghouse-qumu/widgets on npm](https://www.npmjs.com/package/@enghouse-qumu/widgets).
+  You can find the available versions here: [@qumu/widgets on npm](https://www.npmjs.com/package/@qumu/widgets).
 </Tip>
 
 ```html
@@ -24,7 +24,7 @@ Use this method if you do not use a bundler.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
-    <link rel="stylesheet" href="https://unpkg.com/@enghouse-qumu/widgets@1.0.0/dist/presentation-widget.css">
+    <link rel="stylesheet" href="https://unpkg.com/@qumu/widgets@1.0.0/dist/presentation-widget.css">
   </head>
   <body>
     <main>
@@ -32,10 +32,10 @@ Use this method if you do not use a bundler.
     </main>
 
     <script type="module">
-      import { PresentationWidget } from 'https://unpkg.com/@enghouse-qumu/widgets@1.0.0/dist/presentation-widget.js';
+      import { PresentationWidget } from 'https://unpkg.com/@qumu/widgets@1.0.0/dist/presentation-widget.js';
 
       const fr = await fetch(
-        "https://unpkg.com/@enghouse-qumu/widgets@1.0.0/dist/locales/fr.json"
+        "https://unpkg.com/@qumu/widgets@1.0.0/dist/locales/fr.json"
       ).then((res) => res.json());
 
       PresentationWidget.create({

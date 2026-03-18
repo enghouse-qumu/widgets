@@ -1,17 +1,18 @@
 {
   "private": true,
-  "name": "@enghouse-qumu/widgets",
+  "name": "@qumu/widgets",
   "version": "1.1.1",
   "description": "Qumu Cloud widget library",
   "engines": {
     "node": ">=24"
   },
+  "homepage": "https://enghouse-qumu.github.io/widgets",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qumu/widgets.git"
+    "url": "git+https://github.com/enghouse-qumu/widgets.git"
   },
   "bugs": {
-    "url": "https://github.com/qumu/widgets/issues"
+    "url": "https://github.com/enghouse-qumu/widgets/issues"
   },
   "scripts": {
     "build": "npm run build -w lib && npm run copy-dist && npm run build -w docs",
