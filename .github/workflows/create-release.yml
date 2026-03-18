@@ -1,0 +1,48 @@
+name: "Create Release"
+
+on:
+  workflow_run:
+    workflows: ["Publish Package"]
+    types:
+      - completed
+
+jobs:
+  create-release:
+    name: Create new release
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Determine tag
+        id: determine_tag
+        run: |
+          TAG=$(git tag --points-at ${{ github.event.workflow_run.head_sha }} | head -n 1)
+          if [ -z "$TAG" ]; then
+            echo "No tag found for SHA ${{ github.event.workflow_run.head_sha }}"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        uses: actions/github-script@v8
+        env:
+          TAG: ${{ steps.determine_tag.outputs.tag }}
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const tag = process.env.TAG;
+            const prerelease = /-(alpha|beta|rc)\./.test(tag);
+            
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              generate_release_notes: true,
+              prerelease
+            });

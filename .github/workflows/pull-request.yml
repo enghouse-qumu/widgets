@@ -1,22 +1,19 @@
-name: "Lint, test and scan"
+name: "Lint & Test"
 
 permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   unit-test:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
@@ -25,26 +22,17 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@qumu'
 
       - name: Install dependencies
         run: npm ci
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.FE_CI_BOT_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build library
-        run: npm run build -w lib
+        run: npm run build --workspace lib
 
       - name: Lint
         run: npm run lint
 
       - name: Test
         run: npm run test:cov --workspace lib
-
-      - name: SonarCloud Scan
-        # Pinned to v6.0.0 but using SHA for safety - https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

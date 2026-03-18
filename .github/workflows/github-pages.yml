@@ -1,49 +1,51 @@
-name: "Deploy to GitHub pages"
+name: "Deploy to GitHub Pages"
 
 on:
-  push:
-    tags:
-      - 'v*'
-
-  # Allows you to run this workflow manually from the Actions tab
+  workflow_run:
+    workflows: ["Publish Package"]
+    types:
+      - completed
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  github-pages:
-    name: Deploy to Github Pages
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    runs-on: ubuntu-latest
+  deploy:
     environment:
       name: github-pages
-      url: ${{ steps.github-pages.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-      - name: Use Node.js 24
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 24
-          cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@qumu'
+          node-version: '24'
 
       - name: Install dependencies
         run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.FE_CI_BOT_TOKEN }}
 
-      - name: Build documentation website
+      - name: Build Library & Docs
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        # v4.0.0
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: packages/docs/storybook-static
+          path: packages/docs/storybook-static
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
