@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Build Library
-        run: npm run build -workspace packages/lib
+        run: npm run build --workspace packages/lib
 
       - name: Build Storybook docs
         run: npm run build --workspace packages/docs
