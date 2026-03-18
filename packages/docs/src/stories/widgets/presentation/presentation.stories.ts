@@ -237,7 +237,7 @@ export const PlayerSdk: Story = {
 
     <script type="module">
       import { PresentationWidget } from 'https://unpkg.com/@qumu/widgets@${version}/dist/presentation-widget.js';
-      import { PlayerSdk } from "https://unpkg.com/@qumu/player-sdk@3.2.1/dist/index.modern.mjs";
+      import { PlayerSdk } from "https://unpkg.com/@qumu/player-sdk@3.3.2/dist/index.modern.mjs";
 
       PresentationWidget.create({
         host:'demo.qumucloud.com',
