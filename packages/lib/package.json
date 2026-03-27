@@ -1,5 +1,5 @@
 {
-  "name": "lib",
+  "name": "@qumu/widgets",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "exports": {
@@ -45,5 +45,15 @@
   },
   "volta": {
     "node": "24.11.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/enghouse-qumu/widgets/issues"
+  },
+  "description": "Qumu Cloud widget library",
+  "homepage": "https://enghouse-qumu.github.io/widgets",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enghouse-qumu/widgets.git"
+  },
+  "version": "1.1.2"
 }
