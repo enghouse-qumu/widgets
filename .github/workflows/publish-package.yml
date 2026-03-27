@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build package
-        run: npm run build --workspace packages/lib
+        run: npm run build --workspace lib
 
       - name: Publish to NPM
         run: |
@@ -47,4 +47,4 @@ jobs:
             TAG="latest"
           fi
           
-          npm publish --workspace packages/lib --tag $TAG --access public
+          npm publish --workspace lib --tag $TAG 
