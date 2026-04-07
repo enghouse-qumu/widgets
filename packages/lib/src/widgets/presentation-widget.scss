@@ -10,5 +10,6 @@
   aspect-ratio: var(--qc-pw-aspect-ratio);
   border-radius: var(--qc-pw-border-radius);
   height: var(--qc-pw-height);
+  isolation: isolate;
   width: var(--qc-pw-width);
 }
