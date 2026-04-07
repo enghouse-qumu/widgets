@@ -20,7 +20,7 @@
       position: absolute;
       top: 0;
       width: 100%;
-      z-index: -1;
+      z-index: 0;
     }
 
     &__play-button {
@@ -28,6 +28,7 @@
       margin: var(--qc-pw-play-button-margin);
       position: relative;
       width: var(--qc-pw-play-button-width);
+      z-index: 1;
 
       &--default {
         background-color: var(--qc-pw-play-button-background-color);
