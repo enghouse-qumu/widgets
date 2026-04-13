@@ -28,6 +28,13 @@ export function DialogComponent({ presentation, widgetOptions, playerParameters 
       '--_qc-pw-dialog-border-width',
       getComputedStyle(dialogRef.current!).borderWidth,
     );
+
+    // TODO necessary for the List widget see if we can improve that
+    const aspectRatio = presentation?.mediaDisplayWidth && presentation?.mediaDisplayHeight
+      ? `${presentation.mediaDisplayWidth} / ${presentation.mediaDisplayHeight}`
+      : '16 / 9';
+
+    dialogRef.current!.style.setProperty('--qc-pw-aspect-ratio', aspectRatio);
   }, [showDialog]);
 
   const closeDialog = () => {
@@ -58,16 +65,16 @@ export function DialogComponent({ presentation, widgetOptions, playerParameters 
           onClose={() => setShowDialog(false)}
         >
           <button
-              type="button"
-              class="qc-dialog__close-button"
-              onClick={closeDialog}
+            type="button"
+            class="qc-dialog__close-button"
+            onClick={closeDialog}
           >
             <Icon name="close"/>
           </button>
           <PlayerComponent
-              presentation={presentation}
-              playerParameters={playerParameters}
-              widgetOptions={widgetOptions}
+            presentation={presentation}
+            playerParameters={playerParameters}
+            widgetOptions={widgetOptions}
           />
         </dialog>
       )}

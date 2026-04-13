@@ -18,8 +18,7 @@
     "build": "npm run build -w lib && npm run copy-dist && npm run build -w docs",
     "copy-dist": "node -e \"const fs=require('fs'); const src='./packages/lib/dist'; const dest='./packages/docs/lighthouse/dist'; if (!fs.existsSync(src)) { console.log('Skipping copy-dist: lib/dist not found'); process.exit(0); } fs.cpSync(src, dest, { recursive: true, force: true });\"",
     "dev:watch": "npm run dev:watch --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
-    "server": "npm run server -w lib"
+    "lint": "npm run lint --workspaces --if-present"
   },
   "workspaces": [
     "packages/*"

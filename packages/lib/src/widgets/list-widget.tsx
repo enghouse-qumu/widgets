@@ -3,19 +3,18 @@ import { PresentationService } from '@/services/presentation.service';
 import { ConfigurationService } from '@/services/configuration.service';
 import { WidgetConfiguration } from '@/interfaces/widget-configuration';
 import { Presentation } from '@/interfaces/presentation';
-import { DialogComponent } from '@/components/dialog';
-import { PlayerComponent } from '@/components/player';
-import { NotFoundComponent } from '@/components/not-found';
 import { createI18n } from '@/i18n';
 import 'virtual:svg-icons/register';
 import { version } from '../../../../package.json' with { type: 'json' };
-import './presentation-widget.scss';
+import './list-widget.scss';
+import { List } from '@/components/list';
+import { NotFoundComponent } from '@/components/not-found';
 
-export class PresentationWidget {
+export class ListWidget {
   private readonly configurationService = new ConfigurationService();
   private readonly configuration: WidgetConfiguration;
   private readonly presentationService;
-  private presentation: Presentation | null = null;
+  private presentations: Presentation[] = [];
   private container: HTMLElement | null = null;
   private destroyed = false;
 
@@ -25,8 +24,8 @@ export class PresentationWidget {
 
   static async create(
     configuration: WidgetConfiguration,
-  ): Promise<PresentationWidget> {
-    const widget = new PresentationWidget(configuration);
+  ): Promise<ListWidget> {
+    const widget = new ListWidget(configuration);
 
     // send telemetry if not disabled by the end user
     if (globalThis.window.__QUMU_WIDGET_TELEMETRY__ ?? true) {
@@ -59,20 +58,19 @@ export class PresentationWidget {
     }
 
     // Prevent future usage
-    this.presentation = null;
+    this.presentations = [];
     this.destroyed = true;
   }
 
   private async init(): Promise<void> {
     try {
-      this.presentation = (await this.presentationService.getPresentations(
+      this.presentations = await this.presentationService.getPresentations(
         this.configuration.guid,
         {
-          limit: 1,
           sortBy: this.configuration.sortBy,
           sortOrder: this.configuration.sortOrder
         }
-      ))[0];
+      );
     } catch (err) {
       console.error(err);
     } finally {
@@ -94,30 +92,17 @@ export class PresentationWidget {
     this.container = container;
     container.innerHTML = '';
 
-    const aspectRatio = this.presentation?.mediaDisplayWidth && this.presentation?.mediaDisplayHeight
-      ? `${this.presentation.mediaDisplayWidth} / ${this.presentation.mediaDisplayHeight}`
-      : '16 / 9';
-
-    this.container.classList.add('qc-widget', 'qc-presentation-widget');
-    this.container.style.setProperty('--qc-pw-aspect-ratio', aspectRatio);
+    this.container.classList.add('qc-widget', 'qc-list-widget', `qc-list-widget--${this.configuration.layout}`);
 
     this.setStyles(this.container);
 
     render(
-      this.presentation ? (
-        this.configuration.widgetOptions?.playbackMode === 'modal' ? (
-          <DialogComponent
-            presentation={this.presentation}
-            playerParameters={this.configuration.playerParameters!}
-            widgetOptions={this.configuration.widgetOptions!}
-          />
-        ) : (
-          <PlayerComponent
-            presentation={this.presentation}
-            playerParameters={this.configuration.playerParameters!}
-            widgetOptions={this.configuration.widgetOptions!}
-          />
-        )
+      this.presentations.length ? (
+        <List
+          playerParameters={this.configuration.playerParameters}
+          presentations={this.presentations}
+          widgetOptions={this.configuration.widgetOptions}
+        />
       ) : (
         <NotFoundComponent/>
       ),

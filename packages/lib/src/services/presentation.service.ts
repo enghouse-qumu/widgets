@@ -11,19 +11,25 @@ export interface PresentationResponseDto {
   };
 }
 
+export interface Options {
+  limit: number;
+  offset: number;
+  sortBy: WidgetConfiguration['sortBy'];
+  sortOrder: WidgetConfiguration['sortOrder'];
+}
+
 export class PresentationService {
   constructor(private readonly host: string) {}
 
-  async getPresentation(
-    guid: string,
-    sortBy = 'created',
-    sortOrder: WidgetConfiguration['sortOrder'] = 'DESCENDING',
-  ): Promise<Presentation> {
-    const url = new URL(`/api/2.2/rest/widgets/${guid}.json`, `https://${this.host}`);
+  async getPresentations(
+    smartSearchGuid: string,
+    options?: Partial<Options>,
+  ): Promise<Presentation[]> {
+    const url = new URL(`/api/2.2/rest/widgets/${smartSearchGuid}.json`, `https://${this.host}`);
 
-    url.searchParams.set('offset', '0');
-    url.searchParams.set('limit', '1');
-    url.searchParams.set('sortBy', `${sortBy},${sortOrder}`);
+    url.searchParams.set('offset', (options?.offset || 0).toString());
+    url.searchParams.set('limit', (options?.limit || 10).toString());
+    url.searchParams.set('sortBy', `${options?.sortBy || 'created'},${options?.sortOrder || 'DESCENDING'}`);
     url.searchParams.set('useUserAuth', 'false');
 
     let response: Response;
@@ -39,9 +45,9 @@ export class PresentationService {
     const { kulus, error } = await response.json() as Partial<PresentationResponseDto>;
 
     if (!response.ok || !kulus?.length) {
-      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"`);
+      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${smartSearchGuid}" from host "${this.host}"`);
     }
 
-    return kulus[0];
+    return kulus;
   }
 }

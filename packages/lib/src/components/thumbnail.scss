@@ -6,6 +6,7 @@
     cursor: pointer;
     display: grid;
     height: 100%;
+    isolation: isolate;
     overflow: hidden;
     padding: 0;
     place-items: var(--qc-pw-play-button-position);

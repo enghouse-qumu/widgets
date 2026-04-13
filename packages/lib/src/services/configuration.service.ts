@@ -6,6 +6,7 @@ const supportedConfigFields = new Set([
   'selector',
   'host',
   'guid',
+  'layout',
   'locales',
   'widgetOptions',
   'playerParameters',

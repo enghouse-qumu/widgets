@@ -8,6 +8,8 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./list-widget.js": "./dist/list-widget.js",
+    "./list-widget.css": "./dist/list-widget.css",
     "./presentation-widget.js": "./dist/presentation-widget.js",
     "./presentation-widget.css": "./dist/presentation-widget.css",
     "./locales/*": "./dist/locales/*"

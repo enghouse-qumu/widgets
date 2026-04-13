@@ -10,6 +10,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: path.resolve(__dirname, './src/index.ts'),
+        'list-widget': path.resolve(__dirname, './src/widgets/list-widget.tsx'),
         'presentation-widget': path.resolve(__dirname, './src/widgets/presentation-widget.tsx'),
       },
       fileName: (_, name) => `${name}.js`,
