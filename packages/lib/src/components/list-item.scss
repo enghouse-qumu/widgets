@@ -162,6 +162,33 @@
       }
     }
 
+    // Markdown of metadata values, rendered by the API
+    &__value--html {
+      // inline with the label, like a single paragraph which is unwrapped
+      > p:first-child {
+        display: inline;
+      }
+
+      p,
+      ul,
+      ol,
+      blockquote,
+      pre {
+        margin: 0;
+      }
+
+      p + p,
+      p + ul,
+      p + ol {
+        margin-top: .25em;
+      }
+
+      ul,
+      ol {
+        padding-inline-start: 1.25em;
+      }
+    }
+
     &__label {
       color: var(--qc-lw-field-label-color, color-mix(in srgb, currentColor 70%, transparent));
     }

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { formatDate, formatDuration, resolveField } from '../presentation-fields';
+import { describe, expect, it, vi } from 'vitest';
+import { formatDate, formatDuration, resolveField, toItemHtml } from '../presentation-fields';
 import { MetadataType, Presentation } from '@/interfaces/presentation';
 
 describe('presentation fields', () => {
@@ -81,14 +81,13 @@ describe('presentation fields', () => {
       });
     });
 
-    it('should resolve metadata fields by guid, with or without the md: prefix', () => {
+    it('should resolve metadata fields by guid', () => {
       const expected = {
         defaultLabel: { text: 'Department' },
         value: 'Sales',
       };
 
       expect(resolveField(presentation, 'md-text', 'en')).toEqual(expected);
-      expect(resolveField(presentation, 'md:md-text', 'en')).toEqual(expected);
       expect(resolveField(presentation, 'md-tags', 'en')?.value).toBe('a, b');
     });
 
@@ -100,6 +99,97 @@ describe('presentation fields', () => {
       expect(resolveField(presentation, 'md-empty', 'en')).toBeNull();
       expect(resolveField(presentation, 'unknown', 'en')).toBeNull();
       expect(resolveField({}, 'title', 'en')).toBeNull();
+    });
+  });
+
+  describe('toItemHtml', () => {
+    it('should unwrap a single paragraph, so the value stays inline with its label', () => {
+      expect(toItemHtml('<p>large <strong>text</strong></p>\n')).toBe('large <strong>text</strong>');
+    });
+
+    it('should keep the markup of several blocks', () => {
+      expect(toItemHtml('<p>one</p>\n<ul><li>two</li></ul>')).toBe('<p>one</p>\n<ul><li>two</li></ul>');
+    });
+
+    it('should turn links into plain text, not allowed in the item button', () => {
+      expect(toItemHtml('<p>see <a href="https://example.com" target="_blank">the docs</a></p>')).toBe('see <span>the docs</span>');
+    });
+  });
+
+  describe('metadata values', () => {
+    const withMetadata = (metadata: Record<string, unknown>) => ({
+      metadata: [
+        {
+          guid: 'md',
+          title: 'Field',
+          ...metadata,
+        },
+      ],
+    }) as unknown as Presentation;
+
+    it('should use the html rendered from the Markdown, and its text as value', () => {
+      expect(resolveField(withMetadata({
+        html: '<p>large <em>text</em></p>\n',
+        type: MetadataType.LargeText,
+        value: 'large *text*',
+      }), 'md', 'en')).toEqual({
+        defaultLabel: { text: 'Field' },
+        html: 'large <em>text</em>',
+        value: 'large text',
+      });
+    });
+
+    it('should skip a html value without text', () => {
+      expect(resolveField(withMetadata({
+        html: '<p></p>',
+        type: MetadataType.LargeText,
+        value: ' ',
+      }), 'md', 'en')).toBeNull();
+    });
+
+    it('should use the option values of select fields', () => {
+      expect(resolveField(withMetadata({
+        type: MetadataType.Select,
+        value: {
+          guid: 'o1',
+          value: 'Option 1',
+        },
+      }), 'md', 'en')?.value).toBe('Option 1');
+      expect(resolveField(withMetadata({
+        type: MetadataType.MultiSelect,
+        value: [
+          {
+            guid: 'o2',
+            value: 'Option 2',
+          },
+          {
+            guid: 'o1',
+            value: 'Option 1',
+          },
+        ],
+      }), 'md', 'en')?.value).toBe('Option 2, Option 1');
+    });
+
+    it.each([
+      [true, 'list.Yes'],
+      [false, 'list.No'],
+      ['true', 'list.Yes'],
+      ['false', 'list.No'],
+    ])('should translate the boolean value %s', (value, expected) => {
+      const t = vi.fn((key: string) => key);
+
+      expect(resolveField(withMetadata({
+        type: MetadataType.Boolean,
+        value,
+      }), 'md', 'en', t)?.value).toBe(expected);
+      expect(t).toHaveBeenCalledWith(expected);
+    });
+
+    it('should decode the HTML entities of plain values', () => {
+      expect(resolveField(withMetadata({
+        type: MetadataType.Text,
+        value: 'Q&amp;A',
+      }), 'md', 'en')?.value).toBe('Q&A');
     });
   });
 });

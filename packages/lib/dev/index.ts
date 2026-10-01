@@ -35,7 +35,7 @@ const listGrid: ListWidgetConfiguration = {
       info: {
         bottom: [
           { field: 'title' },
-          { field: 'md:6' },
+          { field: '6' },
           {
             field: 'publishOn',
             label: true,
@@ -92,7 +92,7 @@ const listGrid: ListWidgetConfiguration = {
             color: '#fcee0a',
             labelColor: '#ff2a6d',
           },
-          'md:6': {
+          '6': {
             color: '#ff9f1c',
             labelColor: '#ff2a6d',
           },
@@ -167,7 +167,17 @@ const listVertical: ListWidgetConfiguration = {
             label: false,
           },
           { field: 'summary' },
+          { field: '2' },
+          { field: '3' },
+          { field: '4' },
+          { field: '5' },
           { field: '6' },
+          { field: '7' },
+          { field: '8' },
+          { field: '9' },
+          { field: '10' },
+          { field: '11' },
+          { field: '12' },
         ],
       },
       showDurationOverlay: true,

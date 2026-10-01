@@ -365,7 +365,7 @@ describe('PresentationService', () => {
             },
             {
               comparator: 'is',
-              field: 'md:abc',
+              field: 'abc',
               value: 'x,y',
             },
           ],
@@ -375,7 +375,7 @@ describe('PresentationService', () => {
       const url = calledUrl();
 
       expect(url.pathname).toBe('/api/2.2/rest/widgets.json');
-      expect(url.searchParams.getAll('search')).toEqual(['title,contains,demo', 'md:abc,is,x,y']);
+      expect(url.searchParams.getAll('search')).toEqual(['title,contains,demo', 'abc,is,x,y']);
       expect(url.searchParams.get('matchAny')).toBe('true');
     });
 

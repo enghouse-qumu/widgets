@@ -60,7 +60,7 @@ export function ListItemComponent({ idPrefix, item, metadataStyle, playIconUrl, 
   const descriptionIds: string[] = [];
 
   const renderField = ({ field, label }: InfoFieldConfig, fieldId: string) => {
-    const resolved = resolveField(presentation, field, locale);
+    const resolved = resolveField(presentation, field, locale, (key) => i18n.t(key));
     const fieldStyle = metadataStyle?.[field];
 
     if (!resolved) {
@@ -90,7 +90,12 @@ export function ListItemComponent({ idPrefix, item, metadataStyle, playIconUrl, 
         <span class="qc-list-item__field-content">
           {/* the space is outside of the label, so it is kept in the accessible description */}
           {labelText && <><span class="qc-list-item__label">{labelText}</span>{' '}</>}
-          <span class="qc-list-item__value">{resolved.value}</span>
+          {resolved.html ? (
+            // sanitized by the API, made safe for the button by toItemHtml()
+            <span class="qc-list-item__value qc-list-item__value--html" dangerouslySetInnerHTML={{ __html: resolved.html }}/>
+          ) : (
+            <span class="qc-list-item__value">{resolved.value}</span>
+          )}
         </span>
       </span>
     );

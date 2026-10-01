@@ -217,6 +217,34 @@ describe('ListItemComponent', () => {
     expect(labels).toEqual(['list.fields.title']);
   });
 
+  it('should render the html of Markdown metadata values', () => {
+    const { container } = renderItem({
+      item: {
+        info: { bottom: [{ field: 'md-description' }] },
+        showDurationOverlay: false,
+      },
+      presentation: {
+        ...presentation,
+        metadata: [
+          {
+            guid: 'md-description',
+            html: '<p>A <strong>bold</strong> <a href="https://example.com">link</a></p>\n',
+            title: 'Description',
+            type: MetadataType.LargeText,
+            value: 'A **bold** [link](https://example.com)',
+          },
+        ],
+      },
+    });
+
+    const value = container.querySelector('[data-field="md-description"] .qc-list-item__value--html')!;
+
+    expect(value.innerHTML).toBe('A <strong>bold</strong> <span>link</span>');
+    expect(container.querySelector('a')).toBeNull();
+    // the label stays inline with the value
+    expect(screen.getByRole('button', { description: 'Description A bold link' })).toBeInTheDocument();
+  });
+
   it('should render the duration overlay', () => {
     const { container } = renderItem({
       item: {
