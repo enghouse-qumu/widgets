@@ -66,6 +66,19 @@ describe('ListComponent', () => {
     expect(container.querySelectorAll('li.qc-list__item')).toHaveLength(2);
   });
 
+  it('should identify the item buttons by the presentation guid', () => {
+    const { container } = renderList();
+
+    const ids = Array.from(container.querySelectorAll('.qc-list-item'), (button) => button.id);
+
+    const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+
+    expect(ids).toEqual([
+      expect.stringMatching(new RegExp(`^qc-list-${uuid}-\\d+-a$`)),
+      expect.stringMatching(new RegExp(`^qc-list-${uuid}-\\d+-b$`)),
+    ]);
+  });
+
   it('should keep the list semantics, dropped by Safari with `list-style: none`', () => {
     renderList();
 
@@ -97,8 +110,8 @@ describe('ListComponent', () => {
 
     const ids = Array.from(document.querySelectorAll<HTMLElement>('[id]'), (element) => element.id);
 
-    // 2 widgets × 2 items × (title field + duration description)
-    expect(ids).toHaveLength(8);
+    // 2 widgets × 2 items × (button + title field + duration description)
+    expect(ids).toHaveLength(12);
     expect(document.querySelectorAll('[aria-describedby]')).toHaveLength(4);
     expect(new Set(ids).size).toBe(ids.length);
 

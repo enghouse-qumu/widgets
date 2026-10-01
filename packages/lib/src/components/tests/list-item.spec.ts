@@ -31,7 +31,7 @@ describe('ListItemComponent', () => {
   };
 
   const renderItem = (props: Record<string, unknown> = {}) => render(createElement(ListItemComponent, {
-    idPrefix: 'item',
+    id: 'item',
     item: {
       info: { bottom: [{ field: 'title' }] },
       showDurationOverlay: false,
@@ -44,7 +44,7 @@ describe('ListItemComponent', () => {
   it('should render the thumbnail and the info fields', () => {
     const { container } = renderItem();
 
-    expect(container.innerHTML).toMatchInlineSnapshot(`"<button type="button" class="qc-list-item" aria-label="common.PLAY_PRESENTATION: My presentation"><span class="qc-list-item__body"><span class="qc-list-item__thumbnail"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></span></span><span class="qc-list-item__info qc-list-item__info--bottom"><span id="item-bottom-0" class="qc-list-item__field" data-field="title"><span class="qc-list-item__field-content"><span class="qc-list-item__value">My presentation</span></span></span></span></button>"`);
+    expect(container.innerHTML).toMatchInlineSnapshot(`"<button type="button" id="item" class="qc-list-item" aria-label="common.PLAY_PRESENTATION: My presentation"><span class="qc-list-item__body"><span class="qc-list-item__thumbnail"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></span></span><span class="qc-list-item__info qc-list-item__info--bottom"><span id="item-bottom-0" class="qc-list-item__field" data-field="title"><span class="qc-list-item__field-content"><span class="qc-list-item__value">My presentation</span></span></span></span></button>"`);
   });
 
   describe('accessibility', () => {

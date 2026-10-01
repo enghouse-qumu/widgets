@@ -7,7 +7,7 @@ import { PlayerDialogComponent } from './dialog';
 
 // Preact's `useId()` is only unique within a render root, and each widget is its own root: the ids are prefixed
 // with a counter, plus a random part in case several copies of the library are loaded in the same page
-const idNamespace = `qc-list-${Math.random().toString(36).slice(2, 8)}`;
+const idNamespace = `qc-list-${crypto.randomUUID()}`;
 let listCount = 0;
 
 interface Props {
@@ -39,7 +39,7 @@ export function ListComponent({ presentations, playerParameters, widgetOptions }
         {presentations.map((presentation, index) => (
           <li class="qc-list__item" key={presentation.guid}>
             <ListItemComponent
-              idPrefix={`${listId}-${index}`}
+              id={`${listId}-${presentation.guid ?? index}`}
               item={widgetOptions.item}
               metadataStyle={widgetOptions.style.item?.metadata}
               playIconUrl={widgetOptions.playIconUrl}

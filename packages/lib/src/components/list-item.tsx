@@ -12,8 +12,8 @@ const unlabelledFields = new Set(['title', 'summary']);
 type MetadataStyle = NonNullable<NonNullable<ListWidgetStyle['item']>['metadata']>;
 
 interface Props {
-  // unique in the page, prefixes the ids referenced by `aria-describedby`
-  idPrefix: string;
+  // the id of the item button, unique in the page; also prefixes the ids referenced by `aria-describedby`
+  id: string;
   item: ItemTemplateConfig;
   metadataStyle?: MetadataStyle;
   playIconUrl?: string;
@@ -53,7 +53,7 @@ function getFieldStyle(style: MetadataStyle[string] | undefined): JSX.CSSPropert
   return properties;
 }
 
-export function ListItemComponent({ idPrefix, item, metadataStyle, playIconUrl, presentation, onClick }: Readonly<Props>) {
+export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presentation, onClick }: Readonly<Props>) {
   const i18n = useI18n();
   const locale = i18n.getLocale();
   // ids of the elements announced as the button's description: the info fields (but the title, already in the name)
@@ -110,7 +110,7 @@ export function ListItemComponent({ idPrefix, item, metadataStyle, playIconUrl, 
 
     return (
       <span class={`qc-list-item__info qc-list-item__info--${slot}`}>
-        {fields.map((fieldConfig, index) => renderField(fieldConfig, `${idPrefix}-${slot}-${index}`))}
+        {fields.map((fieldConfig, index) => renderField(fieldConfig, `${id}-${slot}-${index}`))}
       </span>
     );
   };
@@ -125,7 +125,7 @@ export function ListItemComponent({ idPrefix, item, metadataStyle, playIconUrl, 
     ? formatDuration(presentation.duration, locale)
     : null;
   // the badge is only visual, the duration is announced in the description when it is not an info field already
-  const durationDescriptionId = `${idPrefix}-duration`;
+  const durationDescriptionId = `${id}-duration`;
   const describeDuration = !!duration && !Object.values(item.info).some((fields) => fields?.some(({ field }) => field === 'duration'));
 
   if (describeDuration) {
@@ -135,6 +135,7 @@ export function ListItemComponent({ idPrefix, item, metadataStyle, playIconUrl, 
   return (
     <button
       type="button"
+      id={id}
       class="qc-list-item"
       // the play text already contains the visible title, the other fields are the description
       aria-label={i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}
