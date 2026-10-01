@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     font: inherit;
-    gap: 8px;
+    gap: var(--qc-lw-item-thumbnail-gap, 8px);
     margin: 0;
     padding: var(--qc-lw-item-padding);
     text-align: start;
@@ -50,14 +50,14 @@
     &__body {
       align-items: flex-start;
       display: flex;
-      gap: 12px;
+      gap: var(--qc-lw-item-thumbnail-gap, 12px);
       min-width: 0;
     }
 
     &__info {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: var(--qc-lw-item-field-gap);
       min-width: 0;
 
       &--left,

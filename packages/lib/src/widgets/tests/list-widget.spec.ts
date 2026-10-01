@@ -133,10 +133,12 @@ describe('ListWidget', () => {
               position: 'top-left',
               textTransform: 'uppercase',
             },
+            fieldGap: '6px',
             hoverBorder: '2px solid blue',
             metadata: { title: { color: 'blue' } },
             playButton: { position: 'top-right' },
             thumbnail: { aspectRatio: '4:3' },
+            thumbnailGap: '20px',
           },
           minItemWidth: '200px',
         },
@@ -151,6 +153,8 @@ describe('ListWidget', () => {
       .toBe('repeat(auto-fill, minmax(min(max(var(--qc-lw-min-item-width), (100% - 2 * var(--qc-lw-gap)) / 3), 100%), 1fr))');
     expect(style('--qc-lw-item-border-radius')).toBe('8px');
     expect(style('--qc-lw-item-hover-border')).toBe('2px solid blue');
+    expect(style('--qc-lw-item-field-gap')).toBe('6px');
+    expect(style('--qc-lw-item-thumbnail-gap')).toBe('20px');
     expect(style('--qc-lw-item-active-border')).toBe('2px solid red');
     expect(style('--qc-lw-item-duration-badge-font-weight')).toBe('600');
     expect(style('--qc-lw-item-duration-badge-font-family')).toBe('monospace');

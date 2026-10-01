@@ -13,10 +13,15 @@ export interface ListWidgetStyle extends Omit<WidgetStyle, 'playButton' | 'thumb
     border: string;
     borderRadius: string;
     boxShadow: string;
+    // spacing between the fields of an info slot
+    fieldGap: string;
     hoverBackgroundColor: string;
     // falls back to `border`
     hoverBorder: string;
     padding: string;
+    // spacing between the thumbnail and the info slots, in both directions;
+    // defaults to 8px from the top/bottom slots and 12px from the left/right ones
+    thumbnailGap: string;
     thumbnail: Partial<{
       borderRadius: string;
       border: string;

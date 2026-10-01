@@ -75,6 +75,8 @@ const listGrid: ListWidgetConfiguration = {
         border: '1px solid #00f0ff',
         borderRadius: '0',
         boxShadow: '0 0 10px rgb(0 240 255 / .45), inset 0 0 14px rgb(0 240 255 / .12)',
+        // fieldGap: '6px',
+        // thumbnailGap: '20px',
         durationBadge: {
           backgroundColor: '#fcee0a',
           borderRadius: '0',
@@ -191,6 +193,8 @@ const listVertical: ListWidgetConfiguration = {
       },
       gap: '32px',
       item: {
+        // fieldGap: '12px',
+        // thumbnailGap: '20px',
         durationBadge: {
           backgroundColor: 'rgb(0 0 0 / .8)',
           borderRadius: '4px',
