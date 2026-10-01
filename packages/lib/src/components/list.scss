@@ -1,0 +1,28 @@
+.qc-widget {
+  .qc-list {
+    display: grid;
+    gap: var(--qc-lw-gap);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &--grid {
+      // items stretch to the tallest item of their row (default `align-items: stretch`)
+      grid-template-columns: var(
+        --qc-lw-grid-template-columns,
+        repeat(auto-fill, minmax(min(var(--qc-lw-min-item-width), 100%), 1fr))
+      );
+    }
+
+    &--vertical {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__item {
+      display: flex;
+      margin: 0;
+      min-width: 0;
+      padding: 0;
+    }
+  }
+}

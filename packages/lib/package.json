@@ -10,6 +10,8 @@
     },
     "./presentation-widget.js": "./dist/presentation-widget.js",
     "./presentation-widget.css": "./dist/presentation-widget.css",
+    "./list-widget.js": "./dist/list-widget.js",
+    "./list-widget.css": "./dist/list-widget.css",
     "./locales/*": "./dist/locales/*"
   },
   "files": [
@@ -21,6 +23,7 @@
     "dev:watch": "vite build --watch",
     "lint": "eslint",
     "prepublishOnly": "node scripts/prepublishOnly.js",
+    "server": "vite serve dev --config vite.config.ts --open",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest watch"

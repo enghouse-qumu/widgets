@@ -31,7 +31,7 @@
 
       &--default {
         background-color: var(--qc-pw-play-button-background-color);
-        border-radius: 100%;
+        border-radius: var(--qc-pw-play-button-border-radius);
         box-sizing: border-box;
         color: var(--qc-pw-play-button-color);
         padding: var(--qc-pw-play-button-padding);

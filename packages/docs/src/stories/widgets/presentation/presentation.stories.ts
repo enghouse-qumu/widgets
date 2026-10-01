@@ -570,6 +570,14 @@ export const Playground: Story = {
         subcategory: 'Play Button',
       },
     },
+    stylePlayButtonBorderRadius: {
+      control: 'text',
+      name: 'Border Radius',
+      table: {
+        category: 'Style',
+        subcategory: 'Play Button',
+      },
+    },
     stylePlayButtonPadding: {
       control: 'text',
       name: 'Padding',
@@ -767,6 +775,14 @@ export const Playground: Story = {
     styleCloseButtonIconSize: {
       control: 'text',
       name: 'Icon Size',
+      table: {
+        category: 'Style',
+        subcategory: 'Close Button',
+      },
+    },
+    styleCloseButtonBorderRadius: {
+      control: 'text',
+      name: 'Border Radius',
       table: {
         category: 'Style',
         subcategory: 'Close Button',

@@ -7,6 +7,7 @@ import { DialogComponent } from '@/components/dialog';
 import { PlayerComponent } from '@/components/player';
 import { NotFoundComponent } from '@/components/not-found';
 import { createI18n } from '@/i18n';
+import { positionToPlaceItems, setCssVariables } from '@/utils/css-variables';
 import 'virtual:svg-icons/register';
 import { version } from '../../../../package.json' with { type: 'json' };
 import './presentation-widget.scss';
@@ -122,40 +123,13 @@ export class PresentationWidget {
     );
   }
 
-  private mapCssValue(key: string, value: string) {
-    if (key === '--qc-pw-play-button-position') {
-      const placeX = value.includes('left') ? 'start' : (value.includes('right') ? 'end' : 'center');
-      const placeY = value.includes('top') ? 'start' : (value.includes('bottom') ? 'end' : 'center');
-
-      return `${placeY} ${placeX}`;
-    }
-
-    return value;
-  }
-
   private setStyles(container: HTMLElement) {
-    const prefix = '--qc-pw';
+    const style = this.configuration.widgetOptions?.style;
 
-    const toKebabCase = (str: string) => str
-      .replaceAll(/([a-z0-9])([A-Z])/g, '$1-$2')
-      .toLowerCase();
-
-    const walk = (obj: Record<string, any>, path: string[] = []) => {
-      for (const [key, value] of Object.entries(obj)) {
-        const nextPath = [...path, toKebabCase(key)];
-
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          walk(value, nextPath);
-        } else if (value !== undefined && value !== null) {
-          const cssVarName = `${prefix}-${nextPath.join('-')}`;
-
-          container.style.setProperty(cssVarName, this.mapCssValue(cssVarName, value));
-        }
-      }
-    };
-
-    if (Object.keys(this.configuration.widgetOptions?.style || {}).length > 0) {
-      walk(this.configuration.widgetOptions!.style!);
+    if (style && Object.keys(style).length > 0) {
+      setCssVariables(container, style, '--qc-pw', (name, value) => (
+        name === '--qc-pw-play-button-position' ? positionToPlaceItems(String(value)) : String(value)
+      ));
     }
   }
 

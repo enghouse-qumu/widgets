@@ -1,5 +1,11 @@
 import { Presentation } from '@/interfaces/presentation';
 import { WidgetConfiguration } from '@/interfaces/widget-configuration';
+import { ListWidgetSource } from '@/interfaces/list-widget-source';
+
+export interface PresentationList {
+  presentations: Presentation[];
+  total: number;
+}
 
 export interface PresentationResponseDto {
   kulus: Presentation[];
@@ -36,12 +42,90 @@ export class PresentationService {
       throw new Error(`Failed to fetch presentation from host "${this.host}": ${(err as Error).message}`, { cause: err });
     }
 
-    const { kulus, error } = await response.json() as Partial<PresentationResponseDto>;
+    const { kulus, error } = await this.readBody(response);
 
     if (!response.ok || !kulus?.length) {
-      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"`);
+      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"${this.status(response)}`);
     }
 
     return kulus[0];
+  }
+
+  async getPresentations(source: ListWidgetSource): Promise<PresentationList> {
+    const url = new URL(this.getListPath(source), `https://${this.host}`);
+
+    url.searchParams.set('offset', String(source.offset ?? 0));
+
+    if (source.limit !== undefined) {
+      url.searchParams.set('limit', String(source.limit));
+    }
+
+    // without `sortBy`, the API returns the presentation GUIDs in the given order
+    if (!source.presentationGuids || source.sortBy || source.sortOrder) {
+      url.searchParams.set('sortBy', `${source.sortBy ?? 'created'},${source.sortOrder ?? 'DESCENDING'}`);
+    }
+
+    if (source.smartSearch) {
+      source.smartSearch.rules.forEach(({ field, comparator, value }) => {
+        url.searchParams.append('search', `${field},${comparator},${value}`);
+      });
+      url.searchParams.set('matchAny', String(source.smartSearch.match === 'any'));
+    }
+
+    url.searchParams.set('useUserAuth', 'false');
+
+    let response: Response;
+
+    try {
+      response = await fetch(url.toString(), {
+        method: 'GET',
+      });
+    } catch (err) {
+      throw new Error(`Failed to fetch presentations from host "${this.host}": ${(err as Error).message}`, { cause: err });
+    }
+
+    const { kulus, total, error } = await this.readBody(response);
+
+    if (!response.ok) {
+      throw new Error(error?.message ?? `Failed to fetch presentations from host "${this.host}"${this.status(response)}`);
+    }
+
+    return {
+      presentations: kulus ?? [],
+      total: total ?? kulus?.length ?? 0,
+    };
+  }
+
+  /**
+   * Parses the JSON body of the response. Error responses are not always JSON (e.g. an HTML 502 page from a proxy),
+   * their body is then ignored so the caller reports the HTTP status instead of a parsing error.
+   */
+  private async readBody(response: Response): Promise<Partial<PresentationResponseDto>> {
+    try {
+      return await response.json() as Partial<PresentationResponseDto>;
+    } catch (err) {
+      if (!response.ok) {
+        return {};
+      }
+
+      throw new Error(`Invalid response from host "${this.host}": the body is not valid JSON`, { cause: err });
+    }
+  }
+
+  private status(response: Response): string {
+    return response.ok ? '' : ` (HTTP ${response.status})`;
+  }
+
+  private getListPath(source: ListWidgetSource): string {
+    if (source.smartSearchGuid) {
+      return `/api/2.2/rest/widgets/${encodeURIComponent(source.smartSearchGuid)}.json`;
+    }
+
+    if (source.presentationGuids) {
+      return `/api/2.2/rest/widgets/${source.presentationGuids.map(encodeURIComponent).join(',')}.json`;
+    }
+
+    // the `.json` suffix is required, the API returns XML otherwise
+    return '/api/2.2/rest/widgets.json';
   }
 }

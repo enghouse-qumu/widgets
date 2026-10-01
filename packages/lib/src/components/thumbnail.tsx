@@ -2,6 +2,7 @@ import { Presentation } from '@/interfaces/presentation';
 import { WidgetOptions } from '@/interfaces/widget-options';
 import { useI18n } from '@/i18n';
 import Icon from '@/components/icon';
+import { decodeEntities } from '@/utils/presentation-fields';
 
 interface Props {
   onClick: () => void;
@@ -17,7 +18,7 @@ export function ThumbnailComponent({ presentation, onClick, widgetOptions }: Rea
 
   return (
     <button type="button" class="qc-thumbnail" onClick={clickHandler}>
-      <span class="qc-sr-only">{i18n.t('common.PLAY_PRESENTATION', { title: presentation.title! })}</span>
+      <span class="qc-sr-only">{i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}</span>
       <img
         class="qc-thumbnail__image"
         src={presentation.thumbnail?.cdnUrl || presentation.thumbnail?.url}

@@ -6,6 +6,7 @@ export interface WidgetStyle {
     activeBackgroundColor: string;
     activeColor: string;
     backgroundColor: string;
+    borderRadius: string;
     boxShadow: string;
     color: string;
     hoverBackgroundColor: string;
@@ -33,6 +34,7 @@ export interface WidgetStyle {
     activeBackgroundColor: string;
     activeColor: string;
     backgroundColor: string;
+    borderRadius: string;
     color: string;
     height: string;
     hoverBackgroundColor: string;

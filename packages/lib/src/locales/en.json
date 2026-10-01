@@ -1,6 +1,17 @@
 {
     "common": {
+        "Close": "Close",
         "PLAY_PRESENTATION": "Play Presentation: {{title}}",
         "Presentation not found": "Presentation not found"
+    },
+    "list": {
+        "No presentations found": "No presentations found",
+        "fields": {
+            "duration": "Duration",
+            "publishOn": "Published on",
+            "publisher": "Published by",
+            "summary": "Summary",
+            "title": "Title"
+        }
     }
 }
