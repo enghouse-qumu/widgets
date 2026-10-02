@@ -172,7 +172,9 @@ export function resolveField(
 ): ResolvedField | null {
   const standard = (value: string | undefined): ResolvedField | null => (value
     ? {
-        defaultLabel: { key: `list.fields.${field}` },
+        defaultLabel: {
+          key: `list.fields.${field}`,
+        },
         value: decodeEntities(value),
       }
     : null);
