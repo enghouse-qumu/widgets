@@ -7,7 +7,7 @@ export interface ListWidgetStyle extends Omit<WidgetStyle, 'playButton' | 'thumb
   columns: 'auto' | number;
   minItemWidth: string;
   item: Partial<{
-    // when pressed or focused with the keyboard, falls back to `hoverBorder`
+    // when pressed, falls back to `hoverBorder`
     activeBorder: string;
     backgroundColor: string;
     border: string;

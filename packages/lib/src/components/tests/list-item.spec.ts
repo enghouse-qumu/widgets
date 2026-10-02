@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/preact';
 import { createElement } from 'preact';
 import { ListItemComponent } from '../list-item';
@@ -44,7 +44,7 @@ describe('ListItemComponent', () => {
   it('should render the thumbnail and the info fields', () => {
     const { container } = renderItem();
 
-    expect(container.innerHTML).toMatchInlineSnapshot(`"<button type="button" id="item" class="qc-list-item" aria-label="common.PLAY_PRESENTATION: My presentation"><span class="qc-list-item__body"><span class="qc-list-item__thumbnail"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></span></span><span class="qc-list-item__info qc-list-item__info--bottom"><span id="item-bottom-0" class="qc-list-item__field" data-field="title"><span class="qc-list-item__field-content"><span class="qc-list-item__value">My presentation</span></span></span></span></button>"`);
+    expect(container.innerHTML).toMatchInlineSnapshot(`"<div id="item" class="qc-list-item"><span class="qc-list-item__body"><button type="button" class="qc-list-item__thumbnail" aria-label="common.PLAY_PRESENTATION: My presentation"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></button></span><span class="qc-list-item__info qc-list-item__info--bottom"><span id="item-bottom-0" class="qc-list-item__field" data-field="title"><span class="qc-list-item__field-content"><span class="qc-list-item__value">My presentation</span></span></span></span></div>"`);
   });
 
   describe('accessibility', () => {
@@ -239,8 +239,7 @@ describe('ListItemComponent', () => {
 
     const value = container.querySelector('[data-field="md-description"] .qc-list-item__value--html')!;
 
-    expect(value.innerHTML).toBe('A <strong>bold</strong> <span>link</span>');
-    expect(container.querySelector('a')).toBeNull();
+    expect(value.innerHTML).toBe('A <strong>bold</strong> <a href="https://example.com" target="_blank" rel="noopener noreferrer">link</a>');
     // the label stays inline with the value
     expect(screen.getByRole('button', { description: 'Description A bold link' })).toBeInTheDocument();
   });
@@ -301,12 +300,106 @@ describe('ListItemComponent', () => {
     expect(container.querySelectorAll('.qc-list-item__field--clamp')).toHaveLength(0);
   });
 
-  it('should call onClick with the presentation when clicking anywhere on the item', () => {
-    const onClick = vi.fn();
-    const { container } = renderItem({ onClick });
+  describe('click', () => {
+    afterEach(() => {
+      globalThis.getSelection()?.removeAllRanges();
+    });
 
-    fireEvent.click(container.querySelector('[data-field="title"]')!);
+    const selectText = (element: Element) => {
+      const range = document.createRange();
 
-    expect(onClick).toHaveBeenCalledWith(presentation);
+      range.selectNodeContents(element);
+      globalThis.getSelection()!.removeAllRanges();
+      globalThis.getSelection()!.addRange(range);
+    };
+
+    it('should call onClick with the presentation when clicking anywhere on the item', () => {
+      const onClick = vi.fn();
+      const { container } = renderItem({ onClick });
+
+      fireEvent.click(container.querySelector('[data-field="title"]')!, { detail: 1 });
+
+      expect(onClick).toHaveBeenCalledWith(presentation);
+    });
+
+    it('should make the thumbnail the play button, for the keyboard and the screen readers', () => {
+      const onClick = vi.fn();
+
+      renderItem({ onClick });
+
+      const buttons = screen.getAllByRole('button');
+
+      expect(buttons).toHaveLength(1);
+      expect(buttons[0]).toHaveClass('qc-list-item__thumbnail');
+
+      // a keyboard activation fires a click with `detail` 0
+      fireEvent.click(buttons[0], { detail: 0 });
+
+      expect(onClick).toHaveBeenCalledWith(presentation);
+    });
+
+    it('should not play when the click ends a text selection in the item, so the text can be copied', () => {
+      const onClick = vi.fn();
+      const { container } = renderItem({ onClick });
+      const title = container.querySelector('[data-field="title"]')!;
+
+      selectText(title);
+      fireEvent.click(title, { detail: 1 });
+
+      expect(onClick).not.toHaveBeenCalled();
+    });
+
+    it('should play with the keyboard even when some text is selected', () => {
+      const onClick = vi.fn();
+      const { container } = renderItem({ onClick });
+
+      selectText(container.querySelector('[data-field="title"]')!);
+      fireEvent.click(screen.getByRole('button'), { detail: 0 });
+
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('should play when the selected text is outside of the item', () => {
+      const onClick = vi.fn();
+      const outside = document.createElement('p');
+
+      outside.textContent = 'elsewhere';
+      document.body.append(outside);
+
+      const { container } = renderItem({ onClick });
+
+      selectText(outside);
+      fireEvent.click(container.querySelector('[data-field="title"]')!, { detail: 1 });
+
+      expect(onClick).toHaveBeenCalledTimes(1);
+      outside.remove();
+    });
+
+    it('should not play when clicking a link of a Markdown value, with the mouse or the keyboard', () => {
+      const onClick = vi.fn();
+      const { container } = renderItem({
+        item: {
+          info: { bottom: [{ field: 'md-description' }] },
+          showDurationOverlay: false,
+        },
+        onClick,
+        presentation: {
+          ...presentation,
+          metadata: [
+            {
+              guid: 'md-description',
+              html: '<p>see <a href="https://example.com"><em>the docs</em></a></p>',
+              title: 'Description',
+              type: MetadataType.LargeText,
+            },
+          ],
+        },
+      });
+
+      fireEvent.click(container.querySelector('a em')!, { detail: 1 });
+      fireEvent.click(container.querySelector('a')!, { detail: 0 });
+
+      expect(onClick).not.toHaveBeenCalled();
+    });
   });
 });

@@ -176,7 +176,7 @@ describe('PresentationService', () => {
       await expect(result).rejects.toHaveProperty('cause', parseError);
     });
 
-    it('should report the HTTP status when an error response is not JSON', async () => {
+    it('should report a fetch error, not a parsing error, when an error response is not JSON', async () => {
       mockFetch.mockResolvedValueOnce({
         json: vi.fn().mockRejectedValue(new SyntaxError('Unexpected token \'<\'')),
         ok: false,
@@ -184,7 +184,7 @@ describe('PresentationService', () => {
       });
 
       await expect(presentationService.getPresentation(mockGuid))
-        .rejects.toThrow(new RegExp(`^Failed to fetch presentation with guid "${mockGuid}" from host ".+" \\(HTTP 502\\)$`));
+        .rejects.toThrow(new RegExp(`^Failed to fetch presentation with guid "${mockGuid}" from host ".+"$`));
     });
 
     it('should handle presentations with minimal data', async () => {
@@ -425,7 +425,7 @@ describe('PresentationService', () => {
       })).rejects.toThrow('Playlist not found');
     });
 
-    it('should report the HTTP status when an error response is not JSON', async () => {
+    it('should report a fetch error, not a parsing error, when an error response is not JSON', async () => {
       mockFetch.mockResolvedValueOnce({
         json: vi.fn().mockRejectedValue(new SyntaxError('Unexpected token \'<\'')),
         ok: false,
@@ -435,7 +435,7 @@ describe('PresentationService', () => {
       await expect(listService.getPresentations({
         host: mockHost,
         smartSearchGuid: 'x',
-      })).rejects.toThrow(`Failed to fetch presentations from host "${mockHost}" (HTTP 502)`);
+      })).rejects.toThrow(new RegExp(`^Failed to fetch presentations from host "${mockHost}"$`));
     });
 
     it('should throw a clear error when a successful response is not JSON', async () => {

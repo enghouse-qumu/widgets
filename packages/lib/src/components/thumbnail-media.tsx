@@ -11,7 +11,7 @@ interface Props {
 
 /**
  * The thumbnail image and the play icon, without the interactive element around them,
- * shared by the presentation widget thumbnail and the list widget items, which are buttons themselves
+ * shared by the presentation widget thumbnail and the list widget items, each one rendering its own button
  */
 export function ThumbnailMediaComponent({ block, loading, playIconUrl, presentation }: Readonly<Props>) {
   return (

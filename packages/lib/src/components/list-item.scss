@@ -16,7 +16,9 @@
     text-align: start;
     width: 100%;
 
-    &:hover {
+    // hovered, or its play button focused with the keyboard
+    &:hover,
+    &:has(.qc-list-item__thumbnail:focus-visible) {
       background-color: var(--qc-lw-item-hover-background-color, var(--qc-lw-item-background-color));
       border: var(--qc-lw-item-hover-border, var(--qc-lw-item-border));
 
@@ -37,8 +39,19 @@
       }
     }
 
-    &:active,
-    &:focus-visible {
+    // the focus ring is drawn around the whole item rather than its play button. Not `:focus-within`, which also
+    // matches the focus given by a mouse click, and the focus of the links in the info fields
+    &:has(.qc-list-item__thumbnail:focus-visible) {
+      outline: auto;
+      outline-offset: 2px;
+
+      .qc-list-item__thumbnail {
+        outline: none;
+      }
+    }
+
+    // pressed, after the hover and focus styles so it takes precedence
+    &:active {
       border: var(--qc-lw-item-active-border, var(--qc-lw-item-hover-border, var(--qc-lw-item-border)));
 
       .qc-list-item__play-button--default {
@@ -66,16 +79,24 @@
       }
     }
 
+    // the play button of the item
     &__thumbnail {
+      appearance: none;
       aspect-ratio: var(--qc-lw-item-thumbnail-aspect-ratio);
+      background: none;
       border: var(--qc-lw-item-thumbnail-border);
       border-radius: var(--qc-lw-item-thumbnail-border-radius);
       box-sizing: border-box;
+      color: inherit;
+      cursor: pointer;
       display: grid;
       flex: 1 1 0;
+      font: inherit;
       isolation: isolate;
+      margin: 0;
       min-width: 0;
       overflow: hidden;
+      padding: 0;
       place-items: var(--qc-lw-item-play-button-position);
       position: relative;
     }
@@ -186,6 +207,11 @@
       ul,
       ol {
         padding-inline-start: 1.25em;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: underline;
       }
     }
 

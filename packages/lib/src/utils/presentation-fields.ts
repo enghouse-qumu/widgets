@@ -1,4 +1,5 @@
-import { MetadataType, Presentation, PresentationMetadata } from '@/interfaces/presentation';
+import { MetadataType, Presentation } from '@/interfaces/presentation';
+import { useI18n } from '@/i18n';
 
 // Intl.DurationFormat is not part of the TypeScript DOM/ESNext libs yet
 type DurationFormatConstructor = new (locale: string, options: Record<string, string>) => {
@@ -7,18 +8,25 @@ type DurationFormatConstructor = new (locale: string, options: Record<string, st
 
 export const standardFields = ['title', 'summary', 'publisher', 'publishOn', 'duration'] as const;
 
-export interface ResolvedField {
+export type ResolvedField = {
   // the default label: a translation key for standard fields, the metadata title for metadata fields
   defaultLabel: { key: string } | { text: string };
-  // the HTML rendered from the Markdown of a metadata value, safe to insert in the item button
-  html?: string;
-  // the plain text value, also the text content of `html` when set
-  value: string;
-}
+} & (
+  // the HTML rendered from the Markdown of a metadata value, prepared by `toItemHtml()`
+  | {
+    html: string;
+    value?: never;
+  }
+  // the plain text value of the other fields
+  | {
+    html?: never;
+    value: string;
+  }
+);
 
 /**
- * Prepares the HTML of a metadata value, already sanitized by the API, to be rendered in the item `<button>`:
- * links are turned into plain text, as they are not allowed in a button,
+ * Prepares the HTML of a metadata value, already sanitized by the API, to be rendered in an item:
+ * links open in a new tab, so the embedding page stays open,
  * and a single paragraph is unwrapped so the value stays inline with its label.
  */
 export function toItemHtml(html: string): string {
@@ -29,10 +37,8 @@ export function toItemHtml(html: string): string {
   const { content } = template;
 
   content.querySelectorAll('a').forEach((link) => {
-    const span = document.createElement('span');
-
-    span.append(...Array.from(link.childNodes));
-    link.replaceWith(span);
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener noreferrer');
   });
 
   const first = content.children.item(0);
@@ -42,14 +48,6 @@ export function toItemHtml(html: string): string {
   }
 
   return template.innerHTML;
-}
-
-function textOf(html: string): string {
-  const template = document.createElement('template');
-
-  template.innerHTML = html;
-
-  return template.content.textContent?.trim() ?? '';
 }
 
 // SELECT values are `{ guid, value }` objects, MULTI_SELECT values arrays of them
@@ -93,11 +91,11 @@ function toDurationParts(durationMs: number) {
 /**
  * Formats a duration (in milliseconds) as a locale-aware digital clock value, e.g. "1:02:03" or "04:05"
  */
-export function formatDuration(durationMs: number, locale: string): string {
+export function formatDuration(durationMs: number): string {
   const { hours, minutes, seconds } = toDurationParts(durationMs);
   const { DurationFormat } = Intl as unknown as { DurationFormat: DurationFormatConstructor };
 
-  return new DurationFormat(locale, {
+  return new DurationFormat(useI18n().getLocale(), {
     hoursDisplay: 'auto',
     style: 'digital',
   }).format({
@@ -107,7 +105,7 @@ export function formatDuration(durationMs: number, locale: string): string {
   });
 }
 
-export function formatDate(value: Date | string | number, locale: string, withTime = false): string {
+export function formatDate(value: Date | string | number, withTime = false): string {
   const date = value instanceof Date ? value : new Date(value);
 
   if (Number.isNaN(date.getTime())) {
@@ -115,7 +113,7 @@ export function formatDate(value: Date | string | number, locale: string, withTi
   }
 
   return new Intl.DateTimeFormat(
-    locale,
+    useI18n().getLocale(),
     withTime
       ? {
           dateStyle: 'long',
@@ -127,11 +125,8 @@ export function formatDate(value: Date | string | number, locale: string, withTi
   ).format(date);
 }
 
-// translates a key, e.g. `I18nService.t`
-type Translate = (key: string) => string;
-
-function formatMetadataValue(metadata: PresentationMetadata, locale: string, t: Translate): string {
-  const value = metadata.value as unknown;
+function formatMetadataValue(value: unknown, type: MetadataType): string {
+  const i18n = useI18n();
 
   if (value === undefined || value === null || value === '') {
     return '';
@@ -142,18 +137,18 @@ function formatMetadataValue(metadata: PresentationMetadata, locale: string, t: 
       .join(', ');
   }
 
-  switch (metadata.type) {
+  switch (type) {
     case MetadataType.Boolean:
       // also accept the string values, "false" would be truthy otherwise
-      return t(value === true || value === 'true' ? 'list.Yes' : 'list.No');
+      return i18n.t(value === true || value === 'true' ? 'list.Yes' : 'list.No');
     case MetadataType.Date:
     case MetadataType.DatePast:
-      return formatDate(value as string, locale);
+      return formatDate(value as string);
     case MetadataType.DateTime:
-      return formatDate(value as string, locale, true);
+      return formatDate(value as string, true);
     case MetadataType.Number:
     case MetadataType.Views:
-      return Number.isFinite(Number(value)) ? new Intl.NumberFormat(locale).format(Number(value)) : String(value as string);
+      return Number.isFinite(Number(value)) ? new Intl.NumberFormat(i18n.getLocale()).format(Number(value)) : String(value as string);
     default:
       return optionValue(value);
   }
@@ -164,12 +159,7 @@ function formatMetadataValue(metadata: PresentationMetadata, locale: string, t: 
  * `field` is either one of the standard fields or a metadata GUID.
  * Returns `null` when the field does not exist or has no value, so it can be skipped when rendering.
  */
-export function resolveField(
-  presentation: Presentation,
-  field: string,
-  locale: string,
-  t: Translate = (key) => key,
-): ResolvedField | null {
+export function resolveField(presentation: Presentation, field: string): ResolvedField | null {
   const standard = (value: string | undefined): ResolvedField | null => (value
     ? {
         defaultLabel: {
@@ -187,9 +177,9 @@ export function resolveField(
     case 'publisher':
       return standard(presentation.publisher?.name);
     case 'publishOn':
-      return standard(presentation.published ? formatDate(presentation.published, locale) : undefined);
+      return standard(presentation.published ? formatDate(presentation.published) : undefined);
     case 'duration':
-      return standard(presentation.duration ? formatDuration(presentation.duration, locale) : undefined);
+      return standard(presentation.duration ? formatDuration(presentation.duration) : undefined);
 
     default: {
       const metadata = presentation.metadata?.find(({ guid }) => guid === field);
@@ -201,18 +191,16 @@ export function resolveField(
       // the value may contain Markdown, rendered by the API into `html`
       if (metadata.html) {
         const html = toItemHtml(metadata.html);
-        const text = textOf(html);
 
-        return text
+        return html
           ? {
               defaultLabel: { text: metadata.title },
               html,
-              value: text,
             }
           : null;
       }
 
-      const value = formatMetadataValue(metadata, locale, t);
+      const value = formatMetadataValue(metadata.value, metadata.type);
 
       return value
         ? {

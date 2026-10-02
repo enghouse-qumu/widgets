@@ -12,7 +12,7 @@ const unlabelledFields = new Set(['title', 'summary']);
 type MetadataStyle = NonNullable<NonNullable<ListWidgetStyle['item']>['metadata']>;
 
 interface Props {
-  // the id of the item button, unique in the page; also prefixes the ids referenced by `aria-describedby`
+  // the id of the item, unique in the page; also prefixes the ids referenced by `aria-describedby`
   id: string;
   item: ItemTemplateConfig;
   metadataStyle?: MetadataStyle;
@@ -55,12 +55,11 @@ function getFieldStyle(style: MetadataStyle[string] | undefined): JSX.CSSPropert
 
 export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presentation, onClick }: Readonly<Props>) {
   const i18n = useI18n();
-  const locale = i18n.getLocale();
   // ids of the elements announced as the button's description: the info fields (but the title, already in the name)
   const descriptionIds: string[] = [];
 
   const renderField = ({ field, label }: InfoFieldConfig, fieldId: string) => {
-    const resolved = resolveField(presentation, field, locale, (key) => i18n.t(key));
+    const resolved = resolveField(presentation, field);
     const fieldStyle = metadataStyle?.[field];
 
     if (!resolved) {
@@ -91,7 +90,7 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
           {/* the space is outside of the label, so it is kept in the accessible description */}
           {labelText && <><span class="qc-list-item__label">{labelText}</span>{' '}</>}
           {resolved.html ? (
-            // sanitized by the API, made safe for the button by toItemHtml()
+            // sanitized by the API, prepared by toItemHtml()
             <span class="qc-list-item__value qc-list-item__value--html" dangerouslySetInnerHTML={{ __html: resolved.html }}/>
           ) : (
             <span class="qc-list-item__value">{resolved.value}</span>
@@ -122,7 +121,7 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
   const bottomSlot = renderSlot('bottom');
 
   const duration = item.showDurationOverlay && presentation.duration
-    ? formatDuration(presentation.duration, locale)
+    ? formatDuration(presentation.duration)
     : null;
   // the badge is only visual, the duration is announced in the description when it is not an info field already
   const durationDescriptionId = `${id}-duration`;
@@ -132,20 +131,36 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
     descriptionIds.push(durationDescriptionId);
   }
 
+  // The card opens the player on click, except when the user selects its text (e.g. to copy it) or clicks a link.
+  // The thumbnail is the actual button, for the keyboard and the screen readers.
+  const handleClick = (event: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+    // links open their own target
+    if ((event.target as Element).closest('a')) {
+      return;
+    }
+
+    const selection = globalThis.getSelection?.();
+
+    // `detail` is 0 for a keyboard activation of the button, which always plays
+    if (event.detail > 0 && selection && !selection.isCollapsed && event.currentTarget.contains(selection.anchorNode)) {
+      return;
+    }
+
+    onClick(presentation);
+  };
+
   return (
-    <button
-      type="button"
-      id={id}
-      class="qc-list-item"
-      // the play text already contains the visible title, the other fields are the description
-      aria-label={i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}
-      aria-describedby={descriptionIds.length ? descriptionIds.join(' ') : undefined}
-      onClick={() => onClick(presentation)}
-    >
+    <div id={id} class="qc-list-item" onClick={handleClick}>
       {topSlot}
       <span class="qc-list-item__body">
         {leftSlot}
-        <span class="qc-list-item__thumbnail">
+        <button
+          type="button"
+          class="qc-list-item__thumbnail"
+          // the play text already contains the visible title, the other fields are the description
+          aria-label={i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}
+          aria-describedby={descriptionIds.length ? descriptionIds.join(' ') : undefined}
+        >
           <ThumbnailMediaComponent
             block="qc-list-item"
             loading="lazy"
@@ -157,13 +172,13 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
               {duration}
             </span>
           )}
-        </span>
+        </button>
         {rightSlot}
       </span>
       {bottomSlot}
       {describeDuration && (
         <span id={durationDescriptionId} class="qc-sr-only">{`${i18n.t('list.fields.duration')} ${duration}`}</span>
       )}
-    </button>
+    </div>
   );
 }

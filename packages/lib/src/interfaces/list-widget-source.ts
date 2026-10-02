@@ -13,20 +13,12 @@ interface ListWidgetSort {
 
 export type ListWidgetSource = ListWidgetSourceBase & (
   | {
-    presentationGuids?: never;
-    smartSearch?: never;
     smartSearchGuid: string;
   } & ListWidgetSort
   | {
     presentationGuids: string[];
-    smartSearch?: never;
-    smartSearchGuid?: never;
-    sortBy?: never;
-    sortOrder?: never;
   }
   | {
-    presentationGuids?: never;
     smartSearch: SearchFilter;
-    smartSearchGuid?: never;
   } & ListWidgetSort
 );

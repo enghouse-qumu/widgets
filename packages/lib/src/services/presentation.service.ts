@@ -45,7 +45,7 @@ export class PresentationService {
     const { kulus, error } = await this.readBody(response);
 
     if (!response.ok || !kulus?.length) {
-      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"${response.ok ? '' : ` (HTTP ${response.status})`}`);
+      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"`);
     }
 
     return kulus[0];
@@ -61,11 +61,11 @@ export class PresentationService {
     }
 
     // without `sortBy`, the API returns the presentation GUIDs in the given order
-    if (!source.presentationGuids) {
+    if (!('presentationGuids' in source)) {
       url.searchParams.set('sortBy', `${source.sortBy ?? 'created'},${source.sortOrder ?? 'DESCENDING'}`);
     }
 
-    if (source.smartSearch) {
+    if ('smartSearch' in source) {
       source.smartSearch.rules.forEach(({ field, comparator, value }) => {
         url.searchParams.append('search', `${field},${comparator},${value}`);
       });
@@ -87,7 +87,7 @@ export class PresentationService {
     const { kulus, total, error } = await this.readBody(response);
 
     if (!response.ok) {
-      throw new Error(error?.message ?? `Failed to fetch presentations from host "${this.host}" (HTTP ${response.status})`);
+      throw new Error(error?.message ?? `Failed to fetch presentations from host "${this.host}"`);
     }
 
     return {
@@ -98,7 +98,7 @@ export class PresentationService {
 
   /**
    * Parses the JSON body of the response. Error responses are not always JSON (e.g. an HTML 502 page from a proxy),
-   * their body is then ignored so the caller reports the HTTP status instead of a parsing error.
+   * their body is then ignored so the caller reports a fetch error instead of a parsing error.
    */
   private async readBody(response: Response): Promise<Partial<PresentationResponseDto>> {
     try {
@@ -113,11 +113,11 @@ export class PresentationService {
   }
 
   private getListPath(source: ListWidgetSource): string {
-    if (source.smartSearchGuid) {
+    if ('smartSearchGuid' in source) {
       return `/api/2.2/rest/widgets/${encodeURIComponent(source.smartSearchGuid)}.json`;
     }
 
-    if (source.presentationGuids) {
+    if ('presentationGuids' in source) {
       return `/api/2.2/rest/widgets/${source.presentationGuids.map(encodeURIComponent).join(',')}.json`;
     }
 

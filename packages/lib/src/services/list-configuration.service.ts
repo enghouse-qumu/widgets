@@ -1,5 +1,6 @@
 import { ListWidgetConfiguration, ListWidgetOptions } from '@/interfaces/list-widget';
-import { ListWidgetSource } from '@/interfaces/list-widget-source';
+import { ListWidgetSource, ListWidgetSourceBase } from '@/interfaces/list-widget-source';
+import { SearchFilter } from '@/interfaces/search-filter';
 import { InfoFieldConfig, InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
 import { ConfigurationService } from '@/services/configuration.service';
 
@@ -47,6 +48,15 @@ const searchComparators = new Set([
   'not_in_the_next',
 ]);
 
+// the source as given by the embedding page, before its validation
+type UncheckedSource = ListWidgetSourceBase & Partial<{
+  presentationGuids: string[];
+  smartSearch: SearchFilter;
+  smartSearchGuid: string;
+  sortBy: string;
+  sortOrder: 'ASCENDING' | 'DESCENDING';
+}>;
+
 export const layoutDefaults: Record<ListWidgetOptions['layout'], { info: ItemTemplateConfig['info'];
   limit: number; }> = {
   grid: {
@@ -93,7 +103,8 @@ export class ListConfigurationService {
           .replace('https://', '')
           .split('/')[0],
         // all the listed presentations are shown by default, the layout default applies to the other sources
-        limit: configuration.source.limit ?? configuration.source.presentationGuids?.length ?? defaults.limit,
+        limit: configuration.source.limit
+          ?? ('presentationGuids' in configuration.source ? configuration.source.presentationGuids.length : defaults.limit),
       },
       widgetOptions: {
         ...configuration.widgetOptions,
@@ -156,7 +167,10 @@ export class ListConfigurationService {
     return configuration;
   }
 
-  private validateSource(source: ListWidgetSource): void {
+  private validateSource(validatedSource: ListWidgetSource): void {
+    // the configuration is not trusted: every property is checked, including the combinations the type does not allow
+    const source = validatedSource as UncheckedSource;
+
     Object.keys(source).forEach((field) => {
       if (!supportedSourceFields.has(field)) {
         console.warn(`Unsupported field \`source.${field}\` in configuration`);

@@ -206,6 +206,7 @@ const listVertical: ListWidgetConfiguration = {
           padding: '1px 4px',
           position: 'bottom-left',
         },
+        hoverBackgroundColor: 'rgba(0, 0, 0, 0.02)',
         metadata: {
           6: {
             color: 'red',

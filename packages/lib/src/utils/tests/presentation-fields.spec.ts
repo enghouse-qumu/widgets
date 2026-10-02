@@ -1,8 +1,22 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { formatDate, formatDuration, resolveField, toItemHtml } from '../presentation-fields';
 import { MetadataType, Presentation } from '@/interfaces/presentation';
 
+const i18n = vi.hoisted(() => ({
+  getLocale: vi.fn(() => 'en-US'),
+  t: vi.fn((key: string) => key),
+}));
+
+vi.mock('@/i18n', () => ({
+  useI18n: () => i18n,
+}));
+
 describe('presentation fields', () => {
+  beforeEach(() => {
+    i18n.getLocale.mockReturnValue('en-US');
+    i18n.t.mockClear();
+  });
+
   const presentation: Presentation = {
     duration: 3_723_000,
     metadata: [
@@ -36,20 +50,23 @@ describe('presentation fields', () => {
 
   describe('formatDuration', () => {
     it('should format durations with and without hours', () => {
-      expect(formatDuration(3_723_000, 'en')).toBe('1:02:03');
-      expect(formatDuration(65_000, 'en')).toBe('01:05');
-      expect(formatDuration(0, 'en')).toBe('00:00');
+      expect(formatDuration(3_723_000)).toBe('1:02:03');
+      expect(formatDuration(65_000)).toBe('01:05');
+      expect(formatDuration(0)).toBe('00:00');
     });
   });
 
   describe('formatDate', () => {
     it('should format using the locale', () => {
-      expect(formatDate('2024-03-05T10:00:00Z', 'en-US')).toBe('March 5, 2024');
-      expect(formatDate('2024-03-05T10:00:00Z', 'fr')).toBe('5 mars 2024');
+      expect(formatDate('2024-03-05T10:00:00Z')).toBe('March 5, 2024');
+
+      i18n.getLocale.mockReturnValue('fr');
+
+      expect(formatDate('2024-03-05T10:00:00Z')).toBe('5 mars 2024');
     });
 
     it('should return an empty string for invalid dates', () => {
-      expect(formatDate('not a date', 'en')).toBe('');
+      expect(formatDate('not a date')).toBe('');
     });
   });
 
@@ -61,7 +78,7 @@ describe('presentation fields', () => {
       ['publishOn', 'March 5, 2024', 'list.fields.publishOn'],
       ['duration', '1:02:03', 'list.fields.duration'],
     ])('should resolve the standard field "%s"', (field, value, key) => {
-      expect(resolveField(presentation, field, 'en-US')).toEqual({
+      expect(resolveField(presentation, field)).toEqual({
         defaultLabel: { key },
         value,
       });
@@ -73,18 +90,18 @@ describe('presentation fields', () => {
         value: 'Sales',
       };
 
-      expect(resolveField(presentation, 'md-text', 'en')).toEqual(expected);
-      expect(resolveField(presentation, 'md-tags', 'en')?.value).toBe('a, b');
+      expect(resolveField(presentation, 'md-text')).toEqual(expected);
+      expect(resolveField(presentation, 'md-tags')?.value).toBe('a, b');
     });
 
     it('should decode the HTML entities returned by the API', () => {
-      expect(resolveField({ title: 'Jane&#39;s &amp; <b>Co</b>' }, 'title', 'en')?.value).toBe('Jane\'s & <b>Co</b>');
+      expect(resolveField({ title: 'Jane&#39;s &amp; <b>Co</b>' }, 'title')?.value).toBe('Jane\'s & <b>Co</b>');
     });
 
     it('should return null for missing or empty fields', () => {
-      expect(resolveField(presentation, 'md-empty', 'en')).toBeNull();
-      expect(resolveField(presentation, 'unknown', 'en')).toBeNull();
-      expect(resolveField({}, 'title', 'en')).toBeNull();
+      expect(resolveField(presentation, 'md-empty')).toBeNull();
+      expect(resolveField(presentation, 'unknown')).toBeNull();
+      expect(resolveField({}, 'title')).toBeNull();
     });
   });
 
@@ -97,8 +114,9 @@ describe('presentation fields', () => {
       expect(toItemHtml('<p>one</p>\n<ul><li>two</li></ul>')).toBe('<p>one</p>\n<ul><li>two</li></ul>');
     });
 
-    it('should turn links into plain text, not allowed in the item button', () => {
-      expect(toItemHtml('<p>see <a href="https://example.com" target="_blank">the docs</a></p>')).toBe('see <span>the docs</span>');
+    it('should open the links in a new tab, so the embedding page stays open', () => {
+      expect(toItemHtml('<p>see <a href="https://example.com">the docs</a></p>'))
+        .toBe('see <a href="https://example.com" target="_blank" rel="noopener noreferrer">the docs</a>');
     });
   });
 
@@ -113,24 +131,23 @@ describe('presentation fields', () => {
       ],
     }) as unknown as Presentation;
 
-    it('should use the html rendered from the Markdown, and its text as value', () => {
+    it('should use the html rendered from the Markdown', () => {
       expect(resolveField(withMetadata({
         html: '<p>large <em>text</em></p>\n',
         type: MetadataType.LargeText,
         value: 'large *text*',
-      }), 'md', 'en')).toEqual({
+      }), 'md')).toEqual({
         defaultLabel: { text: 'Field' },
         html: 'large <em>text</em>',
-        value: 'large text',
       });
     });
 
-    it('should skip a html value without text', () => {
+    it('should skip an empty html value', () => {
       expect(resolveField(withMetadata({
-        html: '<p></p>',
+        html: '\n',
         type: MetadataType.LargeText,
         value: ' ',
-      }), 'md', 'en')).toBeNull();
+      }), 'md')).toBeNull();
     });
 
     it('should use the option values of select fields', () => {
@@ -140,7 +157,7 @@ describe('presentation fields', () => {
           guid: 'o1',
           value: 'Option 1',
         },
-      }), 'md', 'en')?.value).toBe('Option 1');
+      }), 'md')?.value).toBe('Option 1');
       expect(resolveField(withMetadata({
         type: MetadataType.MultiSelect,
         value: [
@@ -153,7 +170,7 @@ describe('presentation fields', () => {
             value: 'Option 1',
           },
         ],
-      }), 'md', 'en')?.value).toBe('Option 2, Option 1');
+      }), 'md')?.value).toBe('Option 2, Option 1');
     });
 
     it.each([
@@ -162,20 +179,18 @@ describe('presentation fields', () => {
       ['true', 'list.Yes'],
       ['false', 'list.No'],
     ])('should translate the boolean value %s', (value, expected) => {
-      const t = vi.fn((key: string) => key);
-
       expect(resolveField(withMetadata({
         type: MetadataType.Boolean,
         value,
-      }), 'md', 'en', t)?.value).toBe(expected);
-      expect(t).toHaveBeenCalledWith(expected);
+      }), 'md')?.value).toBe(expected);
+      expect(i18n.t).toHaveBeenCalledWith(expected);
     });
 
     it('should decode the HTML entities of plain values', () => {
       expect(resolveField(withMetadata({
         type: MetadataType.Text,
         value: 'Q&amp;A',
-      }), 'md', 'en')?.value).toBe('Q&A');
+      }), 'md')?.value).toBe('Q&A');
     });
   });
 });
