@@ -3,8 +3,8 @@ import { Presentation } from '@/interfaces/presentation';
 import { InfoFieldConfig, InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
 import { ListWidgetStyle } from '@/interfaces/list-widget-style';
 import { useI18n } from '@/i18n';
-import { ThumbnailMediaComponent } from '@/components/thumbnail-media';
-import { decodeEntities, formatDuration, resolveField } from '@/utils/presentation-fields';
+import { ThumbnailComponent } from '@/components/thumbnail';
+import { formatDuration, resolveField } from '@/utils/presentation-fields';
 
 // fields showing their label only when `label` is set explicitly, all the others show it by default
 const unlabelledFields = new Set(['title', 'summary']);
@@ -152,25 +152,22 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
       {topSlot}
       <div class="qc-list-item__body">
         {leftSlot}
-        <button
-          type="button"
+        {/* named with the play text, which contains the visible title; the other fields are the description.
+            Its click is handled by the item */}
+        <ThumbnailComponent
+          block="qc-list-item"
           class="qc-list-item__thumbnail"
-          // the play text already contains the visible title, the other fields are the description
-          aria-label={i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}
-          aria-describedby={descriptionIds.length ? descriptionIds.join(' ') : undefined}
+          describedBy={descriptionIds.length ? descriptionIds.join(' ') : undefined}
+          loading="lazy"
+          presentation={presentation}
+          widgetOptions={{ playIconUrl }}
         >
-          <ThumbnailMediaComponent
-            block="qc-list-item"
-            loading="lazy"
-            playIconUrl={playIconUrl}
-            presentation={presentation}
-          />
           {duration && (
             <span class="qc-list-item__duration" aria-hidden="true">
               {duration}
             </span>
           )}
-        </button>
+        </ThumbnailComponent>
         {rightSlot}
       </div>
       {bottomSlot}

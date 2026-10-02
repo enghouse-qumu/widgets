@@ -44,7 +44,7 @@ describe('ListItemComponent', () => {
   it('should render the thumbnail and the info fields', () => {
     const { container } = renderItem();
 
-    expect(container.innerHTML).toMatchInlineSnapshot(`"<div id="item" class="qc-list-item"><div class="qc-list-item__body"><button type="button" class="qc-list-item__thumbnail" aria-label="common.PLAY_PRESENTATION: My presentation"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></button></div><dl class="qc-list-item__info qc-list-item__info--bottom"><div id="item-bottom-0" class="qc-list-item__field" data-field="title"><dt class="qc-list-item__label qc-sr-only">list.fields.title</dt> <dd class="qc-list-item__value">My presentation</dd></div></dl></div>"`);
+    expect(container.innerHTML).toMatchInlineSnapshot(`"<div id="item" class="qc-list-item"><div class="qc-list-item__body"><button type="button" class="qc-list-item__thumbnail"><span class="qc-sr-only">common.PLAY_PRESENTATION: My presentation</span><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></button></div><dl class="qc-list-item__info qc-list-item__info--bottom"><div id="item-bottom-0" class="qc-list-item__field" data-field="title"><dt class="qc-list-item__label qc-sr-only">list.fields.title</dt> <dd class="qc-list-item__value">My presentation</dd></div></dl></div>"`);
   });
 
   describe('accessibility', () => {
