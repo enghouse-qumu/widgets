@@ -155,8 +155,6 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
         {/* named with the play text, which contains the visible title; the other fields are the description.
             Its click is handled by the item */}
         <ThumbnailComponent
-          block="qc-list-item"
-          class="qc-list-item__thumbnail"
           describedBy={descriptionIds.length ? descriptionIds.join(' ') : undefined}
           loading="lazy"
           presentation={presentation}

@@ -18,7 +18,7 @@
 
     // hovered, or its play button focused with the keyboard
     &:hover,
-    &:has(.qc-list-item__thumbnail:focus-visible) {
+    &:has(.qc-thumbnail:focus-visible) {
       background-color: var(--qc-lw-item-hover-background-color, var(--qc-lw-item-background-color));
       border: var(--qc-lw-item-hover-border, var(--qc-lw-item-border));
 
@@ -33,7 +33,7 @@
         );
       }
 
-      .qc-list-item__play-button--default {
+      .qc-thumbnail__play-button--default {
         background-color: var(--qc-lw-item-play-button-hover-background-color);
         color: var(--qc-lw-item-play-button-hover-color);
       }
@@ -41,11 +41,11 @@
 
     // the focus ring is drawn around the whole item rather than its play button. Not `:focus-within`, which also
     // matches the focus given by a mouse click, and the focus of the links in the info fields
-    &:has(.qc-list-item__thumbnail:focus-visible) {
+    &:has(.qc-thumbnail:focus-visible) {
       outline: auto;
       outline-offset: 2px;
 
-      .qc-list-item__thumbnail {
+      .qc-thumbnail {
         outline: none;
       }
     }
@@ -54,7 +54,7 @@
     &:active {
       border: var(--qc-lw-item-active-border, var(--qc-lw-item-hover-border, var(--qc-lw-item-border)));
 
-      .qc-list-item__play-button--default {
+      .qc-thumbnail__play-button--default {
         background-color: var(--qc-lw-item-play-button-active-background-color);
         color: var(--qc-lw-item-play-button-active-color);
       }
@@ -81,7 +81,7 @@
     }
 
     // the play button of the item
-    &__thumbnail {
+    .qc-thumbnail {
       appearance: none;
       aspect-ratio: var(--qc-lw-item-thumbnail-aspect-ratio);
       background: none;
@@ -102,7 +102,7 @@
       position: relative;
     }
 
-    &__image {
+    .qc-thumbnail__image {
       display: block;
       height: 100%;
       left: 0;
@@ -115,7 +115,7 @@
 
     // the play button and the duration badge share the single cell of the thumbnail grid,
     // each one is placed with its own position
-    &__play-button {
+    .qc-thumbnail__play-button {
       grid-area: 1 / 1;
       height: var(--qc-lw-item-play-button-height);
       margin: var(--qc-lw-item-play-button-margin);
@@ -235,7 +235,7 @@
     }
   }
 
-  &.qc-list-widget--vertical .qc-list-item__thumbnail {
+  &.qc-list-widget--vertical .qc-thumbnail {
     flex: 0 0 var(--qc-lw-item-thumbnail-width);
     max-width: 50%;
   }

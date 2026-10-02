@@ -6,12 +6,8 @@ import Icon from '@/components/icon';
 import { decodeEntities } from '@/utils/presentation-fields';
 
 interface Props {
-  // the BEM block of the image and the play icon, e.g. `qc-list-item` renders `qc-list-item__image`
-  block?: string;
   // e.g. the duration badge of the list widget
   children?: ComponentChildren;
-  // the class of the button
-  class?: string;
   // the ids of the elements describing the button
   describedBy?: string;
   loading?: 'eager' | 'lazy';
@@ -25,9 +21,7 @@ interface Props {
  * The play button of a presentation: its thumbnail and a play icon
  */
 export function ThumbnailComponent({
-  block = 'qc-thumbnail',
   children,
-  class: className = 'qc-thumbnail',
   describedBy,
   loading,
   onClick,
@@ -44,10 +38,10 @@ export function ThumbnailComponent({
   };
 
   return (
-    <button type="button" class={className} aria-describedby={describedBy} onClick={clickHandler}>
+    <button type="button" class="qc-thumbnail" aria-describedby={describedBy} onClick={clickHandler}>
       <span class="qc-sr-only">{i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}</span>
       <img
-        class={`${block}__image`}
+        class="qc-thumbnail__image"
         src={presentation.thumbnail?.cdnUrl || presentation.thumbnail?.url}
         alt=""
         loading={loading}
@@ -55,13 +49,13 @@ export function ThumbnailComponent({
       {widgetOptions.playIconUrl ? (
         <img
           alt=""
-          class={`${block}__play-button`}
+          class="qc-thumbnail__play-button"
           src={widgetOptions.playIconUrl}
         />
       ) : (
         <Icon
           name="play"
-          class={`${block}__play-button ${block}__play-button--default`}
+          class="qc-thumbnail__play-button qc-thumbnail__play-button--default"
         />
       )}
       {children}

@@ -249,38 +249,23 @@ describe('ThumbnailComponent', () => {
   // used by the list widget items, which handle the click themselves
   describe('Reuse', () => {
     const renderReused = (props: Record<string, unknown> = {}) => render(createElement(ThumbnailComponent, {
-      block: 'qc-list-item',
-      class: 'qc-list-item__thumbnail',
       presentation: mockPresentation,
       widgetOptions: {},
       ...props,
     })).container;
 
-    it('should render the presentation widget classes by default', () => {
-      const { container } = render(createElement(ThumbnailComponent, {
-        onClick: mockOnClick,
-        presentation: mockPresentation,
-        widgetOptions: {},
-      }));
-
-      expect(container.querySelector('button')).toHaveClass('qc-thumbnail');
-      expect(container.querySelector('img')).toHaveClass('qc-thumbnail__image');
-      expect(container.querySelector('svg')).toHaveClass('qc-thumbnail__play-button', 'qc-thumbnail__play-button--default');
-    });
-
-    it('should name the classes after the given class and block', () => {
+    it('should always render the qc-thumbnail classes, styled by each widget', () => {
       const container = renderReused({ widgetOptions: { playIconUrl: 'https://example.com/play.svg' } });
 
-      expect(container.querySelector('button')).toHaveClass('qc-list-item__thumbnail');
-      expect(container.querySelector('button')).not.toHaveClass('qc-thumbnail');
-      expect(container.querySelector('.qc-list-item__image')).toBeInTheDocument();
-      expect(container.querySelector('img.qc-list-item__play-button')).toHaveAttribute('src', 'https://example.com/play.svg');
+      expect(container.querySelector('button')).toHaveClass('qc-thumbnail');
+      expect(container.querySelector('.qc-thumbnail__image')).toBeInTheDocument();
+      expect(container.querySelector('img.qc-thumbnail__play-button')).toHaveAttribute('src', 'https://example.com/play.svg');
     });
 
     it('should only set the loading attribute of the image when given', () => {
-      expect(renderReused().querySelector('.qc-list-item__image')).not.toHaveAttribute('loading');
+      expect(renderReused().querySelector('.qc-thumbnail__image')).not.toHaveAttribute('loading');
       document.body.innerHTML = '';
-      expect(renderReused({ loading: 'lazy' }).querySelector('.qc-list-item__image')).toHaveAttribute('loading', 'lazy');
+      expect(renderReused({ loading: 'lazy' }).querySelector('.qc-thumbnail__image')).toHaveAttribute('loading', 'lazy');
     });
 
     it('should render its children, e.g. the duration badge', () => {
