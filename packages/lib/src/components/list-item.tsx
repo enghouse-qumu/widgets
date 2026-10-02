@@ -66,37 +66,35 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
       return null;
     }
 
-    let labelText: string | undefined;
-
-    if (typeof label === 'string') {
-      labelText = label;
-    } else if (label ?? !unlabelledFields.has(field)) {
-      labelText = 'key' in resolved.defaultLabel ? i18n.t(resolved.defaultLabel.key) : resolved.defaultLabel.text;
-    }
+    const defaultLabel = 'key' in resolved.defaultLabel ? i18n.t(resolved.defaultLabel.key) : resolved.defaultLabel.text;
+    // a hidden label is still rendered for the screen readers, each value of the description list needs its term
+    const showLabel = typeof label === 'string' || (label ?? !unlabelledFields.has(field));
 
     if (field !== 'title') {
       descriptionIds.push(fieldId);
     }
 
+    // a group of the description list, `<dt>` and `<dd>` are displayed inline
     return (
-      <span
+      <div
         key={fieldId}
         id={fieldId}
         class={fieldStyle?.lineClamp ? 'qc-list-item__field qc-list-item__field--clamp' : 'qc-list-item__field'}
         data-field={field}
         style={getFieldStyle(fieldStyle)}
       >
-        <span class="qc-list-item__field-content">
-          {/* the space is outside of the label, so it is kept in the accessible description */}
-          {labelText && <><span class="qc-list-item__label">{labelText}</span>{' '}</>}
-          {resolved.html ? (
-            // sanitized by the API, prepared by toItemHtml()
-            <span class="qc-list-item__value qc-list-item__value--html" dangerouslySetInnerHTML={{ __html: resolved.html }}/>
-          ) : (
-            <span class="qc-list-item__value">{resolved.value}</span>
-          )}
-        </span>
-      </span>
+        <dt class={showLabel ? 'qc-list-item__label' : 'qc-list-item__label qc-sr-only'}>
+          {typeof label === 'string' ? label : defaultLabel}
+        </dt>
+        {/* the space between the term and the value, also kept in the accessible description */}
+        {' '}
+        {resolved.html ? (
+          // sanitized by the API, prepared by toItemHtml()
+          <dd class="qc-list-item__value qc-list-item__value--html" dangerouslySetInnerHTML={{ __html: resolved.html }}/>
+        ) : (
+          <dd class="qc-list-item__value">{resolved.value}</dd>
+        )}
+      </div>
     );
   };
 
@@ -108,9 +106,9 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
     }
 
     return (
-      <span class={`qc-list-item__info qc-list-item__info--${slot}`}>
+      <dl class={`qc-list-item__info qc-list-item__info--${slot}`}>
         {fields.map((fieldConfig, index) => renderField(fieldConfig, `${id}-${slot}-${index}`))}
-      </span>
+      </dl>
     );
   };
 
@@ -152,7 +150,7 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
   return (
     <div id={id} class="qc-list-item" onClick={handleClick}>
       {topSlot}
-      <span class="qc-list-item__body">
+      <div class="qc-list-item__body">
         {leftSlot}
         <button
           type="button"
@@ -174,7 +172,7 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
           )}
         </button>
         {rightSlot}
-      </span>
+      </div>
       {bottomSlot}
       {describeDuration && (
         <span id={durationDescriptionId} class="qc-sr-only">{`${i18n.t('list.fields.duration')} ${duration}`}</span>

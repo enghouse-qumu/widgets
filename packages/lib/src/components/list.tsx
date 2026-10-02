@@ -7,7 +7,7 @@ import { PlayerDialogComponent } from './dialog';
 
 // Preact's `useId()` is only unique within a render root, and each widget is its own root: the ids are prefixed
 // with a counter, plus a random part in case several copies of the library are loaded in the same page
-const idNamespace = `qc-list-${crypto.randomUUID()}`;
+const idNamespace = `qc-list-${Math.random().toString(36).slice(2, 8)}`;
 let listCount = 0;
 
 interface Props {

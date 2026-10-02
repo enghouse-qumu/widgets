@@ -71,6 +71,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--qc-lw-item-field-gap);
+      margin: 0;
       min-width: 0;
 
       &--left,
@@ -158,18 +159,22 @@
       font-weight: var(--qc-lw-field-font-weight, 400);
       letter-spacing: var(--qc-lw-field-letter-spacing, inherit);
       line-height: 1.4;
+      // the `padding` option, as a margin: a field has no background nor border so it looks the same,
+      // and the bottom padding of a clamped field would show the first hidden line
+      margin: var(--qc-lw-field-padding, 0);
       overflow-wrap: anywhere;
-      padding: var(--qc-lw-field-padding, 0);
       text-transform: var(--qc-lw-field-text-transform, inherit);
 
-      &-content {
-        display: block;
+      // the term and the value on the same line
+      > dt,
+      > dd {
+        display: inline;
+        margin: 0;
       }
 
       // only when `lineClamp` is set: `-webkit-line-clamp` requires the legacy `-webkit-box` layout,
-      // which would otherwise stack the label and the value in Firefox.
-      // The clamp is on the inner content, the bottom padding of the field would show the next line otherwise
-      &--clamp > .qc-list-item__field-content {
+      // which would otherwise stack the label and the value in Firefox
+      &--clamp {
         -webkit-box-orient: vertical;
         -webkit-line-clamp: var(--qc-lw-field-line-clamp);
         display: -webkit-box;
@@ -212,6 +217,16 @@
       a {
         color: inherit;
         text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: .15em;
+
+        // derived from the current text color, so it stays visible whatever the field colors are:
+        // a tint of the color and a thicker underline, which does not depend on the color at all
+        &:hover {
+          background-color: color-mix(in srgb, currentColor 15%, transparent);
+          border-radius: 2px;
+          text-decoration-thickness: .15em;
+        }
       }
     }
 

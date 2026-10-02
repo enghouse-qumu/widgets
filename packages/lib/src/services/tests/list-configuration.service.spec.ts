@@ -105,7 +105,7 @@ describe('ListConfigurationService', () => {
       }).source.limit).toBe(5);
     });
 
-    it('should drop the sort of presentation guids with a warning, they keep the given order', () => {
+    it('should drop the sort of presentation guids with a warning and keep the given order', () => {
       const configuration = create({
         ...baseConfiguration,
         source: {

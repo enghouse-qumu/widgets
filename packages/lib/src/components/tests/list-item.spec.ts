@@ -44,7 +44,7 @@ describe('ListItemComponent', () => {
   it('should render the thumbnail and the info fields', () => {
     const { container } = renderItem();
 
-    expect(container.innerHTML).toMatchInlineSnapshot(`"<div id="item" class="qc-list-item"><span class="qc-list-item__body"><button type="button" class="qc-list-item__thumbnail" aria-label="common.PLAY_PRESENTATION: My presentation"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></button></span><span class="qc-list-item__info qc-list-item__info--bottom"><span id="item-bottom-0" class="qc-list-item__field" data-field="title"><span class="qc-list-item__field-content"><span class="qc-list-item__value">My presentation</span></span></span></span></div>"`);
+    expect(container.innerHTML).toMatchInlineSnapshot(`"<div id="item" class="qc-list-item"><div class="qc-list-item__body"><button type="button" class="qc-list-item__thumbnail" aria-label="common.PLAY_PRESENTATION: My presentation"><img class="qc-list-item__image" src="https://cdn.example.com/thumb.jpg" alt="" loading="lazy"><svg class="qc-list-item__play-button qc-list-item__play-button--default" aria-hidden="true"><use href="#icon-play"></use></svg></button></div><dl class="qc-list-item__info qc-list-item__info--bottom"><div id="item-bottom-0" class="qc-list-item__field" data-field="title"><dt class="qc-list-item__label qc-sr-only">list.fields.title</dt> <dd class="qc-list-item__value">My presentation</dd></div></dl></div>"`);
   });
 
   describe('accessibility', () => {
@@ -94,6 +94,30 @@ describe('ListItemComponent', () => {
 
       expect(screen.getByRole('button', { name: 'common.PLAY_PRESENTATION: Jane\'s talk' })).toBeInTheDocument();
     });
+  });
+
+  it('should render the fields as description lists', () => {
+    const { container } = renderItem({
+      item: {
+        info: {
+          bottom: [
+            { field: 'title' },
+            { field: 'publisher' },
+          ],
+        },
+        showDurationOverlay: false,
+      },
+    });
+
+    const list = container.querySelector('dl.qc-list-item__info--bottom')!;
+    const groups = Array.from(list.children);
+
+    // `dl > div > dt + dd`, a term for each value
+    expect(groups.map(({ tagName }) => tagName)).toEqual(['DIV', 'DIV']);
+    groups.forEach((group) => {
+      expect(Array.from(group.children, ({ tagName }) => tagName)).toEqual(['DT', 'DD']);
+    });
+    expect(container.querySelector('.qc-list-item__body')!.tagName).toBe('DIV');
   });
 
   it('should render the fields in their slots, in order', () => {
@@ -152,7 +176,7 @@ describe('ListItemComponent', () => {
       },
     });
 
-    const labels = Array.from(container.querySelectorAll('.qc-list-item__label')).map((el) => el.textContent?.trim());
+    const labels = Array.from(container.querySelectorAll('.qc-list-item__label:not(.qc-sr-only)')).map((el) => el.textContent?.trim());
 
     expect(labels).toEqual(['list.fields.publisher', 'Length']);
   });
@@ -184,13 +208,17 @@ describe('ListItemComponent', () => {
       },
     });
 
-    const labelOf = (field: string) => container.querySelector(`[data-field="${field}"] .qc-list-item__label`)?.textContent?.trim();
+    const labelOf = (field: string) => container.querySelector(`[data-field="${field}"] .qc-list-item__label:not(.qc-sr-only)`)?.textContent?.trim();
+    const hiddenTermOf = (field: string) => container.querySelector(`[data-field="${field}"] dt.qc-sr-only`)?.textContent?.trim();
 
     expect(labelOf('title')).toBeUndefined();
     expect(labelOf('summary')).toBeUndefined();
     expect(labelOf('publisher')).toBe('list.fields.publisher');
     // metadata fields use the metadata title as default label
     expect(labelOf('md-department')).toBe('Department');
+    // a hidden label is still the term of the value, for the screen readers
+    expect(hiddenTermOf('title')).toBe('list.fields.title');
+    expect(hiddenTermOf('summary')).toBe('list.fields.summary');
   });
 
   it('should hide the label of any field with label: false and show it for title/summary with label: true', () => {
@@ -212,7 +240,7 @@ describe('ListItemComponent', () => {
       },
     });
 
-    const labels = Array.from(container.querySelectorAll('.qc-list-item__label')).map((el) => el.textContent?.trim());
+    const labels = Array.from(container.querySelectorAll('.qc-list-item__label:not(.qc-sr-only)')).map((el) => el.textContent?.trim());
 
     expect(labels).toEqual(['list.fields.title']);
   });

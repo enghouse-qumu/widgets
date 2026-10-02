@@ -71,11 +71,9 @@ describe('ListComponent', () => {
 
     const ids = Array.from(container.querySelectorAll('.qc-list-item'), (button) => button.id);
 
-    const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-
     expect(ids).toEqual([
-      expect.stringMatching(new RegExp(`^qc-list-${uuid}-\\d+-a$`)),
-      expect.stringMatching(new RegExp(`^qc-list-${uuid}-\\d+-b$`)),
+      expect.stringMatching(/^qc-list-[a-z0-9]+-\d+-a$/),
+      expect.stringMatching(/^qc-list-[a-z0-9]+-\d+-b$/),
     ]);
   });
 
