@@ -1,0 +1,53 @@
+:root {
+  /**
+   * /!\ IMPORTANT /!\
+   *
+   * List widget specific tokens. The dialog, close button and not found tokens
+   * are shared with the presentation widget (`--qc-pw-*`, see variables.scss)
+   */
+
+  // List widget style
+  --qc-lw-border-radius: 0;
+  --qc-lw-height: auto;
+  --qc-lw-width: 100%;
+  --qc-lw-gap: 16px;
+  --qc-lw-min-item-width: 240px;
+
+  // Item style
+  --qc-lw-item-background-color: transparent;
+  --qc-lw-item-border: none;
+  --qc-lw-item-border-radius: 0;
+  --qc-lw-item-field-gap: 4px; // between the fields of a slot
+  --qc-lw-item-box-shadow: none;
+  --qc-lw-item-padding: 0;
+
+  // Item thumbnail style
+  --qc-lw-item-thumbnail-aspect-ratio: 16 / 9;
+  --qc-lw-item-thumbnail-border: none;
+  --qc-lw-item-thumbnail-border-radius: 6px;
+  --qc-lw-item-thumbnail-image-fit: cover;
+  --qc-lw-item-thumbnail-width: 240px; // vertical layout only
+
+  // Item play button
+  --qc-lw-item-play-button-background-color: rgb(0 0 0 / .8);
+  --qc-lw-item-play-button-border-radius: 100%;
+  --qc-lw-item-play-button-color: #fff;
+  --qc-lw-item-play-button-margin: 8px;
+  --qc-lw-item-play-button-padding: 8px;
+  --qc-lw-item-play-button-hover-background-color: #000;
+  --qc-lw-item-play-button-hover-color: #fff;
+  --qc-lw-item-play-button-active-background-color: rgb(0 0 0 / .9);
+  --qc-lw-item-play-button-active-color: #fff;
+  --qc-lw-item-play-button-height: 40px;
+  --qc-lw-item-play-button-width: 40px;
+  --qc-lw-item-play-button-position: center;
+
+  // Item duration badge
+  --qc-lw-item-duration-badge-background-color: rgb(0 0 0 / .8);
+  --qc-lw-item-duration-badge-border-radius: 4px;
+  --qc-lw-item-duration-badge-color: #fff;
+  --qc-lw-item-duration-badge-font-size: 12px;
+  --qc-lw-item-duration-badge-font-weight: 400;
+  --qc-lw-item-duration-badge-padding: 2px 6px;
+  --qc-lw-item-duration-badge-position: end end; // bottom-right
+}

@@ -1,9 +1,15 @@
 import { describe, it, expect, vi, afterEach, beforeAll } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/preact';
 import { createElement } from 'preact';
-import { DialogComponent } from '../dialog';
+import { DialogComponent, PlayerDialogComponent } from '../dialog';
 import { WidgetOptions } from '@/interfaces/widget-options';
 import { Presentation } from '@/interfaces/presentation';
+
+vi.mock('@/i18n', () => ({
+  useI18n: vi.fn().mockReturnValue({
+    t: vi.fn((key: string) => key),
+  }),
+}));
 
 vi.mock('../player', () => ({
   PlayerComponent: ({ presentation }: { presentation: Presentation }) => createElement('div', {
@@ -310,6 +316,68 @@ describe('DialogComponent', () => {
       const playerComponent = screen.getByTestId('player-component');
 
       expect(playerComponent).toBeInTheDocument();
+    });
+  });
+
+  describe('PlayerDialogComponent', () => {
+    const renderPlayerDialog = (onClose = vi.fn()) => {
+      render(createElement(PlayerDialogComponent, {
+        onClose,
+        playerParameters: {},
+        presentation: mockPresentation,
+        widgetOptions: mockOptions,
+      }));
+
+      const dialog = document.querySelector('dialog')!;
+
+      // like browsers, closing the dialog fires the `close` event
+      dialog.close = vi.fn(() => dialog.dispatchEvent(new Event('close')));
+
+      return { dialog,
+        onClose };
+    };
+
+    it('should call onClose once when clicking the close button', () => {
+      const { onClose } = renderPlayerDialog();
+
+      fireEvent.click(document.querySelector('.qc-dialog__close-button')!);
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onClose once when clicking the backdrop', () => {
+      const { dialog, onClose } = renderPlayerDialog();
+
+      fireEvent.click(dialog);
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should name the dialog with the decoded title and the close button', () => {
+      render(createElement(PlayerDialogComponent, {
+        onClose: vi.fn(),
+        playerParameters: {},
+        presentation: {
+          ...mockPresentation,
+          title: 'Jane&#39;s talk',
+        },
+        widgetOptions: mockOptions,
+      }));
+
+      // `showModal()` is mocked, a closed dialog is hidden and has no accessible name
+      document.querySelector('dialog')!.setAttribute('open', '');
+
+      expect(screen.getByRole('dialog', { name: 'Jane\'s talk' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'common.Close' })).toHaveClass('qc-dialog__close-button');
+    });
+
+    it('should call onClose when the dialog is closed with the Escape key', () => {
+      const { dialog, onClose } = renderPlayerDialog();
+
+      // the browser closes the dialog itself and fires the `close` event
+      fireEvent(dialog, new Event('close'));
+
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
   });
 });

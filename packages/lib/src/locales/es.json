@@ -1,6 +1,19 @@
 {
     "common": {
+        "Close": "Cerca",
         "PLAY_PRESENTATION": "Presentación de la obra: {{title}}",
         "Presentation not found": "Presentación no encontrada"
+    },
+    "list": {
+        "No": "No",
+        "No presentations found": "No se encontraron presentaciones",
+        "Yes": "Sí",
+        "fields": {
+            "duration": "Duración",
+            "publishOn": "Publicado el",
+            "publisher": "Publicado por",
+            "summary": "Resumen",
+            "title": "Título"
+        }
     }
 }

@@ -1,5 +1,12 @@
 export * from '@/widgets/presentation-widget';
+export * from '@/widgets/list-widget';
 export type { WidgetConfiguration } from '@/interfaces/widget-configuration';
 export type { WidgetOptions } from '@/interfaces/widget-options';
 export type { PlayerParameters } from '@/interfaces/player-parameters';
 export type { WidgetStyle } from '@/interfaces/widget-style';
+export type { ListWidgetConfiguration, ListWidgetOptions } from '@/interfaces/list-widget';
+export type { ListWidgetSource, ListWidgetSourceBase } from '@/interfaces/list-widget-source';
+export type { ListWidgetStyle } from '@/interfaces/list-widget-style';
+export type { InfoFieldConfig, InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
+export type { SearchFilter, SearchRule } from '@/interfaces/search-filter';
+export type { Presentation } from '@/interfaces/presentation';

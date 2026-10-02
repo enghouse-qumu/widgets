@@ -1,22 +1,19 @@
+// The structure of the thumbnail, shared by the widgets: the image covers the button, behind the play icon.
+// Each widget sets the rest, from its own style options: see presentation-widget.scss and list-item.scss
 .qc-widget {
   .qc-thumbnail {
-    border-radius: inherit;
-    background: transparent;
+    background: none;
     border: none;
     cursor: pointer;
     display: grid;
-    height: 100%;
     overflow: hidden;
     padding: 0;
-    place-items: var(--qc-pw-play-button-position);
     position: relative;
-    width: 100%;
 
     &__image {
       display: block;
       height: 100%;
       left: 0;
-      object-fit: var(--qc-pw-thumbnail-image-fit);
       position: absolute;
       top: 0;
       width: 100%;
@@ -24,32 +21,10 @@
     }
 
     &__play-button {
-      height: var(--qc-pw-play-button-height);
-      margin: var(--qc-pw-play-button-margin);
       position: relative;
-      width: var(--qc-pw-play-button-width);
 
       &--default {
-        background-color: var(--qc-pw-play-button-background-color);
-        border-radius: 100%;
         box-sizing: border-box;
-        color: var(--qc-pw-play-button-color);
-        padding: var(--qc-pw-play-button-padding);
-      }
-    }
-
-    &:hover {
-      .qc-thumbnail__play-button--default {
-        background-color: var(--qc-pw-play-button-hover-background-color);
-        color: var(--qc-pw-play-button-hover-color);
-      }
-    }
-
-    &:active,
-    &:focus-visible {
-      .qc-thumbnail__play-button--default {
-        background-color: var(--qc-pw-play-button-active-background-color);
-        color: var(--qc-pw-play-button-active-color);
       }
     }
   }

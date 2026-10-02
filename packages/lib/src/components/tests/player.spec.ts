@@ -51,6 +51,22 @@ describe('PlayerComponent', () => {
     }).rejects.toThrow();
   });
 
+  it('should decode the HTML entities of the title of the iframe', () => {
+    const { container } = render(createElement(PlayerComponent, {
+      playerParameters: {} as PlayerParameters,
+      presentation: {
+        ...mockPresentation,
+        title: 'Jane&#39;s talk',
+      },
+      widgetOptions: {
+        ...mockConfiguration.widgetOptions as WidgetOptions,
+        playbackMode: 'inline-autoload',
+      } as WidgetOptions,
+    }));
+
+    expect(container.querySelector('iframe')).toHaveAttribute('title', 'Jane\'s talk');
+  });
+
   it('should render thumbnail when playbackMode is inline', () => {
     const widgetOptions = {
       ...mockConfiguration.widgetOptions as WidgetOptions,

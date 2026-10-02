@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { Presentation } from '@/interfaces/presentation';
 import { WidgetOptions } from '@/interfaces/widget-options';
 import { ThumbnailComponent } from './thumbnail';
+import { decodeEntities } from '@/utils/presentation-fields';
 import { PlayerParameters } from '@/interfaces/player-parameters';
 
 interface Props {
@@ -48,7 +49,7 @@ export function PlayerComponent({ presentation, widgetOptions, playerParameters 
         width="100%"
         height="100%"
         allow="autoplay; fullscreen"
-        title={presentation.title}
+        title={decodeEntities(presentation.title ?? '')}
         class="qc-player"
     />
   );
