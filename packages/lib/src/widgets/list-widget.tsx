@@ -129,7 +129,7 @@ export class ListWidget {
           return positionToPlaceItems(String(value));
         case '--qc-lw-item-thumbnail-aspect-ratio':
           // accept both the "16:9" and the CSS "16 / 9" notations
-          return String(value).replace(':', ' / ');
+          return String(value).replace(':', '/');
         default:
           return String(value);
       }

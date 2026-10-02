@@ -161,7 +161,7 @@ describe('ListWidget', () => {
     expect(style('--qc-lw-item-duration-badge-letter-spacing')).toBe('1px');
     expect(style('--qc-lw-item-duration-badge-text-transform')).toBe('uppercase');
     expect(style('--qc-lw-item-duration-badge-position')).toBe('start start');
-    expect(style('--qc-lw-item-thumbnail-aspect-ratio')).toBe('4 / 3');
+    expect(style('--qc-lw-item-thumbnail-aspect-ratio')).toBe('4/3');
     expect(style('--qc-lw-item-play-button-position')).toBe('start end');
     // shared with the presentation widget components
     expect(style('--qc-pw-dialog-max-width')).toBe('800px');

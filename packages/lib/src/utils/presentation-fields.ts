@@ -95,26 +95,16 @@ function toDurationParts(durationMs: number) {
  */
 export function formatDuration(durationMs: number, locale: string): string {
   const { hours, minutes, seconds } = toDurationParts(durationMs);
-  const { DurationFormat } = Intl as unknown as { DurationFormat?: DurationFormatConstructor };
+  const { DurationFormat } = Intl as unknown as { DurationFormat: DurationFormatConstructor };
 
-  if (DurationFormat) {
-    try {
-      return new DurationFormat(locale, {
-        hoursDisplay: 'auto',
-        style: 'digital',
-      }).format({
-        hours,
-        minutes,
-        seconds,
-      });
-    } catch {
-      // fall through to the manual formatting for unsupported locales
-    }
-  }
-
-  const pad = (n: number) => String(n).padStart(2, '0');
-
-  return hours ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`;
+  return new DurationFormat(locale, {
+    hoursDisplay: 'auto',
+    style: 'digital',
+  }).format({
+    hours,
+    minutes,
+    seconds,
+  });
 }
 
 export function formatDate(value: Date | string | number, locale: string, withTime = false): string {
@@ -124,14 +114,17 @@ export function formatDate(value: Date | string | number, locale: string, withTi
     return '';
   }
 
-  try {
-    return new Intl.DateTimeFormat(locale, withTime
-      ? { dateStyle: 'long',
-          timeStyle: 'short' }
-      : { dateStyle: 'long' }).format(date);
-  } catch {
-    return date.toLocaleDateString();
-  }
+  return new Intl.DateTimeFormat(
+    locale,
+    withTime
+      ? {
+          dateStyle: 'long',
+          timeStyle: 'short',
+        }
+      : {
+          dateStyle: 'long',
+        },
+  ).format(date);
 }
 
 // translates a key, e.g. `I18nService.t`

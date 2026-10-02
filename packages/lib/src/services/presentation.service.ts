@@ -45,7 +45,7 @@ export class PresentationService {
     const { kulus, error } = await this.readBody(response);
 
     if (!response.ok || !kulus?.length) {
-      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"${this.status(response)}`);
+      throw new Error(error?.message ?? `Failed to fetch presentation with guid "${guid}" from host "${this.host}"${response.ok ? '' : ` (HTTP ${response.status})`}`);
     }
 
     return kulus[0];
@@ -61,7 +61,7 @@ export class PresentationService {
     }
 
     // without `sortBy`, the API returns the presentation GUIDs in the given order
-    if (!source.presentationGuids || source.sortBy || source.sortOrder) {
+    if (!source.presentationGuids) {
       url.searchParams.set('sortBy', `${source.sortBy ?? 'created'},${source.sortOrder ?? 'DESCENDING'}`);
     }
 
@@ -87,7 +87,7 @@ export class PresentationService {
     const { kulus, total, error } = await this.readBody(response);
 
     if (!response.ok) {
-      throw new Error(error?.message ?? `Failed to fetch presentations from host "${this.host}"${this.status(response)}`);
+      throw new Error(error?.message ?? `Failed to fetch presentations from host "${this.host}" (HTTP ${response.status})`);
     }
 
     return {
@@ -110,10 +110,6 @@ export class PresentationService {
 
       throw new Error(`Invalid response from host "${this.host}": the body is not valid JSON`, { cause: err });
     }
-  }
-
-  private status(response: Response): string {
-    return response.ok ? '' : ` (HTTP ${response.status})`;
   }
 
   private getListPath(source: ListWidgetSource): string {

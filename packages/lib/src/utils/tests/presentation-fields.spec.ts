@@ -40,20 +40,6 @@ describe('presentation fields', () => {
       expect(formatDuration(65_000, 'en')).toBe('01:05');
       expect(formatDuration(0, 'en')).toBe('00:00');
     });
-
-    it('should fall back to a manual format when Intl.DurationFormat is not supported', () => {
-      const intl = Intl as unknown as Record<string, unknown>;
-      const { DurationFormat } = intl;
-
-      delete intl.DurationFormat;
-
-      try {
-        expect(formatDuration(3_723_000, 'en')).toBe('1:02:03');
-        expect(formatDuration(65_000, 'en')).toBe('01:05');
-      } finally {
-        intl.DurationFormat = DurationFormat;
-      }
-    });
   });
 
   describe('formatDate', () => {

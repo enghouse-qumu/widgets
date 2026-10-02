@@ -105,6 +105,22 @@ describe('ListConfigurationService', () => {
       }).source.limit).toBe(5);
     });
 
+    it('should drop the sort of presentation guids with a warning, they keep the given order', () => {
+      const configuration = create({
+        ...baseConfiguration,
+        source: {
+          host: 'example.com',
+          presentationGuids: ['b', 'a'],
+          sortBy: 'title',
+          sortOrder: 'ASCENDING',
+        },
+      });
+
+      expect(configuration.source).not.toHaveProperty('sortBy');
+      expect(configuration.source).not.toHaveProperty('sortOrder');
+      expect(console.warn).toHaveBeenCalledWith('`source.sortBy` is not supported with `source.presentationGuids`, the presentations keep the given order');
+    });
+
     it('should allow disabling the duration overlay', () => {
       const configuration = create({
         ...baseConfiguration,

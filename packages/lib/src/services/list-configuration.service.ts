@@ -187,6 +187,14 @@ export class ListConfigurationService {
     }
 
     if (source.presentationGuids !== undefined) {
+      // the presentations are rendered in the given order
+      (['sortBy', 'sortOrder'] as const).forEach((field) => {
+        if (field in source) {
+          console.warn(`\`source.${field}\` is not supported with \`source.presentationGuids\`, the presentations keep the given order`);
+          delete (source as Partial<Record<typeof field, unknown>>)[field];
+        }
+      });
+
       if (!Array.isArray(source.presentationGuids) || source.presentationGuids.length === 0) {
         throw new TypeError('`source.presentationGuids` must be a non-empty array of strings');
       }

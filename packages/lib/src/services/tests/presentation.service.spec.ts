@@ -314,8 +314,6 @@ describe('PresentationService', () => {
         host: mockHost,
         offset: 5,
         presentationGuids: ['a', 'b'],
-        sortBy: 'title',
-        sortOrder: 'ASCENDING',
       });
 
       const url = calledUrl();
@@ -323,7 +321,7 @@ describe('PresentationService', () => {
       expect(url.pathname).toBe('/api/2.2/rest/widgets/a,b.json');
       expect(url.searchParams.get('offset')).toBe('5');
       expect(url.searchParams.has('limit')).toBe(false);
-      expect(url.searchParams.get('sortBy')).toBe('title,ASCENDING');
+      expect(url.searchParams.has('sortBy')).toBe(false);
     });
 
     it('should not sort presentation guids by default, to keep their order', async () => {
@@ -338,16 +336,17 @@ describe('PresentationService', () => {
       expect(calledUrl().searchParams.has('sortBy')).toBe(false);
     });
 
-    it('should sort presentation guids when only sortOrder is set', async () => {
+    it('should sort the smart search results', async () => {
       mockResponse({ kulus: mockPresentations });
 
       await listService.getPresentations({
         host: mockHost,
-        presentationGuids: ['b', 'a'],
+        smartSearchGuid: 'playlist-guid',
+        sortBy: 'title',
         sortOrder: 'ASCENDING',
       });
 
-      expect(calledUrl().searchParams.get('sortBy')).toBe('created,ASCENDING');
+      expect(calledUrl().searchParams.get('sortBy')).toBe('title,ASCENDING');
     });
 
     it('should send the ad-hoc smart search rules', async () => {
