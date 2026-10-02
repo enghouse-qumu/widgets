@@ -1,7 +1,7 @@
 import { Presentation } from '@/interfaces/presentation';
 import { WidgetOptions } from '@/interfaces/widget-options';
 import { useI18n } from '@/i18n';
-import Icon from '@/components/icon';
+import { ThumbnailMediaComponent } from '@/components/thumbnail-media';
 import { decodeEntities } from '@/utils/presentation-fields';
 
 interface Props {
@@ -19,23 +19,11 @@ export function ThumbnailComponent({ presentation, onClick, widgetOptions }: Rea
   return (
     <button type="button" class="qc-thumbnail" onClick={clickHandler}>
       <span class="qc-sr-only">{i18n.t('common.PLAY_PRESENTATION', { title: decodeEntities(presentation.title ?? '') })}</span>
-      <img
-        class="qc-thumbnail__image"
-        src={presentation.thumbnail?.cdnUrl || presentation.thumbnail?.url}
-        alt=""
+      <ThumbnailMediaComponent
+        block="qc-thumbnail"
+        playIconUrl={widgetOptions.playIconUrl}
+        presentation={presentation}
       />
-      {widgetOptions.playIconUrl ? (
-        <img
-          alt=""
-          class="qc-thumbnail__play-button"
-          src={widgetOptions.playIconUrl}
-        />
-      ) : (
-        <Icon
-          name="play"
-          class="qc-thumbnail__play-button qc-thumbnail__play-button--default"
-        />
-      )}
     </button>
   );
 }

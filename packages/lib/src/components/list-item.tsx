@@ -3,7 +3,7 @@ import { Presentation } from '@/interfaces/presentation';
 import { InfoFieldConfig, InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
 import { ListWidgetStyle } from '@/interfaces/list-widget-style';
 import { useI18n } from '@/i18n';
-import Icon from '@/components/icon';
+import { ThumbnailMediaComponent } from '@/components/thumbnail-media';
 import { decodeEntities, formatDuration, resolveField } from '@/utils/presentation-fields';
 
 // fields showing their label only when `label` is set explicitly, all the others show it by default
@@ -146,24 +146,12 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
       <span class="qc-list-item__body">
         {leftSlot}
         <span class="qc-list-item__thumbnail">
-          <img
-            class="qc-list-item__image"
-            src={presentation.thumbnail?.cdnUrl || presentation.thumbnail?.url}
-            alt=""
+          <ThumbnailMediaComponent
+            block="qc-list-item"
             loading="lazy"
+            playIconUrl={playIconUrl}
+            presentation={presentation}
           />
-          {playIconUrl ? (
-            <img
-              alt=""
-              class="qc-list-item__play-button"
-              src={playIconUrl}
-            />
-          ) : (
-            <Icon
-              name="play"
-              class="qc-list-item__play-button qc-list-item__play-button--default"
-            />
-          )}
           {duration && (
             <span class="qc-list-item__duration" aria-hidden="true">
               {duration}

@@ -90,12 +90,12 @@ const listGrid: ListWidgetConfiguration = {
         hoverBackgroundColor: '#1d0a3a',
         hoverBorder: '1px solid #fcee0a',
         metadata: {
-          duration: {
-            color: '#fcee0a',
+          6: {
+            color: '#ff9f1c',
             labelColor: '#ff2a6d',
           },
-          '6': {
-            color: '#ff9f1c',
+          duration: {
+            color: '#fcee0a',
             labelColor: '#ff2a6d',
           },
           publisher: {
