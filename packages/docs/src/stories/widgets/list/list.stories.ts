@@ -386,7 +386,9 @@ export const ItemClick: Story = {
         widgetOptions: {
           // replaces the modal, e.g. to open the presentation in your own page
           onItemClick(presentation) {
-            document.querySelector('#logs').innerHTML += \`<li>\${presentation.title} (\${presentation.guid})</li>\`;
+            const item = document.createElement('li');
+            item.textContent = \`\${presentation.title} (\${presentation.guid})\`;
+            document.querySelector('#logs')?.append(item);
           },
         },
       }).catch((err) => console.log(err));
