@@ -69,7 +69,8 @@ const preview: Preview = {
           ],
           'Widgets',
           [
-            'Presentation'
+            'Presentation',
+            'List'
           ]
         ],
       },

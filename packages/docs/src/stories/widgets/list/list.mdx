@@ -1,0 +1,288 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import { Tip } from '../../../components/Tip.jsx';
+import * as Stories from './list.stories.ts';
+
+<Meta
+  title="Widgets/List"
+/>
+
+
+# List widget
+
+The list widget shows several presentations, in a **grid** or a **vertical** list.
+
+Each item shows the thumbnail of a presentation and information fields around it, like its title, publication date, publisher or any metadata. Clicking an item plays the presentation in a modal.
+
+## Basic Usage
+
+By default, the widget uses the `grid` layout and shows the title and the publication date of each presentation.
+
+<Canvas of={Stories.Basic}/>
+
+## Recipes
+
+### Vertical layout
+
+The `vertical` layout shows one presentation per row, with the information next to the thumbnail.
+
+<Canvas of={Stories.Vertical}/>
+
+### Use a Smart Search
+
+The presentations can come from a list of GUIDs, a saved Smart Search, or Smart Search rules defined in the configuration. Here, the presentations whose title contains "driverless", sorted by title.
+
+<Canvas of={Stories.SmartSearch}/>
+
+### Choose the information fields
+
+The fields are placed in 4 slots around the thumbnail: `top`, `left`, `right` and `bottom`. Each field shows its default label, except the title and the summary; property `label` hides it (`false`), shows it (`true`) or replaces it (a string).
+
+<Canvas of={Stories.InfoFields}/>
+
+### Limit the number of columns
+
+With a number, `columns` is the maximum number of columns: the grid shows fewer columns when the items would get narrower than `minItemWidth`. Resize the window to see the columns adapt.
+
+<Canvas of={Stories.Columns}/>
+
+### Style the items
+
+Every part of the items can be styled: the item itself and its hover state, the thumbnail, the play button, the duration badge, and each information field separately. Here, white tiles with the thumbnail at the top, a small eyebrow above a big title, a short summary taken from a metadata field, and a custom play icon: an inline SVG given to `playIconUrl`.
+
+<Canvas of={Stories.Styling}/>
+
+And a newspaper look for the `vertical` layout: a red accent, serif headlines and summaries, plain rows divided by a vivid bottom line, with a square play icon and the duration badge in the bottom corners of the thumbnail.
+
+<Canvas of={Stories.StylingVertical}/>
+
+### Handle the click yourself
+
+`onItemClick` replaces the modal, e.g. to open the presentation in a page of your own application.
+
+<Canvas of={Stories.ItemClick}/>
+
+
+## Behavior
+
+- **Playback:** clicking anywhere on an item opens the presentation in a modal, or calls `onItemClick` when it is set.
+- **Text selection:** the text of the items can be selected and copied. A click ending a text selection does not open the presentation.
+- **Links:** the links of a Markdown metadata field open in a new tab, they do not open the presentation.
+- **Keyboard:** the thumbnail is the play button of the item. Its focus ring is drawn around the whole item, which also takes its hover style.
+- **Screen readers:** the play button is named after the presentation title and described by the other fields. The fields are description lists, so each value is announced with its label, even when the label is hidden.
+- **Formatting:** the dates and the durations are formatted for the language of the page, see [Localization](?path=/docs/getting-started-localization--docs).
+- **No results:** the widget shows a "No presentations found" message when the source returns no presentations, or when they cannot be fetched.
+
+
+## API
+
+### ListWidget
+
+| Property/Method                                                                   | Type                  | Description                              |
+|-----------------------------------------------------------------------------------|-----------------------|------------------------------------------|
+| version                                                                           | `string`              | The widget's version.                    |
+| static create(configuration: [ListWidgetConfiguration](#listwidgetconfiguration)) | `Promise<ListWidget>` | Create the widget.                       |
+| destroy()                                                                         | `void`                | Destroy the widget and clean up the DOM. |
+
+
+### ListWidgetConfiguration
+
+| Property         | Type                                                                                     | Required | Default                                     | Description                                                                                                                                                                                          |
+|------------------|------------------------------------------------------------------------------------------|----------|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| selector         | `string \| HTMLElement`                                                                  | **Yes**  | `''`                                        | Defines the HTML element to create the widget into. It can be a HTMLElement or a string used by [document.querySelector()](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector). |
+| source           | [ListWidgetSource](#listwidgetsource)                                                    | **Yes**  | `undefined`                                 | Defines the presentations to show.                                                                                                                                                                   |
+| locales          | `Record<string, object>`                                                                 | No       | `undefined`                                 | Defines extra translations, see [Localization](?path=/docs/getting-started-localization--docs).                                                                                                      |
+| playerParameters | [Partial&lt;PlayerParameters&gt;](?path=/docs/widgets-presentation--docs#playerparameters) | No       | `undefined`                                 | Defines the parameters to add to the Qumu Cloud player, the same as the presentation widget.                                                                                                         |
+| widgetOptions    | [Partial&lt;ListWidgetOptions&gt;](#listwidgetoptions)                                   | No       | See [ListWidgetOptions](#listwidgetoptions) | Defines the widget options.                                                                                                                                                                          |
+
+
+### ListWidgetSource
+
+The source must define **exactly one** of `smartSearchGuid`, `presentationGuids` or `smartSearch`.
+
+| Property          | Type                            | Required | Default                                                            | Description                                                                                                                                                                       |
+|-------------------|---------------------------------|----------|--------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| host              | `string`                        | **Yes**  | `''`                                                               | Defines the Qumu Cloud tenant to get the presentations from (i.e: demo.qumucloud.com).                                                                                            |
+| smartSearchGuid   | `string`                        | One of   | `undefined`                                                        | Defines the GUID of a saved Smart Search.                                                                                                                                         |
+| presentationGuids | `string[]`                      | One of   | `undefined`                                                        | Defines the GUIDs of the presentations to show, in this order.                                                                                                                    |
+| smartSearch       | [SearchFilter](#searchfilter)   | One of   | `undefined`                                                        | Defines Smart Search rules.                                                                                                                                                       |
+| limit             | `number`                        | No       | `12` (`grid`), `10` (`vertical`), the number of `presentationGuids` | Defines the maximum number of presentations to show.                                                                                                                              |
+| offset            | `number`                        | No       | `0`                                                                | Defines the number of presentations to skip.                                                                                                                                      |
+| sortBy            | `string`                        | No       | `'created'`                                                        | <p>Defines the property to sort the presentations by, e.g. `published` or `title`.</p><p>⚠️ Only with `smartSearchGuid` or `smartSearch`.</p> |
+| sortOrder         | `string`   | No       | `'DESCENDING'`                                                     | <p>Defines the order to sort the presentations. Value must be one of: `ASCENDING`, `DESCENDING`.</p><p>⚠️ Only with `smartSearchGuid` or `smartSearch`.</p>                                                                       |
+
+
+### SearchFilter
+
+| Property | Type                          | Description                                                                 |
+|----------|-------------------------------|-----------------------------------------------------------------------------|
+| match    | `string`                      | Defines whether the presentations must match all the rules, or any of them. Value must be one of: `all`, `any`. |
+| rules    | [SearchRule[]](#searchrule)   | Defines the rules.                                                          |
+
+### SearchRule
+
+| Property   | Type     | Description                                                                                                                                                                                                                                                                                |
+|------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| field      | `string` | Defines the field to search: a presentation property, e.g. `title` or `published`, or the GUID of a metadata field.                                                                                                                                                                        |
+| comparator | `string` | Defines how to compare the field with the value. Value must be one of: `is`, `is_not`, `contains`, `does_not_contain`, `contains_any`, `less_than`, `greater_than`, `greater_than_or_equal_to`, `less_than_or_equal_to`, `between`, `not_between`, `in_the_last`, `not_in_the_last`, `in_the_next`, `not_in_the_next`. |
+| value      | `string` | <p>Defines the value to compare the field with.</p><p>The relative date comparators (`in_the_last`, `in_the_next`…) take an offset and a unit, e.g. `30,DAYS`, `6,MONTHS` or `1,YEARS`.</p>                                                                                                |
+
+
+### ListWidgetOptions
+
+| Property     | Type                                                       | Default                       | Description                                                                                                                                                             |
+|--------------|------------------------------------------------------------|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| layout       | `string`                                                   | `'grid'`                      | <p>Defines the layout.</p><ul><li>`grid`: several presentations per row.</li><li>`vertical`: one presentation per row, the information next to the thumbnail.</li></ul> |
+| item         | [Partial&lt;ItemTemplateConfig&gt;](#itemtemplateconfig)   | See [Layouts](#layouts)       | Defines the content of the items.                                                                                                                                       |
+| playIconUrl  | `string`                                                   | `undefined`                   | Defines the URL to a custom play icon image.                                                                                                                            |
+| style        | [Partial&lt;ListWidgetStyle&gt;](#listwidgetstyle)         | `undefined`                   | Defines the style of the widget.                                                                                                                                        |
+| onIframeLoad | `(iframe: HTMLIFrameElement) => void`                      | `undefined`                   | Method triggered once the player iframe is loaded in the modal. Useful to load our Player SDK.                                                                          |
+| onItemClick  | `(presentation: Presentation) => void`                     | `undefined`                   | Method triggered when an item is clicked, instead of opening the modal. Useful to bypass the default behaviour of the widget.                                           |
+
+
+### ItemTemplateConfig
+
+| Property            | Type                                                                         | Default                 | Description                                                                                                                       |
+|---------------------|------------------------------------------------------------------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| showDurationOverlay | `boolean`                                                                    | `true`                  | Defines whether the duration is shown in a badge over the thumbnail.                                                              |
+| info                | `Partial<Record<'top' \| 'left' \| 'right' \| 'bottom', InfoFieldConfig[]>>` | See [Layouts](#layouts) | <p>Defines the fields to show in each slot around the thumbnail, in order.</p><p>When set, it replaces the default fields entirely.</p> |
+
+### InfoFieldConfig
+
+| Property | Type                | Default                                       | Description                                                                                                                       |
+|----------|---------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| field    | `string`            |                                               | Defines the field, see [Fields](#fields).                                                                                         |
+| label    | `string \| boolean` | Hidden for `title` and `summary`, shown otherwise | <ul><li>`true`: show the default label.</li><li>`false`: hide the label.</li><li>a string: show this label.</li></ul> |
+
+### Fields
+
+| Field            | Value                                         | Default label                     |
+|------------------|-----------------------------------------------|-----------------------------------|
+| `title`          | The title of the presentation.                | Title (hidden)                    |
+| `summary`        | The summary of the presentation.              | Summary (hidden)                  |
+| `publisher`      | The name of the publisher.                    | Published by                      |
+| `publishOn`      | The publication date, e.g. September 24, 2026. | Published on                      |
+| `duration`       | The duration, e.g. 01:05.                     | Duration                          |
+| a metadata GUID  | The value of the metadata field.              | The name of the metadata field    |
+
+The fields without a value are not shown. Metadata values are formatted according to their type: dates, numbers, the options of select fields, and Yes or No for booleans. Markdown values are rendered, with their links opening in a new tab.
+
+### Layouts
+
+The layout changes the default values; each one can still be overridden.
+
+| Layout     | `source.limit` | `item.info`                                                            |
+|------------|----------------|------------------------------------------------------------------------|
+| `grid`     | `12`           | `{ bottom: [{ field: 'title' }, { field: 'publishOn' }] }`             |
+| `vertical` | `10`           | `{ right: [{ field: 'title' }, { field: 'summary' }, { field: 'publisher' }] }` |
+
+
+### ListWidgetStyle
+
+<Tip title="Colors">The `color` properties accept any CSS color, e.g. `#1d4ed8`, `rgb(0 0 0 / .8)` or `light-dark(#000, #fff)`.</Tip>
+
+#### Widget
+
+| Property     | Default  | Description                                                                                                                                                                       |
+|--------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| borderRadius | `0`      | The border radius of the widget container.                                                                                                                                        |
+| height       | `auto`   | The height of the widget container.                                                                                                                                               |
+| width        | `100%`   | The width of the widget container.                                                                                                                                                |
+| gap          | `16px`   | The spacing between the items.                                                                                                                                                    |
+| columns      | `'auto'` | <p>Grid only. The number of columns.</p><ul><li>`'auto'`: as many columns as fit, at least `minItemWidth` wide.</li><li>a number: at most this number of columns, fewer when the items would get narrower than `minItemWidth`.</li></ul> |
+| minItemWidth | `240px`  | Grid only. The minimum width of the items.                                                                                                                                        |
+
+#### Item
+
+| Property                  | Default                                       | Description                                                                                  |
+|---------------------------|-----------------------------------------------|----------------------------------------------------------------------------------------------|
+| item.backgroundColor      | `transparent`                                 | The background color of the items.                                                           |
+| item.hoverBackgroundColor | `item.backgroundColor`                        | The background color of the items on hover, and when their play button has the keyboard focus. |
+| item.border               | `none`                                        | The border of the items.                                                                     |
+| item.hoverBorder          | `item.border`                                 | The border of the items on hover, and when their play button has the keyboard focus.         |
+| item.activeBorder         | `item.hoverBorder`                            | The border of the items when pressed.                                                        |
+| item.borderRadius         | `0`                                           | The border radius of the items.                                                              |
+| item.boxShadow            | `none`                                        | The box shadow of the items.                                                                 |
+| item.padding              | `0`                                           | The padding inside the items.                                                                |
+| item.fieldGap             | `4px`                                         | The spacing between the fields of a slot.                                                    |
+| item.thumbnailGap         | `8px` (top/bottom), `12px` (left/right)       | The spacing between the thumbnail and the slots.                                             |
+
+#### Thumbnail
+
+| Property                     | Default | Description                                                                                                                                       |
+|------------------------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| item.thumbnail.aspectRatio   | `16:9`  | The aspect ratio of the thumbnail, e.g. `4:3` or `4/3`.                                                                                           |
+| item.thumbnail.border        | `none`  | The border of the thumbnail.                                                                                                                      |
+| item.thumbnail.borderRadius  | `6px`   | The border radius of the thumbnail.                                                                                                               |
+| item.thumbnail.imageFit      | `cover` | How the thumbnail image fits its container: `contain` or `cover`. See [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit). |
+| item.thumbnail.width         | `240px` | Vertical layout only. The width of the thumbnail, at most half of the item.                                                                       |
+
+#### Play Button
+
+| Property                              | Default           | Description                                                                                                                                  |
+|---------------------------------------|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| item.playButton.backgroundColor       | `rgb(0 0 0 / .8)` | The background color of the play button.                                                                                                     |
+| item.playButton.color                 | `#fff`            | The color of the play button.                                                                                                                |
+| item.playButton.hoverBackgroundColor  | `#000`            | The background color of the play button on hover.                                                                                            |
+| item.playButton.hoverColor            | `#fff`            | The color of the play button on hover.                                                                                                       |
+| item.playButton.activeBackgroundColor | `rgb(0 0 0 / .9)` | The background color of the play button when active.                                                                                         |
+| item.playButton.activeColor           | `#fff`            | The color of the play button when active.                                                                                                    |
+| item.playButton.borderRadius          | `100%`            | The border radius of the play button, e.g. `0` for a square button.                                                                          |
+| item.playButton.margin                | `8px`             | The margin around the play button.                                                                                                           |
+| item.playButton.padding               | `8px`             | The padding between the play icon and the button background.                                                                                 |
+| item.playButton.position              | `center`          | The position of the play button. Value must be one of: `top-left`, `top`, `top-right`, `left`, `center`, `right`, `bottom-left`, `bottom`, `bottom-right`. |
+| item.playButton.height                | `40px`            | The height of the play button.                                                                                                               |
+| item.playButton.width                 | `40px`            | The width of the play button.                                                                                                                |
+
+#### Duration Badge
+
+| Property                          | Default           | Description                                                                                                                                         |
+|-----------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| item.durationBadge.backgroundColor | `rgb(0 0 0 / .8)` | The background color of the duration badge.                                                                                                         |
+| item.durationBadge.color          | `#fff`            | The text color of the duration badge.                                                                                                               |
+| item.durationBadge.borderRadius   | `4px`             | The border radius of the duration badge.                                                                                                            |
+| item.durationBadge.fontFamily     | inherited         | The font family of the duration badge.                                                                                                              |
+| item.durationBadge.fontSize       | `12px`            | The font size of the duration badge.                                                                                                                |
+| item.durationBadge.fontWeight     | `400`             | The font weight of the duration badge.                                                                                                              |
+| item.durationBadge.letterSpacing  | inherited         | The letter spacing of the duration badge.                                                                                                           |
+| item.durationBadge.padding        | `2px 6px`         | The padding of the duration badge.                                                                                                                  |
+| item.durationBadge.position       | `bottom-right`    | The position of the duration badge on the thumbnail. Value must be one of: `top-left`, `top`, `top-right`, `left`, `center`, `right`, `bottom-left`, `bottom`, `bottom-right`. |
+| item.durationBadge.textTransform  | inherited         | The text transform of the duration badge.                                                                                                           |
+
+#### Fields
+
+Each field is styled separately, keyed by its `field`: `item.metadata.title`, `item.metadata.publishOn`, or `item.metadata['<metadata GUID>']`.
+
+```js
+style: {
+  item: {
+    metadata: {
+      title: { fontWeight: '700', lineClamp: 2 },
+      publishOn: { fontSize: '12px', labelColor: '#777' },
+      myMetadataGUID: { labelColor: '#999' };
+    },
+  },
+},
+```
+
+| Property                          | Default                                     | Description                                                                                                      |
+|-----------------------------------|---------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| item.metadata[field].color        | inherited                                   | The text color of the field.                                                                                     |
+| item.metadata[field].hoverColor   | `color`                                     | The text color of the field when the item is hovered.                                                            |
+| item.metadata[field].labelColor   | the text color, at 70% opacity              | The color of the label.                                                                                          |
+| item.metadata[field].hoverLabelColor | `labelColor`                             | The color of the label when the item is hovered.                                                                 |
+| item.metadata[field].fontFamily   | inherited                                   | The font family of the field.                                                                                    |
+| item.metadata[field].fontSize     | `16px` (`title`), `14px` (the others)       | The font size of the field.                                                                                      |
+| item.metadata[field].fontWeight   | `600` (`title`), `400` (the others)         | The font weight of the field.                                                                                    |
+| item.metadata[field].letterSpacing | inherited                                  | The letter spacing of the field.                                                                                 |
+| item.metadata[field].textTransform | inherited                                  | The text transform of the field, e.g. `uppercase`.                                                               |
+| item.metadata[field].lineClamp    | `undefined`                                 | The maximum number of lines of the field; the rest is truncated with an ellipsis.                                |
+| item.metadata[field].padding      | `0`                                         | The spacing around the field.                                                                                    |
+
+#### Dialog, Close Button and Not Found
+
+These are the same as the presentation widget: see `dialog.*`, `closeButton.*` and `notFound.*` in its [WidgetStyle](?path=/docs/widgets-presentation--docs#widgetstyle).
+
+
+## Playground
+
+The [playground](?path=/story/stories-widgets-list--playground) offers a live editor to try out different configurations. You can find the different properties in the Controls panel.
