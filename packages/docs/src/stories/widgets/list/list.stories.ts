@@ -2,6 +2,7 @@ import type { StoryObj } from '@storybook/web-components-vite';
 import type { StoryContext } from 'storybook/internal/types';
 import { ListWidget, type ListWidgetConfiguration, type Presentation } from 'lib';
 import de from 'lib/locales/de.json';
+import en from 'lib/locales/en.json';
 import es from 'lib/locales/es.json';
 import fr from 'lib/locales/fr.json';
 import it from 'lib/locales/it.json';
@@ -41,6 +42,7 @@ function renderList(configuration: Configuration, container = document.createEle
   ListWidget.create({
     locales: {
       de,
+      en,
       es,
       fr,
       it,
