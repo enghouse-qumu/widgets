@@ -341,7 +341,7 @@ export const controls: Control[] = [
   style('Close Button', 'styleCloseButtonActiveColor', 'Color (active state)', 'closeButton.activeColor', 'color', '#fff'),
   style('Close Button', 'styleCloseButtonBorderRadius', 'Border Radius', 'closeButton.borderRadius', 'text', '100%'),
   style('Close Button', 'styleCloseButtonBoxShadow', 'Box Shadow', 'closeButton.boxShadow', 'text', '0 0 1px 1px #000'),
-  style('Close Button', 'styleCloseButtonIconSize', 'Icon Size', 'closeButton.iconSize', 'text', '20px'),
+  style('Close Button', 'styleCloseButtonIconSize', 'Icon Size', 'closeButton.iconSize', 'text', '14px'),
   style('Close Button', 'styleCloseButtonPadding', 'Padding', 'closeButton.padding', 'text', '6px'),
   style('Not Found', 'styleNotFoundBackgroundColor', 'Background Color', 'notFound.backgroundColor', 'color', 'transparent'),
   style('Not Found', 'styleNotFoundBorder', 'Border', 'notFound.border'),
