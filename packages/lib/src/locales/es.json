@@ -5,6 +5,7 @@
         "Presentation not found": "Presentación no encontrada"
     },
     "list": {
+        "Loading presentations": "Cargando presentaciones…",
         "No": "No",
         "No presentations found": "No se encontraron presentaciones",
         "Yes": "Sí",

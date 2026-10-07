@@ -15,7 +15,7 @@ Each item shows the thumbnail of a presentation and information fields around it
 
 ## Basic Usage
 
-By default, the widget uses the `grid` layout and shows the title and the publication date of each presentation.
+By default, the widget uses the `grid` layout and shows the title and the publication date of each presentation. Here, the first 9 presentations of a saved Smart Search.
 
 <Canvas of={Stories.Basic}/>
 
@@ -29,7 +29,7 @@ The `vertical` layout shows one presentation per row, with the information next 
 
 ### Use a Smart Search
 
-The presentations can come from a list of GUIDs, a saved Smart Search, or Smart Search rules defined in the configuration. Here, the presentations whose title contains "driverless", sorted by title.
+The presentations can come from a list of GUIDs, a saved Smart Search, or Smart Search rules defined in the configuration. Here, the presentations with a Yes/No metadata field set to Yes, sorted by title: a rule `field` can be the GUID of a metadata field.
 
 <Canvas of={Stories.SmartSearch}/>
 
@@ -47,7 +47,7 @@ With a number, `columns` is the maximum number of columns: the grid shows fewer 
 
 ### Style the items
 
-Every part of the items can be styled: the item itself and its hover state, the thumbnail, the play button, the duration badge, and each information field separately. Here, white tiles with the thumbnail at the top, a small eyebrow above a big title, a short summary taken from a metadata field, and a custom play icon: an inline SVG given to `playIconUrl`.
+Every part of the items can be styled: the item itself and its hover state, the thumbnail, the play button, the duration badge, and each information field separately. Here, white tiles with the thumbnail at the top, a small eyebrow above a big title, a short summary, and a custom play icon: an inline SVG given to `playIconUrl`.
 
 <Canvas of={Stories.Styling}/>
 

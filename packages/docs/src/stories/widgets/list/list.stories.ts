@@ -21,15 +21,25 @@ export default {
 
 const host = 'demo.qumucloud.com';
 
+// the examples only show the presentations of a playlist dedicated to these docs
+const docsPlaylistGuid = 'yKoSjaQV0l8y3RXQm1o9GD';
+// a Yes/No metadata field, set to Yes on each presentation of the playlist
+const docsMetadataGuid = '7ujlJU5I4Jx60ZLGlrrhDo';
+
+// the 12 presentations of the playlist
 const presentationGuids = [
-  'JN6JHrg17xpwF8klXSIfFj',
-  'TlvJB8ujYp54PmMBpKV0TZ',
-  '248kK0jZZ2yBgQPc7yxms8',
-  'g9ANFoOE45gkyjMqYP0mvZ',
-  'v12JwVGie3S',
-  'W0IiLMkOpXnMBePv9m13ZI',
-  'VqYTNqsbLxTbcsOwYcIO28',
-  'QLMMr6jc7n6QmnKWY0r2AS',
+  'MpAKx9XnzxB9gTHeHmvtkS',
+  'zLXb37rXK3OFWfXX073IGN',
+  'r7S1ukfVHJS3ZwGQrbY9Yb',
+  'laSY2N0H5ZjkihbGmM7k47',
+  'WqfoJz4zM3WsGfu9iivGnd',
+  'oNDKHPaGyAxZwQNVfQPIh0',
+  'gmutumplJKLaX1E40zikRb',
+  '5wznZejHImTxD6xtmlz1Py',
+  'oDTf4p8h7FXfayBBNIUQEl',
+  'LzfN9v8n6ZikDUNjUbZRJX',
+  'c0gntNerXAWDLk53Rvd3mn',
+  'JGScLtU7L5yZzrLiYostdv',
 ];
 
 /**
@@ -76,7 +86,8 @@ export const Basic: Story = example({
   source: {
     host,
     // 9 presentations, 3 rows of 3 at the maximum width of the docs
-    presentationGuids: [...presentationGuids, 'YFQW7Vfzpdx'],
+    limit: 9,
+    smartSearchGuid: docsPlaylistGuid,
   },
 });
 
@@ -97,9 +108,9 @@ export const SmartSearch: Story = example({
       match: 'all',
       rules: [
         {
-          comparator: 'contains',
-          field: 'title',
-          value: 'driverless',
+          comparator: 'is',
+          field: docsMetadataGuid,
+          value: 'true',
         },
       ],
     },
@@ -142,6 +153,7 @@ export const InfoFields: Story = example({
 export const Columns: Story = example({
   source: {
     host,
+    // 12 presentations, 3 rows of 4
     presentationGuids,
   },
   widgetOptions: {
@@ -153,7 +165,6 @@ export const Columns: Story = example({
 });
 
 // white tiles with a soft shadow and the thumbnail at the top, a small eyebrow above a big title and a short summary
-const description = '4521001'; // the GUID of the "Description" metadata field of the demo tenant
 const inset = '0 24px';
 
 // a custom play icon, inlined as a data URL: a gradient circle with a soft ring and a rounded triangle.
@@ -176,12 +187,7 @@ const playIcon = toDataUrl(playIconSvg);
 export const Styling: Story = example({
   source: {
     host,
-    presentationGuids: [
-      'v12JwVGie3S',
-      'YFQW7Vfzpdx',
-      'irLRZpv3ByP',
-      '0M1JtQNBZmt',
-    ],
+    presentationGuids: presentationGuids.slice(4, 8),
   },
   widgetOptions: {
     item: {
@@ -192,10 +198,7 @@ export const Styling: Story = example({
             label: false,
           },
           { field: 'title' },
-          {
-            field: description,
-            label: false,
-          },
+          { field: 'summary' },
         ],
       },
       showDurationOverlay: false,
@@ -212,12 +215,6 @@ export const Styling: Story = example({
         hoverBackgroundColor: '#fbfaff',
         hoverBorder: '1px solid rgb(67 56 202 / .3)',
         metadata: {
-          [description]: {
-            color: '#6b7280',
-            fontSize: '14px',
-            lineClamp: 3,
-            padding: inset,
-          },
           publisher: {
             color: '#6b7280',
             fontSize: '11px',
@@ -225,6 +222,12 @@ export const Styling: Story = example({
             letterSpacing: '.12em',
             padding: inset,
             textTransform: 'uppercase',
+          },
+          summary: {
+            color: '#6b7280',
+            fontSize: '14px',
+            lineClamp: 3,
+            padding: inset,
           },
           title: {
             color: '#111827',
@@ -270,11 +273,7 @@ const squarePlayIcon = toDataUrl(`
 export const StylingVertical: Story = example({
   source: {
     host,
-    presentationGuids: [
-      'v12JwVGie3S',
-      'YFQW7Vfzpdx',
-      'irLRZpv3ByP',
-    ],
+    presentationGuids: presentationGuids.slice(8, 11),
   },
   widgetOptions: {
     item: {
@@ -285,10 +284,7 @@ export const StylingVertical: Story = example({
             label: false,
           },
           { field: 'title' },
-          {
-            field: description,
-            label: false,
-          },
+          { field: 'summary' },
           {
             field: 'publishOn',
             label: false,
@@ -314,24 +310,26 @@ export const StylingVertical: Story = example({
         fieldGap: '8px',
         hoverBackgroundColor: '#faf7f0',
         metadata: {
-          // the standfirst
-          [description]: {
-            color: '#3f3f3f',
-            fontFamily: newspaperSerif,
-            fontSize: '15px',
-            lineClamp: 2,
-          },
           // the fly title
           publisher: {
             color: '#d42a20',
             fontFamily: newspaperSans,
             fontSize: '13px',
-            fontWeight: '700',
+            fontWeight: '400',
+            letterSpacing: '1.2px',
+            textTransform: 'uppercase',
           },
           publishOn: {
             color: '#6e6e6e',
             fontFamily: newspaperSans,
             fontSize: '12px',
+          },
+          // the standfirst
+          summary: {
+            color: '#3f3f3f',
+            fontFamily: newspaperSerif,
+            fontSize: '15px',
+            lineClamp: 2,
           },
           title: {
             color: '#1b1b1b',
@@ -426,13 +424,14 @@ export const Playground: Story = {
   // the order of the args is the order of the controls, the data source first
   /* eslint-disable sort-keys */
   args: {
-    source: 'presentationGuids',
+    source: 'smartSearchGuid',
     host,
+    smartSearchGuid: docsPlaylistGuid,
     presentationGuids: presentationGuids.join(', '),
     searchMatch: 'all',
-    searchField: 'title',
-    searchComparator: 'contains',
-    searchValue: 'driverless',
+    searchField: docsMetadataGuid,
+    searchComparator: 'is',
+    searchValue: 'true',
   },
   /* eslint-enable sort-keys */
   argTypes,
