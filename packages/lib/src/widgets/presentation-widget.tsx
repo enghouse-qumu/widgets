@@ -18,6 +18,8 @@ export class PresentationWidget {
   private readonly presentationService;
   private presentation: Presentation | null = null;
   private container: HTMLElement | null = null;
+  // the class and style attributes of the container before the widget, restored on destroy
+  private originalContainerAttributes: { className: string; style: string | null } | null = null;
   private destroyed = false;
 
   get version(): string {
@@ -57,6 +59,8 @@ export class PresentationWidget {
 
       // Clear container HTML
       this.container.innerHTML = '';
+
+      this.restoreContainerAttributes(this.container);
     }
 
     // Prevent future usage
@@ -90,6 +94,10 @@ export class PresentationWidget {
     createI18n(container, this.configuration.locales);
 
     this.container = container;
+    this.originalContainerAttributes ??= {
+      className: container.className,
+      style: container.getAttribute('style'),
+    };
     container.innerHTML = '';
 
     const aspectRatio = this.presentation?.mediaDisplayWidth && this.presentation?.mediaDisplayHeight
@@ -131,6 +139,25 @@ export class PresentationWidget {
         name === '--qc-pw-play-button-position' ? positionToPlaceItems(String(value)) : String(value)
       ));
     }
+  }
+
+  // removes the classes and the CSS custom properties set by the widget, and keeps those of the host page
+  private restoreContainerAttributes(container: HTMLElement) {
+    if (!this.originalContainerAttributes) {
+      return;
+    }
+
+    const { className, style } = this.originalContainerAttributes;
+
+    container.className = className;
+
+    if (style === null) {
+      container.removeAttribute('style');
+    } else {
+      container.setAttribute('style', style);
+    }
+
+    this.originalContainerAttributes = null;
   }
 
   private async sendTelemetry() {

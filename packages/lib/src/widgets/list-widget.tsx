@@ -21,6 +21,8 @@ export class ListWidget {
   private readonly presentationService;
   private presentations: Presentation[] = [];
   private container: HTMLElement | null = null;
+  // the class and style attributes of the container before the widget, restored on destroy
+  private originalContainerAttributes: { className: string; style: string | null } | null = null;
   private destroyed = false;
 
   get version(): string {
@@ -60,6 +62,8 @@ export class ListWidget {
 
       // Clear container HTML
       this.container.innerHTML = '';
+
+      this.restoreContainerAttributes(this.container);
     }
 
     // Prevent future usage
@@ -95,6 +99,10 @@ export class ListWidget {
     createI18n(container, this.configuration.locales);
 
     this.container = container;
+    this.originalContainerAttributes ??= {
+      className: container.className,
+      style: container.getAttribute('style'),
+    };
     container.innerHTML = '';
 
     this.container.classList.add('qc-widget', 'qc-list-widget', `qc-list-widget--${this.configuration.widgetOptions.layout}`);
@@ -170,6 +178,25 @@ export class ListWidget {
         `repeat(auto-fill, minmax(min(max(var(--qc-lw-min-item-width), ${maxColumnWidth}), 100%), 1fr))`,
       );
     }
+  }
+
+  // removes the classes and the CSS custom properties set by the widget, and keeps those of the host page
+  private restoreContainerAttributes(container: HTMLElement) {
+    if (!this.originalContainerAttributes) {
+      return;
+    }
+
+    const { className, style } = this.originalContainerAttributes;
+
+    container.className = className;
+
+    if (style === null) {
+      container.removeAttribute('style');
+    } else {
+      container.setAttribute('style', style);
+    }
+
+    this.originalContainerAttributes = null;
   }
 
   private async sendTelemetry() {
