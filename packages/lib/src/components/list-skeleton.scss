@@ -1,0 +1,71 @@
+// the "ghost" items shown while the presentations are loading, see list-skeleton.tsx
+.qc-widget {
+  .qc-list-skeleton {
+    // derived from the text color, so it fits light and dark themes and any custom color
+    --_qc-lw-ghost-color: color-mix(in srgb, currentColor 5%, transparent);
+  }
+
+  .qc-list-item--skeleton {
+    // a faint hint of the custom tile background, so the ghosts stay discreet
+    background-color: color-mix(in srgb, var(--qc-lw-item-background-color) 18%, transparent);
+    box-shadow: none;
+    cursor: default;
+    // no hover nor active styles
+    pointer-events: none;
+  }
+
+  .qc-list-skeleton__thumbnail,
+  .qc-list-skeleton__line {
+    background-color: var(--_qc-lw-ghost-color);
+    overflow: hidden;
+    position: relative;
+
+    // the shimmer moving across the ghosts
+    &::after {
+      animation: qc-list-skeleton-shimmer 1.6s ease-in-out infinite;
+      background: linear-gradient(90deg, transparent, rgb(255 255 255 / .45), transparent);
+      content: '';
+      inset: 0;
+      position: absolute;
+      transform: translateX(-100%);
+    }
+  }
+
+  // each line takes the height of a line of text (the 1.4 line height of the fields), so the content does not move
+  .qc-list-skeleton__line {
+    border-radius: 4px;
+    display: block;
+    height: .8em;
+    margin: .3em 0;
+    width: 70%;
+
+    &--title {
+      height: 1.1em;
+      margin: .15em 0;
+      width: 90%;
+    }
+  }
+
+  // a bit of variation, so it reads as text
+  .qc-list-item__field + .qc-list-item__field .qc-list-skeleton__line:not(.qc-list-skeleton__line--title) {
+    width: 55%;
+  }
+
+  // the last line of a clamped field is shorter
+  .qc-list-skeleton__line:not(:only-child):last-child {
+    width: 45%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qc-list-skeleton__thumbnail::after,
+    .qc-list-skeleton__line::after {
+      animation: none;
+    }
+  }
+}
+
+@keyframes qc-list-skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}

@@ -9,7 +9,7 @@ import { formatDuration, resolveField } from '@/utils/presentation-fields';
 // fields showing their label only when `label` is set explicitly, all the others show it by default
 const unlabelledFields = new Set(['title', 'summary']);
 
-type MetadataStyle = NonNullable<NonNullable<ListWidgetStyle['item']>['metadata']>;
+export type MetadataStyle = NonNullable<NonNullable<ListWidgetStyle['item']>['metadata']>;
 
 interface Props {
   // the id of the item, unique in the page; also prefixes the ids referenced by `aria-describedby`
@@ -24,7 +24,7 @@ interface Props {
 /**
  * Converts the per-field style into the private custom properties read by `.qc-list-item__field`
  */
-function getFieldStyle(style: MetadataStyle[string] | undefined): JSX.CSSProperties | undefined {
+export function getFieldStyle(style: MetadataStyle[string] | undefined): JSX.CSSProperties | undefined {
   if (!style) {
     return undefined;
   }
