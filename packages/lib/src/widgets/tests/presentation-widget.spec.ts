@@ -628,5 +628,21 @@ describe('PresentationWidget', () => {
 
       expect(container.innerHTML).toMatchInlineSnapshot(`"manually added content"`);
     });
+
+    it('should restore the classes and the style of the container', async () => {
+      container.style.setProperty('margin', '8px');
+
+      const widget = await PresentationWidget.create(mockConfiguration);
+
+      await flushPromises();
+
+      expect(container.className).toBe('widget-container qc-widget qc-presentation-widget');
+      expect(container.style.getPropertyValue('--qc-pw-aspect-ratio')).not.toBe('');
+
+      widget.destroy();
+
+      expect(container.className).toBe('widget-container');
+      expect(container.getAttribute('style')).toBe('margin: 8px;');
+    });
   });
 });

@@ -5,6 +5,7 @@
         "Presentation not found": "プレゼンテーションが見つかりません"
     },
     "list": {
+        "Loading presentations": "プレゼンテーションを読み込んでいます…",
         "No": "いいえ",
         "No presentations found": "プレゼンテーションは見つかりませんでした",
         "Yes": "はい",

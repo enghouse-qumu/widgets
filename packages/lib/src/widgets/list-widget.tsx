@@ -5,11 +5,15 @@ import { ListWidgetConfiguration } from '@/interfaces/list-widget';
 import { Presentation } from '@/interfaces/presentation';
 import { ListComponent } from '@/components/list';
 import { NotFoundComponent } from '@/components/not-found';
+import { ListSkeletonComponent } from '@/components/list-skeleton';
 import { createI18n } from '@/i18n';
 import { positionToPlaceItems, setCssVariables } from '@/utils/css-variables';
 import 'virtual:svg-icons/register';
 import { version } from '../../../../package.json' with { type: 'json' };
 import './list-widget.scss';
+
+// the maximum number of ghost items shown while loading
+const SKELETON_MAX_ITEMS = 12;
 
 export class ListWidget {
   private readonly configurationService = new ListConfigurationService();
@@ -17,6 +21,8 @@ export class ListWidget {
   private readonly presentationService;
   private presentations: Presentation[] = [];
   private container: HTMLElement | null = null;
+  // the class and style attributes of the container before the widget, restored on destroy
+  private originalContainerAttributes: { className: string; style: string | null } | null = null;
   private destroyed = false;
 
   get version(): string {
@@ -56,6 +62,8 @@ export class ListWidget {
 
       // Clear container HTML
       this.container.innerHTML = '';
+
+      this.restoreContainerAttributes(this.container);
     }
 
     // Prevent future usage
@@ -64,18 +72,22 @@ export class ListWidget {
   }
 
   private async init(): Promise<void> {
+    // the container is ready, with the ghost items, while the presentations are loading
+    this.prepareContainer();
+    this.renderSkeleton();
+
     try {
       const { presentations } = await this.presentationService.getPresentations(this.configuration.source);
 
       this.presentations = presentations;
     } catch (err) {
       console.error(err);
-    } finally {
-      this.mount();
     }
+
+    this.renderPresentations();
   }
 
-  private mount() {
+  private prepareContainer() {
     const container = this.configuration.selector instanceof HTMLElement
       ? this.configuration.selector
       : document.querySelector<HTMLElement>(this.configuration.selector);
@@ -87,12 +99,32 @@ export class ListWidget {
     createI18n(container, this.configuration.locales);
 
     this.container = container;
+    this.originalContainerAttributes ??= {
+      className: container.className,
+      style: container.getAttribute('style'),
+    };
     container.innerHTML = '';
 
     this.container.classList.add('qc-widget', 'qc-list-widget', `qc-list-widget--${this.configuration.widgetOptions.layout}`);
 
     this.setStyles(this.container);
+  }
 
+  private renderSkeleton() {
+    const { item, layout } = this.configuration.widgetOptions;
+
+    render(
+      <ListSkeletonComponent
+        count={Math.min(this.configuration.source.limit ?? SKELETON_MAX_ITEMS, SKELETON_MAX_ITEMS)}
+        item={item}
+        layout={layout}
+        metadataStyle={this.configuration.widgetOptions.style.item?.metadata}
+      />,
+      this.container!,
+    );
+  }
+
+  private renderPresentations() {
     render(
       this.presentations.length ? (
         <ListComponent
@@ -103,7 +135,7 @@ export class ListWidget {
       ) : (
         <NotFoundComponent message="list.No presentations found"/>
       ),
-      container,
+      this.container!,
     );
   }
 
@@ -146,6 +178,25 @@ export class ListWidget {
         `repeat(auto-fill, minmax(min(max(var(--qc-lw-min-item-width), ${maxColumnWidth}), 100%), 1fr))`,
       );
     }
+  }
+
+  // removes the classes and the CSS custom properties set by the widget, and keeps those of the host page
+  private restoreContainerAttributes(container: HTMLElement) {
+    if (!this.originalContainerAttributes) {
+      return;
+    }
+
+    const { className, style } = this.originalContainerAttributes;
+
+    container.className = className;
+
+    if (style === null) {
+      container.removeAttribute('style');
+    } else {
+      container.setAttribute('style', style);
+    }
+
+    this.originalContainerAttributes = null;
   }
 
   private async sendTelemetry() {

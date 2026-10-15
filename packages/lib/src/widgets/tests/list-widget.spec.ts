@@ -215,4 +215,52 @@ describe('ListWidget', () => {
 
     expect(container.innerHTML).toBe('');
   });
+
+  it('should restore the classes and the style of the container on destroy', async () => {
+    container.style.setProperty('margin', '8px');
+
+    const widget = await ListWidget.create({
+      ...mockConfiguration,
+      widgetOptions: {
+        layout: 'vertical',
+        style: {
+          columns: 3,
+          gap: '24px',
+        },
+      },
+    });
+
+    expect(container.className).toBe('widget-container qc-widget qc-list-widget qc-list-widget--vertical');
+    expect(container.style.getPropertyValue('--qc-lw-gap')).toBe('24px');
+
+    widget.destroy();
+
+    expect(container.className).toBe('widget-container');
+    expect(container.getAttribute('style')).toBe('margin: 8px;');
+  });
+
+  it('should not keep the classes and the style of a destroyed widget', async () => {
+    const widget = await ListWidget.create({
+      ...mockConfiguration,
+      widgetOptions: {
+        layout: 'vertical',
+        style: { columns: 3 },
+      },
+    });
+
+    widget.destroy();
+
+    await ListWidget.create(mockConfiguration);
+
+    expect(container.className).toBe('widget-container qc-widget qc-list-widget qc-list-widget--grid');
+    expect(container.style.getPropertyValue('--qc-lw-grid-template-columns')).toBe('');
+  });
+
+  it('should remove the style attribute on destroy when the container had none', async () => {
+    const widget = await ListWidget.create(mockConfiguration);
+
+    widget.destroy();
+
+    expect(container.hasAttribute('style')).toBe(false);
+  });
 });

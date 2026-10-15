@@ -23,7 +23,6 @@
     "dev:watch": "vite build --watch",
     "lint": "eslint",
     "prepublishOnly": "node scripts/prepublishOnly.js",
-    "server": "vite serve dev --config vite.config.ts --open",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest watch"

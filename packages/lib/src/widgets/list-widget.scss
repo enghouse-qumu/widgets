@@ -8,6 +8,7 @@
 @use '../components/not-found.scss';
 @use '../components/list.scss';
 @use '../components/list-item.scss';
+@use '../components/list-skeleton.scss';
 
 .qc-list-widget {
   border-radius: var(--qc-lw-border-radius);

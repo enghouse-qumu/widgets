@@ -8,5 +8,5 @@
       ]
     },
   },
-  "include": ["src", "test", "dev", "vite.config.ts"],
+  "include": ["src", "test", "vite.config.ts"],
 }

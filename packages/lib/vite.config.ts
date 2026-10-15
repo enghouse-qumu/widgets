@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
 import path from 'node:path';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons-ng';
 import dts from 'vite-plugin-dts';
@@ -36,7 +36,7 @@ export default defineConfig({
       targets: [
         {
           dest: '', // copy directly to dist root
-          src: path.resolve(__dirname, 'src/locales'),
+          src: normalizePath(path.resolve(__dirname, 'src/locales')),
         },
       ],
     }),
