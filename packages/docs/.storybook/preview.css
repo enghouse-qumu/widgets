@@ -7,3 +7,21 @@
   white-space: break-spaces;
   line-height: 1.3;
 }
+
+@media (max-width: 1280px) {
+  /* Let the long values of the tables (types, function signatures…) wrap at their spaces on narrow screens */
+  .sbdocs-content td code {
+    white-space: break-spaces;
+  }
+
+  /* On narrow screens, a table wider than the page scrolls on its own instead of widening the page */
+  .sbdocs-content table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  /* Keep the descriptions readable instead of squeezing them into a few words per line */
+  .sbdocs-content td:last-child {
+    min-width: 16em;
+  }
+}
