@@ -1,0 +1,228 @@
+.qc-widget {
+  .qc-list-item {
+    background-color: var(--qc-lw-item-background-color);
+    border: var(--qc-lw-item-border);
+    border-radius: var(--qc-lw-item-border-radius);
+    box-shadow: var(--qc-lw-item-box-shadow);
+    box-sizing: border-box;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font: inherit;
+    gap: var(--qc-lw-item-thumbnail-gap, 8px);
+    margin: 0;
+    padding: var(--qc-lw-item-padding);
+    text-align: start;
+    width: 100%;
+
+    // hovered, or its play button focused with the keyboard
+    &:hover,
+    &:has(.qc-thumbnail:focus-visible) {
+      background-color: var(--qc-lw-item-hover-background-color, var(--qc-lw-item-background-color));
+      border: var(--qc-lw-item-hover-border, var(--qc-lw-item-border));
+
+      .qc-list-item__field {
+        color: var(--qc-lw-field-hover-color, var(--qc-lw-field-color, inherit));
+      }
+
+      .qc-list-item__label {
+        color: var(
+          --qc-lw-field-hover-label-color,
+          var(--qc-lw-field-label-color, color-mix(in srgb, currentColor 70%, transparent))
+        );
+      }
+
+      .qc-thumbnail__play-button--default {
+        background-color: var(--qc-lw-item-play-button-hover-background-color);
+        color: var(--qc-lw-item-play-button-hover-color);
+      }
+    }
+
+    // the focus ring is drawn around the whole item rather than its play button. Not `:focus-within`, which also
+    // matches the focus given by a mouse click, and the focus of the links in the info fields
+    &:has(.qc-thumbnail:focus-visible) {
+      outline: auto;
+      outline-offset: 2px;
+
+      .qc-thumbnail {
+        outline: none;
+      }
+    }
+
+    // pressed, after the hover and focus styles so it takes precedence
+    &:active {
+      border: var(--qc-lw-item-active-border, var(--qc-lw-item-hover-border, var(--qc-lw-item-border)));
+
+      .qc-thumbnail__play-button--default {
+        background-color: var(--qc-lw-item-play-button-active-background-color);
+        color: var(--qc-lw-item-play-button-active-color);
+      }
+    }
+
+    &__body {
+      align-items: flex-start;
+      display: flex;
+      gap: var(--qc-lw-item-thumbnail-gap, 12px);
+      min-width: 0;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--qc-lw-item-field-gap);
+      margin: 0;
+      min-width: 0;
+
+      &--left,
+      &--right {
+        flex: 1 1 0;
+      }
+    }
+
+    // the play button of the item
+    // the structure of the thumbnail is in thumbnail.scss
+    .qc-thumbnail {
+      appearance: none;
+      aspect-ratio: var(--qc-lw-item-thumbnail-aspect-ratio);
+      border: var(--qc-lw-item-thumbnail-border);
+      border-radius: var(--qc-lw-item-thumbnail-border-radius);
+      box-sizing: border-box;
+      color: inherit;
+      flex: 1 1 0;
+      font: inherit;
+      isolation: isolate;
+      margin: 0;
+      min-width: 0;
+      place-items: var(--qc-lw-item-play-button-position);
+    }
+
+    .qc-thumbnail__image {
+      object-fit: var(--qc-lw-item-thumbnail-image-fit);
+    }
+
+    // the play button and the duration badge share the single cell of the thumbnail grid,
+    // each one is placed with its own position
+    .qc-thumbnail__play-button {
+      grid-area: 1 / 1;
+      height: var(--qc-lw-item-play-button-height);
+      margin: var(--qc-lw-item-play-button-margin);
+      width: var(--qc-lw-item-play-button-width);
+
+      &--default {
+        background-color: var(--qc-lw-item-play-button-background-color);
+        border-radius: var(--qc-lw-item-play-button-border-radius);
+        color: var(--qc-lw-item-play-button-color);
+        padding: var(--qc-lw-item-play-button-padding);
+      }
+    }
+
+    &__duration {
+      background-color: var(--qc-lw-item-duration-badge-background-color);
+      border-radius: var(--qc-lw-item-duration-badge-border-radius);
+      color: var(--qc-lw-item-duration-badge-color);
+      font-family: var(--qc-lw-item-duration-badge-font-family, inherit);
+      font-size: var(--qc-lw-item-duration-badge-font-size);
+      font-variant-numeric: tabular-nums;
+      font-weight: var(--qc-lw-item-duration-badge-font-weight);
+      grid-area: 1 / 1;
+      letter-spacing: var(--qc-lw-item-duration-badge-letter-spacing, inherit);
+      line-height: 1.4;
+      margin: 8px;
+      padding: var(--qc-lw-item-duration-badge-padding);
+      place-self: var(--qc-lw-item-duration-badge-position);
+      // above the play button when they overlap
+      position: relative;
+      text-transform: var(--qc-lw-item-duration-badge-text-transform, inherit);
+    }
+
+    // per-field tokens are set inline on each field from `style.item.metadata[field]`
+    &__field {
+      color: var(--qc-lw-field-color, inherit);
+      display: block;
+      font-family: var(--qc-lw-field-font-family, inherit);
+      font-size: var(--qc-lw-field-font-size, 14px);
+      font-weight: var(--qc-lw-field-font-weight, 400);
+      letter-spacing: var(--qc-lw-field-letter-spacing, inherit);
+      line-height: 1.4;
+      // the `padding` option, as a margin: a field has no background nor border so it looks the same,
+      // and the bottom padding of a clamped field would show the first hidden line
+      margin: var(--qc-lw-field-padding, 0);
+      overflow-wrap: anywhere;
+      text-transform: var(--qc-lw-field-text-transform, inherit);
+
+      // the term and the value on the same line
+      > dt,
+      > dd {
+        display: inline;
+        margin: 0;
+      }
+
+      // only when `lineClamp` is set: `-webkit-line-clamp` requires the legacy `-webkit-box` layout,
+      // which would otherwise stack the label and the value in Firefox
+      &--clamp {
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: var(--qc-lw-field-line-clamp);
+        display: -webkit-box;
+        line-clamp: var(--qc-lw-field-line-clamp);
+        overflow: hidden;
+      }
+
+      &[data-field='title'] {
+        font-size: var(--qc-lw-field-font-size, 16px);
+        font-weight: var(--qc-lw-field-font-weight, 600);
+      }
+    }
+
+    // Markdown of metadata values, rendered by the API
+    &__value--html {
+      // inline with the label, like a single paragraph which is unwrapped
+      > p:first-child {
+        display: inline;
+      }
+
+      p,
+      ul,
+      ol,
+      blockquote,
+      pre {
+        margin: 0;
+      }
+
+      p + p,
+      p + ul,
+      p + ol {
+        margin-top: .25em;
+      }
+
+      ul,
+      ol {
+        padding-inline-start: 1.25em;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: .15em;
+
+        // derived from the current text color, so it stays visible whatever the field colors are:
+        // a tint of the color and a thicker underline, which does not depend on the color at all
+        &:hover {
+          background-color: color-mix(in srgb, currentColor 15%, transparent);
+          border-radius: 2px;
+          text-decoration-thickness: .15em;
+        }
+      }
+    }
+
+    &__label {
+      color: var(--qc-lw-field-label-color, color-mix(in srgb, currentColor 70%, transparent));
+    }
+  }
+
+  &.qc-list-widget--vertical .qc-thumbnail {
+    flex: 0 0 var(--qc-lw-item-thumbnail-width);
+    max-width: 50%;
+  }
+}

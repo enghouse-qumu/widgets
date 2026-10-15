@@ -1,6 +1,19 @@
 {
     "common": {
+        "Close": "閉じる",
         "PLAY_PRESENTATION": "プレゼンテーションを再生: {{title}}",
         "Presentation not found": "プレゼンテーションが見つかりません"
+    },
+    "list": {
+        "No": "いいえ",
+        "No presentations found": "プレゼンテーションは見つかりませんでした",
+        "Yes": "はい",
+        "fields": {
+            "duration": "再生時間",
+            "publishOn": "公開日",
+            "publisher": "発行元",
+            "summary": "まとめ",
+            "title": "タイトル"
+        }
     }
 }

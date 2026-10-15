@@ -125,7 +125,7 @@ export class ConfigurationService {
     return configuration;
   }
 
-  private validatePlayerParameters(playerParameters: Partial<PlayerParameters> | undefined): void {
+  validatePlayerParameters(playerParameters: Partial<PlayerParameters> | undefined): void {
     if (!playerParameters) {
       return;
     }

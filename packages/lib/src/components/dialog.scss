@@ -34,7 +34,7 @@ html:has(.qc-dialog dialog[open]) {
 
     &__close-button {
       background-color: var(--qc-pw-close-button-background-color);
-      border-radius: 100%;
+      border-radius: var(--qc-pw-close-button-border-radius);
       border: none;
       box-shadow: var(--qc-pw-close-button-box-shadow);
       color: var(--qc-pw-close-button-color);

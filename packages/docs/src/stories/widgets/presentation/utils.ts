@@ -23,6 +23,7 @@ export interface Args {
   styleCloseButtonActiveBackgroundColor: WidgetStyle['closeButton']['activeBackgroundColor'];
   styleCloseButtonActiveColor: WidgetStyle['closeButton']['activeColor'];
   styleCloseButtonBackgroundColor: WidgetStyle['closeButton']['backgroundColor'];
+  styleCloseButtonBorderRadius: WidgetStyle['closeButton']['borderRadius'];
   styleCloseButtonBoxShadow: WidgetStyle['closeButton']['boxShadow'];
   styleCloseButtonColor: WidgetStyle['closeButton']['color'];
   styleCloseButtonHoverBackgroundColor: WidgetStyle['closeButton']['hoverBackgroundColor'];
@@ -44,6 +45,7 @@ export interface Args {
   stylePlayButtonActiveBackgroundColor: WidgetStyle['playButton']['activeBackgroundColor'];
   stylePlayButtonActiveColor: WidgetStyle['playButton']['activeColor'];
   stylePlayButtonBackgroundColor: WidgetStyle['playButton']['backgroundColor'];
+  stylePlayButtonBorderRadius: WidgetStyle['playButton']['borderRadius'];
   stylePlayButtonColor: WidgetStyle['playButton']['color'];
   stylePlayButtonHoverBackgroundColor: WidgetStyle['playButton']['hoverBackgroundColor'];
   stylePlayButtonHoverColor: WidgetStyle['playButton']['hoverColor'];
@@ -88,6 +90,10 @@ export function getPlaygroundConfigurationFromArgs(args: Partial<Args>): Omit<Wi
 
   if (args.styleCloseButtonBackgroundColor) {
     closeButton.backgroundColor = args.styleCloseButtonBackgroundColor;
+  }
+
+  if (args.styleCloseButtonBorderRadius) {
+    closeButton.borderRadius = args.styleCloseButtonBorderRadius;
   }
 
   if (args.styleCloseButtonBoxShadow) {
@@ -164,6 +170,10 @@ export function getPlaygroundConfigurationFromArgs(args: Partial<Args>): Omit<Wi
 
   if (args.stylePlayButtonBackgroundColor) {
     playButton.backgroundColor = args.stylePlayButtonBackgroundColor;
+  }
+
+  if (args.stylePlayButtonBorderRadius) {
+    playButton.borderRadius = args.stylePlayButtonBorderRadius;
   }
 
   if (args.stylePlayButtonColor) {

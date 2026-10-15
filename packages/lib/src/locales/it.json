@@ -1,6 +1,19 @@
 {
     "common": {
+        "Close": "Vicino",
         "PLAY_PRESENTATION": "Presentazione del gioco: {{title}}",
         "Presentation not found": "Presentazione non trovata"
+    },
+    "list": {
+        "No": "NO",
+        "No presentations found": "Nessuna presentazione trovata",
+        "Yes": "SÌ",
+        "fields": {
+            "duration": "Durata",
+            "publishOn": "Pubblicato il",
+            "publisher": "Pubblicato da",
+            "summary": "Riepilogo",
+            "title": "Titolo"
+        }
     }
 }

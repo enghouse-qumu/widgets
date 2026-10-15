@@ -1,6 +1,19 @@
 {
     "common": {
+        "Close": "Schließen",
         "PLAY_PRESENTATION": "Präsentation spielen: {{title}}",
         "Presentation not found": "Präsentation nicht gefunden"
+    },
+    "list": {
+        "No": "NEIN",
+        "No presentations found": "Keine Präsentationen gefunden",
+        "Yes": "Ja",
+        "fields": {
+            "duration": "Dauer",
+            "publishOn": "Veröffentlicht am",
+            "publisher": "Herausgegeben von",
+            "summary": "Zusammenfassung",
+            "title": "Titel"
+        }
     }
 }

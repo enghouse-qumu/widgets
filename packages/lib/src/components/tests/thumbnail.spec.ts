@@ -245,4 +245,58 @@ describe('ThumbnailComponent', () => {
       expect(playIcon).toHaveAttribute('alt', '');
     });
   });
+
+  // used by the list widget items, which handle the click themselves
+  describe('Reuse', () => {
+    const renderReused = (props: Record<string, unknown> = {}) => render(createElement(ThumbnailComponent, {
+      presentation: mockPresentation,
+      widgetOptions: {},
+      ...props,
+    })).container;
+
+    it('should always render the qc-thumbnail classes, styled by each widget', () => {
+      const container = renderReused({ widgetOptions: { playIconUrl: 'https://example.com/play.svg' } });
+
+      expect(container.querySelector('button')).toHaveClass('qc-thumbnail');
+      expect(container.querySelector('.qc-thumbnail__image')).toBeInTheDocument();
+      expect(container.querySelector('img.qc-thumbnail__play-button')).toHaveAttribute('src', 'https://example.com/play.svg');
+    });
+
+    it('should only set the loading attribute of the image when given', () => {
+      expect(renderReused().querySelector('.qc-thumbnail__image')).not.toHaveAttribute('loading');
+      document.body.innerHTML = '';
+      expect(renderReused({ loading: 'lazy' }).querySelector('.qc-thumbnail__image')).toHaveAttribute('loading', 'lazy');
+    });
+
+    it('should render its children, e.g. the duration badge', () => {
+      const container = renderReused({ children: createElement('span', { class: 'qc-list-item__duration' }, '01:05') });
+
+      expect(container.querySelector('button .qc-list-item__duration')?.textContent).toBe('01:05');
+    });
+
+    it('should be described by the given elements', () => {
+      const description = document.createElement('span');
+
+      description.id = 'description';
+      description.textContent = 'Published by Jane Doe';
+      document.body.append(description);
+
+      renderReused({ describedBy: 'description' });
+
+      expect(screen.getByRole('button', {
+        description: 'Published by Jane Doe',
+        name: 'common.PLAY_PRESENTATION',
+      })).toBeInTheDocument();
+    });
+
+    it('should leave the click to its parent when there is no onClick', () => {
+      const parentClick = vi.fn();
+      const container = renderReused();
+
+      container.addEventListener('click', parentClick);
+      fireEvent.click(container.querySelector('button')!);
+
+      expect(parentClick).toHaveBeenCalledTimes(1);
+    });
+  });
 });
