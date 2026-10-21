@@ -1,0 +1,235 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import { Tip } from '../../../components/Tip.jsx';
+import * as Stories from './playlist.stories.ts';
+
+<Meta
+  title="Widgets/Playlist"
+/>
+
+
+# Playlist widget
+
+The playlist widget plays several presentations one after the other, in a persistent player.
+
+It shows the player, a control bar and the list of the presentations. Clicking a row plays its presentation; when a presentation ends, the next one starts. The widget remembers what the viewer watched, so they can continue where they left off.
+
+## Basic Usage
+
+By default, the widget shows the thumbnail of the first presentation, the control bar and a row per presentation, with its title and duration. Here, the first 6 presentations of a saved Smart Search.
+
+<Canvas of={Stories.Basic}/>
+
+## Recipes
+
+### Hide the player
+
+`showPlayer: false` hides the video and keeps the control bar and the list, for audio-style playlists like podcasts. The player is still loaded and plays the sound. With a `height`, the list takes the remaining height and scrolls.
+
+<Canvas of={Stories.HiddenPlayer}/>
+
+### Choose the row fields
+
+The rows have 2 slots: `left`, which takes the remaining width, and `right`, aligned at the end. They take the same fields as the [list widget](?path=/docs/widgets-list--docs#fields), including metadata fields. The rows show one line per field; `lineClamp` allows more.
+
+<Canvas of={Stories.RowFields}/>
+
+### Style the widget
+
+Every part can be styled: the player, the control bar and its menus, the list, the rows and their current and watched states, and each field separately. Here, an indigo control bar, rounded rows and a fixed height: the list scrolls.
+
+<Canvas of={Stories.Styling}/>
+
+### Follow the playback
+
+`onItemChange` is called when the current item changes, and `onPlaylistEnd` when the last item ends. Play the first item and let the playlist run.
+
+<Canvas of={Stories.Events}/>
+
+### Control the playlist from your page
+
+The widget instance has methods to change the current item, and gives access to the [Player SDK](https://qumu.github.io/player-sdk/) of the current item's player, e.g. to seek or listen to its events.
+
+<Canvas of={Stories.InstanceApi}/>
+
+<Tip title="The Player SDK changes with the item">Each item is played in a new player: `playerSdk` returns the SDK of the current one. It is `undefined` before the first item is loaded.</Tip>
+
+
+## Behavior
+
+- **First item:** `playbackMode` defines how the first item starts: its thumbnail (`inline`), its player paused (`inline-autoload`), or playing (`inline-autoplay`). The following items always play automatically.
+- **Selection:** clicking a row plays its presentation. Clicking the current row plays or pauses it. The current row is highlighted, and scrolled into view inside the list; the page itself never scrolls.
+- **Auto-advance:** when an item ends, the next one plays. With `trackProgress`, the next unwatched item is preferred. After the last item, the playlist stops and calls `onPlaylistEnd`, or continues with the first item with `loop`.
+- **Previous and next:** the buttons go to the adjacent items, watched or not. They are disabled at the ends of the playlist, unless `loop` is set.
+- **Progress:** with `trackProgress`, the progress of each presentation is saved in the browser (`localStorage`, key `qumu-widget-progress`). The playlist starts from the first unwatched item, a partially watched item resumes where the viewer left it and shows its watched time (`00:08 / 00:20`), and watched items show a replay icon. Without storage, e.g. in a private window, the progress is not tracked.
+- **Viewer choices:** the captions, audio track, volume, quality and playback speed chosen by the viewer are kept for the following items.
+- **Controls:** the widget renders its own control bar, the same for every presentation: `playerParameters.showControlPanel` is ignored. The optional buttons are hidden when the current item has nothing to offer, e.g. the captions button without captions. On touch devices, the volume slider is replaced by the mute button only.
+- **Live events:** a live event shows a Live badge instead of the seek bar, and the audience reactions while it runs. Auto-advance skips the live events which have already ended.
+- **Hidden player:** with `showPlayer: false`, the captions, quality and fullscreen buttons are hidden, and the player uses the lowest quality, `240p`, unless `playerParameters.quality` is set.
+- **Loops:** `playerParameters.loop` loops the current item and disables the auto-advance; it takes precedence over `loop`.
+- **Keyboard:** every control is a native button or slider. The seek bar moves by 5 seconds with the arrow keys and by 10% with Page Up and Page Down; the menus are navigated with the arrow keys and closed with Escape. The focus ring of a row is drawn around the whole row.
+- **Screen readers:** the widget is a region named "Playlist", the control bar a group named "Player controls". Each row's button is named after the presentation title and described by the other fields and its state (now playing, watched or in progress). The new item is announced after an auto-advance or previous/next.
+- **Formatting:** the dates and the durations are formatted for the language of the page, see [Localization](?path=/docs/getting-started-localization--docs).
+- **No results:** the widget shows a "No presentations found" message when the source returns no presentations, or when they cannot be fetched.
+
+
+## API
+
+### PlaylistWidget
+
+| Property/Method                                                                           | Type                                         | Description                                                                                                                                                  |
+|-------------------------------------------------------------------------------------------|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| version                                                                                   | `string`                                     | The widget's version.                                                                                                                                        |
+| currentIndex                                                                              | `number`                                     | The index of the current item, `-1` when the playlist is empty.                                                                                              |
+| presentations                                                                             | `Presentation[]`                             | The presentations of the playlist.                                                                                                                           |
+| playerSdk                                                                                 | `PlayerSdk \| undefined`                     | The [Player SDK](https://qumu.github.io/player-sdk/) of the current item's player. It changes with the item, and is `undefined` before the player is loaded. |
+| static create(configuration: [PlaylistWidgetConfiguration](#playlistwidgetconfiguration)) | `Promise<PlaylistWidget>`                    | Create the widget.                                                                                                                                           |
+| select(indexOrGuid: number \| string, play = true)                                        | `void`                                       | Select an item, by its index or the GUID of its presentation, and play it unless `play` is `false`.                                                          |
+| next()                                                                                    | `void`                                       | Play the next item.                                                                                                                                          |
+| previous()                                                                                | `void`                                       | Play the previous item.                                                                                                                                      |
+| destroy()                                                                                 | `void`                                       | Destroy the widget and clean up the DOM.                                                                                                                     |
+
+
+### PlaylistWidgetConfiguration
+
+| Property         | Type                                                                                       | Required | Default                                             | Description                                                                                                                                                                                          |
+|------------------|--------------------------------------------------------------------------------------------|----------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| selector         | `string \| HTMLElement`                                                                    | **Yes**  | `''`                                                | Defines the HTML element to create the widget into. It can be a HTMLElement or a string used by [document.querySelector()](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector). |
+| source           | [ListWidgetSource](?path=/docs/widgets-list--docs#listwidgetsource)                        | **Yes**  | `undefined`                                         | <p>Defines the presentations to play, the same as the list widget.</p><p>`limit` defaults to `100`, or the number of `presentationGuids`.</p>                                                        |
+| locales          | `Record<string, object>`                                                                   | No       | `undefined`                                         | Defines extra translations, see [Localization](?path=/docs/getting-started-localization--docs).                                                                                                      |
+| playerParameters | [Partial&lt;PlayerParameters&gt;](?path=/docs/widgets-presentation--docs#playerparameters) | No       | `undefined`                                         | <p>Defines the parameters to add to the Qumu Cloud player of every item, the same as the presentation widget.</p><p>`start` only applies to the first item, `showControlPanel` is ignored.</p>       |
+| widgetOptions    | [Partial&lt;PlaylistWidgetOptions&gt;](#playlistwidgetoptions)                             | No       | See [PlaylistWidgetOptions](#playlistwidgetoptions) | Defines the widget options.                                                                                                                                                                          |
+
+
+### PlaylistWidgetOptions
+
+| Property      | Type                                                                     | Default                                         | Description                                                                                                                                                                                                                                |
+|---------------|--------------------------------------------------------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| playbackMode  | `string`                                                                 | `'inline'`                                      | <p>Defines how the first item starts. The following items always play automatically.</p><ul><li>`inline`: show its thumbnail, load the player when the viewer clicks play.</li><li>`inline-autoload`: load the player, paused.</li><li>`inline-autoplay`: load the player and start the playback.</li></ul> |
+| controls      | [Partial&lt;PlaylistControls&gt;](#playlistcontrols)                     | All shown                                       | Defines the optional buttons of the control bar.                                                                                                                                                                                           |
+| showPlayer    | `boolean`                                                                | `true`                                          | Defines whether the player is shown. `false` hides it, for audio-style playlists: the player is still loaded and plays the sound.                                                                                                         |
+| loop          | `boolean`                                                                | `false`                                         | Defines whether the playlist continues with the first item after the last one.                                                                                                                                                            |
+| trackProgress | `boolean`                                                                | `true`                                          | Defines whether the progress of each presentation is saved in the browser, to resume it and show the watched items.                                                                                                                       |
+| item          | [Partial&lt;PlaylistItemTemplateConfig&gt;](#playlistitemtemplateconfig) | See [PlaylistItemTemplateConfig](#playlistitemtemplateconfig) | Defines the content of the rows.                                                                                                                                                                                         |
+| playIconUrl   | `string`                                                                 | `undefined`                                     | Defines the URL to a custom play icon image, shown over the thumbnail of the first item.                                                                                                                                                   |
+| style         | [Partial&lt;PlaylistWidgetStyle&gt;](#playlistwidgetstyle)               | `undefined`                                     | Defines the style of the widget.                                                                                                                                                                                                           |
+| onIframeLoad  | `(iframe: HTMLIFrameElement) => void`                                    | `undefined`                                     | Method triggered once the player iframe of an item is loaded.                                                                                                                                                                              |
+| onItemChange  | `(presentation: Presentation, index: number) => void`                    | `undefined`                                     | Method triggered when the current item changes, and once for the first item.                                                                                                                                                              |
+| onPlaylistEnd | `() => void`                                                             | `undefined`                                     | Method triggered when the last item ends, unless `loop` is set.                                                                                                                                                                            |
+
+
+### PlaylistControls
+
+The play/pause, previous and next buttons, the seek bar and the times are always shown. An optional button is also hidden when the current item has nothing to offer.
+
+| Property          | Type      | Default | Description                                                                                            |
+|-------------------|-----------|---------|--------------------------------------------------------------------------------------------------------|
+| volume            | `boolean` | `true`  | Defines whether the mute button and the volume slider are shown. The slider is not shown on touch devices. |
+| audioTracks       | `boolean` | `true`  | Defines whether the audio track menu is shown, when the item has several audio tracks.                |
+| captions          | `boolean` | `true`  | Defines whether the captions menu is shown, when the item has captions. Not shown when `showPlayer` is `false`. |
+| playbackRate      | `boolean` | `true`  | Defines whether the playback speed is shown in the settings menu.                                      |
+| quality           | `boolean` | `true`  | Defines whether the quality is shown in the settings menu. Not shown when `showPlayer` is `false`.     |
+| audienceReactions | `boolean` | `true`  | Defines whether the audience reactions menu is shown, for the running live events.                     |
+| fullscreen        | `boolean` | `true`  | Defines whether the fullscreen button is shown, for the player and the control bar. Not shown when `showPlayer` is `false`. |
+
+
+### PlaylistItemTemplateConfig
+
+| Property | Type                                                                                                     | Default                                                                         | Description                                                                                                                                    |
+|----------|----------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| info     | `Partial<Record<'left' \| 'right', InfoFieldConfig[]>>`                                                  | `{ left: [{ field: 'title' }], right: [{ field: 'duration', label: false }] }` | <p>Defines the fields to show in each slot of the rows, in order. See [InfoFieldConfig](?path=/docs/widgets-list--docs#infofieldconfig) and the [fields](?path=/docs/widgets-list--docs#fields) of the list widget.</p><p>When set, it replaces the default fields entirely.</p> |
+
+With `trackProgress`, the `duration` field of a partially watched item also shows its watched time, e.g. `00:08 / 00:20`.
+
+
+### PlaylistWidgetStyle
+
+<Tip title="Colors">The `color` properties accept any CSS color, e.g. `#1d4ed8`, `rgb(0 0 0 / .8)` or `light-dark(#000, #fff)`.</Tip>
+
+#### Widget
+
+| Property     | Default | Description                                                                                  |
+|--------------|---------|----------------------------------------------------------------------------------------------|
+| borderRadius | `0`     | The border radius of the widget container.                                                   |
+| height       | `auto`  | The height of the widget container. When set, the list takes the remaining height and scrolls. |
+| width        | `100%`  | The width of the widget container.                                                           |
+| gap          | `0`     | The spacing between the rows.                                                                |
+
+#### Player
+
+| Property               | Default                     | Description                                                                                                        |
+|------------------------|-----------------------------|--------------------------------------------------------------------------------------------------------------------|
+| player.aspectRatio     | the presentation's, or `16:9` | The aspect ratio of the player, e.g. `4:3` or `4/3`. By default, the one of the current presentation.            |
+| player.backgroundColor | `#000`                      | The background color of the player, behind the letterboxing and while loading.                                     |
+| player.maxHeight       | `none`                      | The maximum height of the player.                                                                                  |
+| player.playButton.*    | See the presentation widget | The play button over the thumbnail of the first item: the same properties as the [presentation widget's play button](?path=/docs/widgets-presentation--docs#widgetstyle), with a `44px` size, `16px` margin and `100%` border radius. |
+
+#### Control Bar
+
+| Property                               | Default                  | Description                                                          |
+|----------------------------------------|--------------------------|----------------------------------------------------------------------|
+| controls.backgroundColor               | `#09091a`                | The background color of the control bar.                             |
+| controls.color                         | `#f5f8fa`                | The color of the times.                                              |
+| controls.fontFamily                    | inherited                | The font family of the control bar.                                  |
+| controls.fontSize                      | `12px`                   | The font size of the control bar.                                    |
+| controls.gap                           | `4px`                    | The spacing between the rows and the buttons of the control bar.     |
+| controls.padding                       | `8px 12px`               | The padding of the control bar.                                      |
+| controls.buttons.backgroundColor       | `transparent`            | The background color of the buttons.                                 |
+| controls.buttons.color                 | `#f5f8fa`                | The color of the buttons.                                            |
+| controls.buttons.hoverBackgroundColor  | `rgb(255 255 255 / .15)` | The background color of the buttons on hover, and while their menu is open. |
+| controls.buttons.hoverColor            | `#f5f8fa`                | The color of the buttons on hover.                                   |
+| controls.buttons.iconSize              | `28px`                   | The size of the icons, which have an inner margin. Smaller when the widget is under 240px wide. |
+| controls.buttons.size                  | `36px`                   | The size of the buttons. Smaller when the widget is under 240px wide.|
+| controls.menu.backgroundColor          | `#09091ae6`              | The background color of the menus.                                   |
+| controls.menu.color                    | `#f5f8fa`                | The text color of the menus.                                         |
+| controls.menu.activeBackgroundColor    | `#f5f8fa33`              | The background color of the selected option.                         |
+| controls.menu.activeColor              | `#6cb4ff`                | The text color of the selected option.                               |
+| controls.menu.hoverBackgroundColor     | `#f5f8fa21`              | The background color of the options on hover and focus.              |
+| controls.menu.borderRadius             | `6px`                    | The border radius of the menus.                                      |
+| controls.timeline.height               | `4px`                    | The height of the seek bar and the volume slider.                    |
+| controls.timeline.progressColor        | `#f5f8fa`                | The color of the elapsed part.                                       |
+| controls.timeline.thumbColor           | `#f5f8fa`                | The color of the slider thumb.                                       |
+| controls.timeline.trackColor           | `rgb(245 248 250 / .3)`  | The color of the remaining part.                                    |
+
+#### List and Rows
+
+| Property                  | Default                                                | Description                                                              |
+|---------------------------|--------------------------------------------------------|--------------------------------------------------------------------------|
+| list.backgroundColor      | `transparent`                                          | The background color of the list.                                        |
+| list.maxHeight            | `none`                                                 | The maximum height of the list, which then scrolls.                      |
+| item.backgroundColor      | `transparent`                                          | The background color of the rows.                                        |
+| item.hoverBackgroundColor | `light-dark(rgb(0 0 0 / .05), rgb(255 255 255 / .08))` | The background color of the rows on hover, and when their button has the keyboard focus. |
+| item.activeBackgroundColor | `light-dark(rgb(0 0 0 / .1), rgb(255 255 255 / .16))` | The background color of the current row.                                 |
+| item.activeColor          | inherited                                              | The text color of the current row.                                       |
+| item.watchedColor         | `light-dark(rgb(0 0 0 / .6), rgb(255 255 255 / .6))`   | The text color of the watched rows.                                      |
+| item.statusIconColor      | the text color                                         | The color of the play, pause and replay icons of the rows.               |
+| item.border               | `none`                                                 | The border of the rows.                                                  |
+| item.hoverBorder          | `item.border`                                          | The border of the rows on hover, and when their button has the keyboard focus. |
+| item.activeBorder         | `item.hoverBorder`                                     | The border of the rows when pressed.                                     |
+| item.borderRadius         | `0`                                                    | The border radius of the rows.                                           |
+| item.boxShadow            | `none`                                                 | The box shadow of the rows.                                              |
+| item.padding              | `8px 12px`                                             | The padding inside the rows.                                             |
+| item.fieldGap             | `2px`                                                  | The spacing between the fields of a slot.                                |
+
+#### Fields
+
+Each field is styled separately, keyed by its `field`, with the same properties as the [list widget's fields](?path=/docs/widgets-list--docs#fields-1). In the rows, the fields default to `14px`, the title in a `500` weight, and show a single line unless `lineClamp` is set.
+
+```js
+style: {
+  item: {
+    metadata: {
+      title: { fontWeight: '600' },
+      duration: { color: '#6b7280', fontSize: '12px' },
+    },
+  },
+},
+```
+
+#### Not Found
+
+The same as the presentation widget: see `notFound.*` in its [WidgetStyle](?path=/docs/widgets-presentation--docs#widgetstyle).
+
+
+## Playground
+
+The [playground](?path=/story/stories-widgets-playlist--playground) offers a live editor to try out different configurations. You can find the different properties in the Controls panel.
