@@ -167,7 +167,10 @@ export class ListConfigurationService {
     return configuration;
   }
 
-  private validateSource(validatedSource: ListWidgetSource): void {
+  /**
+   * Validates the data source, shared with the PlaylistWidget: unsupported fields are removed with a warning
+   */
+  validateSource(validatedSource: ListWidgetSource): void {
     // the configuration is not trusted: every property is checked, including the combinations the type does not allow
     const source = validatedSource as UncheckedSource;
 
@@ -285,8 +288,13 @@ export class ListConfigurationService {
       throw new Error('`widgetOptions.style.columns` must be either "auto" or a positive integer');
     }
 
-    const info = widgetOptions.item?.info;
+    this.validateItemInfo(widgetOptions.item?.info, infoSlots);
+  }
 
+  /**
+   * Validates the info fields of the item template, shared with the PlaylistWidget, which supports fewer slots
+   */
+  validateItemInfo(info: Partial<Record<string, InfoFieldConfig[]>> | undefined, slots: readonly string[]): void {
     if (info === undefined) {
       return;
     }
@@ -296,8 +304,10 @@ export class ListConfigurationService {
     }
 
     Object.entries(info).forEach(([slot, fields]) => {
-      if (!infoSlots.includes(slot as InfoSlot)) {
-        throw new Error(`\`widgetOptions.item.info.${slot}\` is not a supported slot, use "top", "left", "right" or "bottom"`);
+      if (!slots.includes(slot)) {
+        const names = slots.map((name) => `"${name}"`);
+
+        throw new Error(`\`widgetOptions.item.info.${slot}\` is not a supported slot, use ${names.slice(0, -1).join(', ')} or ${names.at(-1)}`);
       }
 
       if (!Array.isArray(fields)) {

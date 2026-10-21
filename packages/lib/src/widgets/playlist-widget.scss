@@ -1,0 +1,215 @@
+@use '../styles/variables.scss';
+@use '../styles/playlist-variables.scss';
+@use '../styles/screenreader.scss';
+@use '../components/icon.scss';
+@use '../components/player.scss';
+@use '../components/thumbnail.scss';
+@use '../components/not-found.scss';
+@use '../components/info-field.scss';
+@use '../components/list-skeleton.scss';
+@use '../components/menu-button.scss';
+@use '../components/playlist-controls.scss';
+@use '../components/playlist-item.scss';
+
+.qc-playlist-widget {
+  border-radius: var(--qc-plw-border-radius);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: var(--qc-plw-height);
+  isolation: isolate;
+  width: var(--qc-plw-width);
+
+  > .qc-not-found {
+    min-height: 200px;
+  }
+
+  // the player and the control bar, put in fullscreen together
+  .qc-playlist__player-area {
+    border-start-end-radius: inherit;
+    border-start-start-radius: inherit;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    overflow: visible;
+    position: relative;
+
+    &:fullscreen {
+      background-color: var(--qc-plw-player-background-color);
+      justify-content: center;
+
+      .qc-playlist__player {
+        aspect-ratio: auto;
+        flex: 1 1 auto;
+        max-height: none;
+      }
+    }
+  }
+
+  .qc-playlist__player {
+    aspect-ratio: var(--qc-plw-player-aspect-ratio, var(--_qc-plw-item-aspect-ratio, 16 / 9));
+    background-color: var(--qc-plw-player-background-color);
+    border-radius: inherit;
+    max-height: var(--qc-plw-player-max-height);
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    // kept loaded and controllable, but visually hidden
+    &--hidden {
+      aspect-ratio: auto;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      width: 1px;
+    }
+
+    // while a menu is open, the clicks must not disappear into the iframe
+    &--menu-open iframe {
+      pointer-events: none;
+    }
+
+    &--skeleton {
+      aspect-ratio: var(--qc-plw-player-aspect-ratio, 16 / 9);
+    }
+
+    // the packshot before the first item is loaded
+    .qc-thumbnail {
+      height: 100%;
+      inset: 0;
+      // the image is behind the play button, not behind the player background
+      isolation: isolate;
+      place-items: var(--qc-plw-player-play-button-position);
+      position: absolute;
+      width: 100%;
+
+      &__image {
+        object-fit: cover;
+      }
+
+      &__play-button {
+        height: var(--qc-plw-player-play-button-height);
+        margin: var(--qc-plw-player-play-button-margin);
+        width: var(--qc-plw-player-play-button-width);
+
+        &--default {
+          background-color: var(--qc-plw-player-play-button-background-color);
+          border-radius: var(--qc-plw-player-play-button-border-radius);
+          color: var(--qc-plw-player-play-button-color);
+          padding: var(--qc-plw-player-play-button-padding);
+        }
+      }
+
+      &:hover .qc-thumbnail__play-button--default {
+        background-color: var(--qc-plw-player-play-button-hover-background-color);
+        color: var(--qc-plw-player-play-button-hover-color);
+      }
+
+      &:active .qc-thumbnail__play-button--default,
+      &:focus-visible .qc-thumbnail__play-button--default {
+        background-color: var(--qc-plw-player-play-button-active-background-color);
+        color: var(--qc-plw-player-play-button-active-color);
+      }
+    }
+  }
+
+  .qc-playlist__frame {
+    inset: 0;
+    position: absolute;
+
+    // replaced by the next item, removed shortly after
+    &--retiring {
+      visibility: hidden;
+    }
+  }
+
+  // with a widget height, the list takes the remaining height and scrolls
+  .qc-playlist__list,
+  .qc-list-skeleton {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .qc-playlist__list,
+  .qc-list--playlist {
+    background-color: var(--qc-plw-list-background-color);
+    border-end-end-radius: inherit;
+    border-end-start-radius: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: var(--qc-plw-gap);
+    list-style: none;
+    margin: 0;
+    max-height: var(--qc-plw-list-max-height);
+    padding: 0;
+  }
+
+  .qc-playlist__list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    // the offsets of the rows, to scroll the current one into view
+    position: relative;
+  }
+
+  .qc-playlist__item,
+  .qc-list__item {
+    display: flex;
+    margin: 0;
+    min-width: 0;
+    padding: 0;
+  }
+
+  // the ghost rows, with the layout of the real rows
+  .qc-list-skeleton {
+    .qc-list-item {
+      align-items: center;
+      background-color: var(--qc-plw-item-background-color);
+      border: var(--qc-plw-item-border);
+      border-radius: var(--qc-plw-item-border-radius);
+      box-sizing: border-box;
+      display: flex;
+      padding: var(--qc-plw-item-padding);
+      width: 100%;
+    }
+
+    .qc-list-item__body {
+      align-items: center;
+      display: flex;
+      flex: 1 1 auto;
+      gap: 12px;
+      min-width: 0;
+
+      // the place of the status icon
+      &::before {
+        background-color: var(--_qc-lw-ghost-color);
+        border-radius: 50%;
+        content: '';
+        flex: none;
+        // the size of the status icon, the glyph is smaller than its box
+        height: 24px;
+        transform: scale(.75);
+        width: 24px;
+      }
+    }
+
+    .qc-list-item__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--qc-plw-item-field-gap);
+      min-width: 0;
+
+      &--left {
+        flex: 1 1 0;
+      }
+
+      &--right {
+        flex: 0 0 48px;
+      }
+    }
+
+    .qc-list-item__field[data-field='title'] {
+      font-size: var(--qc-lw-field-font-size, 14px);
+    }
+  }
+}

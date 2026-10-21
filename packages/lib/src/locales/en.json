@@ -16,5 +16,36 @@
             "summary": "Summary",
             "title": "Title"
         }
+    },
+    "playlist": {
+        "Audio description": "Audio description",
+        "Audio track": "Audio track",
+        "Auto": "Auto",
+        "Captions": "Captions",
+        "Exit fullscreen": "Exit fullscreen",
+        "Fullscreen": "Fullscreen",
+        "In progress": "In progress",
+        "Live": "Live",
+        "Mute": "Mute",
+        "Next": "Next",
+        "Normal": "Normal",
+        "Now playing": "Now playing",
+        "NOW_PLAYING_TITLE": "Now playing {{title}}",
+        "Off": "Off",
+        "Original": "Original",
+        "Pause": "Pause",
+        "Play": "Play",
+        "Playback speed": "Playback speed",
+        "Player controls": "Player controls",
+        "Playlist": "Playlist",
+        "Previous": "Previous",
+        "Quality": "Quality",
+        "Reactions": "Reactions",
+        "Seek": "Seek",
+        "Settings": "Settings",
+        "TIME_OF_DURATION": "{{current}} of {{duration}}",
+        "Unmute": "Unmute",
+        "Volume": "Volume",
+        "Watched": "Watched"
     }
 }

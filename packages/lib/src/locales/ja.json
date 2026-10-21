@@ -16,5 +16,36 @@
             "summary": "まとめ",
             "title": "タイトル"
         }
+    },
+    "playlist": {
+        "Audio description": "音声解説",
+        "Audio track": "音声トラック",
+        "Auto": "自動",
+        "Captions": "字幕",
+        "Exit fullscreen": "全画面表示を終了",
+        "Fullscreen": "全画面表示",
+        "In progress": "視聴中",
+        "Live": "ライブ",
+        "Mute": "ミュート",
+        "Next": "次へ",
+        "Normal": "標準",
+        "Now playing": "再生中",
+        "NOW_PLAYING_TITLE": "再生中: {{title}}",
+        "Off": "オフ",
+        "Original": "オリジナル",
+        "Pause": "一時停止",
+        "Play": "再生",
+        "Playback speed": "再生速度",
+        "Player controls": "プレーヤーのコントロール",
+        "Playlist": "プレイリスト",
+        "Previous": "前へ",
+        "Quality": "画質",
+        "Reactions": "リアクション",
+        "Seek": "シーク",
+        "Settings": "設定",
+        "TIME_OF_DURATION": "{{current}} / {{duration}}",
+        "Unmute": "ミュート解除",
+        "Volume": "音量",
+        "Watched": "視聴済み"
     }
 }

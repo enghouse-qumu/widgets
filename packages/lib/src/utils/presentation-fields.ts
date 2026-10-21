@@ -105,6 +105,24 @@ export function formatDuration(durationMs: number): string {
   });
 }
 
+/**
+ * Formats a duration (in milliseconds) as words for the screen readers, e.g. "1 minute, 8 seconds"
+ */
+export function formatDurationText(durationMs: number): string {
+  const { hours, minutes, seconds } = toDurationParts(durationMs);
+  const { DurationFormat } = Intl as unknown as { DurationFormat: DurationFormatConstructor };
+
+  return new DurationFormat(useI18n().getLocale(), {
+    style: 'long',
+    // "0 seconds" rather than an empty text
+    ...(!hours && !minutes && { secondsDisplay: 'always' }),
+  }).format({
+    hours,
+    minutes,
+    seconds,
+  });
+}
+
 export function formatDate(value: Date | string | number, withTime = false): string {
   const date = value instanceof Date ? value : new Date(value);
 

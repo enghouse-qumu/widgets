@@ -16,5 +16,36 @@
             "summary": "Resumo",
             "title": "Título"
         }
+    },
+    "playlist": {
+        "Audio description": "Audiodescrição",
+        "Audio track": "Faixa de áudio",
+        "Auto": "Automático",
+        "Captions": "Legendas",
+        "Exit fullscreen": "Sair da tela cheia",
+        "Fullscreen": "Tela cheia",
+        "In progress": "Em andamento",
+        "Live": "Ao vivo",
+        "Mute": "Desativar som",
+        "Next": "Próximo",
+        "Normal": "Normal",
+        "Now playing": "Reproduzindo",
+        "NOW_PLAYING_TITLE": "Reproduzindo {{title}}",
+        "Off": "Desativadas",
+        "Original": "Original",
+        "Pause": "Pausar",
+        "Play": "Reproduzir",
+        "Playback speed": "Velocidade de reprodução",
+        "Player controls": "Controles do player",
+        "Playlist": "Playlist",
+        "Previous": "Anterior",
+        "Quality": "Qualidade",
+        "Reactions": "Reações",
+        "Seek": "Buscar",
+        "Settings": "Configurações",
+        "TIME_OF_DURATION": "{{current}} de {{duration}}",
+        "Unmute": "Ativar som",
+        "Volume": "Volume",
+        "Watched": "Assistido"
     }
 }

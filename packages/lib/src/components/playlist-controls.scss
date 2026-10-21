@@ -1,0 +1,212 @@
+// the control bar of the playlist widget, see playlist-controls.tsx
+@mixin range-track {
+  background: linear-gradient(
+    to right,
+    var(--qc-plw-controls-timeline-progress-color) var(--_qc-plw-progress, 0%),
+    var(--qc-plw-controls-timeline-track-color) var(--_qc-plw-progress, 0%)
+  );
+  border-radius: var(--qc-plw-controls-timeline-height);
+  height: var(--qc-plw-controls-timeline-height);
+}
+
+@mixin range-thumb {
+  background-color: var(--qc-plw-controls-timeline-thumb-color);
+  border: none;
+  border-radius: 50%;
+  height: 12px;
+  width: 12px;
+}
+
+.qc-widget {
+  .qc-playlist-controls {
+    // the narrow layout below 240px, see the container query
+    container-type: inline-size;
+    background-color: var(--qc-plw-controls-background-color);
+    box-sizing: border-box;
+    color: var(--qc-plw-controls-color);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--qc-plw-controls-font-family, inherit);
+    font-size: var(--qc-plw-controls-font-size);
+    gap: var(--qc-plw-controls-gap);
+    padding: var(--qc-plw-controls-padding);
+    width: 100%;
+
+    &__timeline {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      min-height: 20px;
+    }
+
+    &__time {
+      flex: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__live {
+      background-color: #d32f2f;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: .04em;
+      padding: 1px 8px;
+      text-transform: uppercase;
+    }
+
+    &__seek,
+    &__volume-slider {
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      height: 16px;
+      margin: 0;
+      min-width: 0;
+
+      &::-webkit-slider-runnable-track {
+        @include range-track;
+      }
+
+      &::-moz-range-track {
+        @include range-track;
+      }
+
+      &::-webkit-slider-thumb {
+        @include range-thumb;
+
+        appearance: none;
+        margin-top: calc((var(--qc-plw-controls-timeline-height) - 12px) / 2);
+      }
+
+      &::-moz-range-thumb {
+        @include range-thumb;
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: .5;
+      }
+
+      &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+    }
+
+    &__seek {
+      flex: 1 1 auto;
+    }
+
+    &__bar {
+      align-items: center;
+      display: grid;
+      gap: var(--qc-plw-controls-gap);
+      grid-template-columns: 1fr auto 1fr;
+    }
+
+    &__start,
+    &__center,
+    &__end {
+      align-items: center;
+      display: flex;
+      gap: var(--qc-plw-controls-gap);
+    }
+
+    &__start {
+      justify-self: start;
+    }
+
+    &__end {
+      justify-self: end;
+    }
+
+    &__button {
+      appearance: none;
+      background-color: var(--qc-plw-controls-buttons-background-color);
+      border: none;
+      border-radius: 50%;
+      color: var(--qc-plw-controls-buttons-color);
+      cursor: pointer;
+      display: grid;
+      flex: none;
+      height: var(--qc-plw-controls-buttons-size);
+      margin: 0;
+      padding: 0;
+      place-items: center;
+      width: var(--qc-plw-controls-buttons-size);
+
+      svg {
+        height: var(--qc-plw-controls-buttons-icon-size);
+        width: var(--qc-plw-controls-buttons-icon-size);
+      }
+
+      &:hover:not(:disabled),
+      &[aria-expanded='true'] {
+        background-color: var(--qc-plw-controls-buttons-hover-background-color);
+        color: var(--qc-plw-controls-buttons-hover-color);
+      }
+
+      &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: -2px;
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: .4;
+      }
+
+      &--play svg {
+        height: calc(var(--qc-plw-controls-buttons-icon-size) * 1.2);
+        width: calc(var(--qc-plw-controls-buttons-icon-size) * 1.2);
+      }
+    }
+
+    // the previous button uses the next icon, like the legacy widget
+    &__icon--flip {
+      transform: scaleX(-1);
+    }
+
+    // the slider shows when the volume is hovered or focused
+    &__volume {
+      align-items: center;
+      display: flex;
+
+      .qc-playlist-controls__volume-slider {
+        opacity: 0;
+        transition: opacity .2s, width .2s;
+        width: 0;
+      }
+
+      &:hover,
+      &:focus-within {
+        .qc-playlist-controls__volume-slider {
+          margin-inline: 4px;
+          opacity: 1;
+          width: 72px;
+        }
+      }
+    }
+
+    &--disabled {
+      pointer-events: none;
+    }
+
+    @container (max-width: 240px) {
+      .qc-playlist-controls__button {
+        --qc-plw-controls-buttons-icon-size: 22px;
+        --qc-plw-controls-buttons-size: 28px;
+      }
+
+      .qc-playlist-controls__volume-slider {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .qc-playlist-controls__volume-slider {
+        transition: none;
+      }
+    }
+  }
+}

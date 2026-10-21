@@ -16,5 +16,36 @@
             "summary": "Riepilogo",
             "title": "Titolo"
         }
+    },
+    "playlist": {
+        "Audio description": "Audiodescrizione",
+        "Audio track": "Traccia audio",
+        "Auto": "Automatica",
+        "Captions": "Sottotitoli",
+        "Exit fullscreen": "Esci da schermo intero",
+        "Fullscreen": "Schermo intero",
+        "In progress": "In corso",
+        "Live": "In diretta",
+        "Mute": "Disattiva audio",
+        "Next": "Successivo",
+        "Normal": "Normale",
+        "Now playing": "In riproduzione",
+        "NOW_PLAYING_TITLE": "In riproduzione: {{title}}",
+        "Off": "Disattivati",
+        "Original": "Originale",
+        "Pause": "Pausa",
+        "Play": "Riproduci",
+        "Playback speed": "Velocità di riproduzione",
+        "Player controls": "Controlli del lettore",
+        "Playlist": "Playlist",
+        "Previous": "Precedente",
+        "Quality": "Qualità",
+        "Reactions": "Reazioni",
+        "Seek": "Cerca",
+        "Settings": "Impostazioni",
+        "TIME_OF_DURATION": "{{current}} di {{duration}}",
+        "Unmute": "Riattiva audio",
+        "Volume": "Volume",
+        "Watched": "Visto"
     }
 }
