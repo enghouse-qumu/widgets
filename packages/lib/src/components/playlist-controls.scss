@@ -1,0 +1,260 @@
+// the control bar of the playlist widget, see playlist-controls.tsx
+@mixin range-track {
+  background: linear-gradient(
+    to right,
+    var(--_qc-plw-progress-color, var(--_qc-plw-slider-color)) var(--_qc-plw-progress, 0%),
+    var(--_qc-plw-track-color) var(--_qc-plw-progress, 0%)
+  );
+  border-radius: var(--qc-plw-controls-timeline-height);
+  height: var(--qc-plw-controls-timeline-height);
+}
+
+@mixin range-thumb {
+  background-color: var(--_qc-plw-slider-color);
+  border: none;
+  border-radius: 50%;
+  height: 12px;
+  width: 12px;
+}
+
+.qc-widget {
+  .qc-playlist-controls {
+    // the narrow layout below 240px, see the container query
+    container-type: inline-size;
+    // the menus are positioned above the control bar
+    position: relative;
+    background-color: var(--_qc-plw-background);
+    box-sizing: border-box;
+    color: var(--_qc-plw-color);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--qc-plw-controls-font-family, inherit);
+    font-size: var(--qc-plw-controls-font-size);
+    gap: var(--qc-plw-controls-gap);
+    padding: var(--qc-plw-controls-padding);
+    width: 100%;
+
+    &__timeline {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      min-height: 20px;
+    }
+
+    &__time {
+      flex: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__live {
+      background-color: #d32f2f;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: .04em;
+      padding: 1px 8px;
+      text-transform: uppercase;
+    }
+
+    &__seek,
+    &__volume-slider {
+      // the thumb and the volume level, darker on hover and while dragged, like the player
+      --_qc-plw-slider-color: var(--_qc-plw-color);
+
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      height: 16px;
+      margin: 0;
+      min-width: 0;
+
+      &::-webkit-slider-runnable-track {
+        @include range-track;
+      }
+
+      &::-moz-range-track {
+        @include range-track;
+      }
+
+      &::-webkit-slider-thumb {
+        @include range-thumb;
+
+        appearance: none;
+        margin-top: calc((var(--qc-plw-controls-timeline-height) - 12px) / 2);
+      }
+
+      &::-moz-range-thumb {
+        @include range-thumb;
+      }
+
+      &:hover:not(:disabled) {
+        --_qc-plw-slider-color: var(--_qc-plw-slider-hover-color);
+      }
+
+      &:active:not(:disabled) {
+        --_qc-plw-slider-color: var(--_qc-plw-slider-active-color);
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: .5;
+      }
+
+      // the ring is around the thumb only, like the player
+      &:focus-visible {
+        outline: none;
+      }
+
+      &:focus-visible::-webkit-slider-thumb {
+        box-shadow: var(--_qc-plw-focus-ring);
+      }
+
+      &:focus-visible::-moz-range-thumb {
+        box-shadow: var(--_qc-plw-focus-ring);
+      }
+    }
+
+    &__seek {
+      // the played part in the primary color, like the player; the volume level in the general color
+      --_qc-plw-progress-color: var(--_qc-plw-primary-background);
+
+      flex: 1 1 auto;
+
+      // the thumb shows on hover and keyboard focus, like the player; always on touch devices
+      @media (hover: hover) {
+        &::-webkit-slider-thumb {
+          transition: opacity .2s, transform .2s;
+        }
+
+        &::-moz-range-thumb {
+          transition: opacity .2s, transform .2s;
+        }
+
+        &:not(:hover, :focus-visible)::-webkit-slider-thumb {
+          opacity: 0;
+          transform: scale(0);
+        }
+
+        &:not(:hover, :focus-visible)::-moz-range-thumb {
+          opacity: 0;
+          transform: scale(0);
+        }
+      }
+    }
+
+    &__bar {
+      align-items: center;
+      display: grid;
+      gap: var(--qc-plw-controls-gap);
+      grid-template-columns: 1fr auto 1fr;
+    }
+
+    &__start,
+    &__center,
+    &__end {
+      align-items: center;
+      display: flex;
+      gap: var(--qc-plw-controls-gap);
+    }
+
+    &__start {
+      justify-self: start;
+    }
+
+    &__end {
+      justify-self: end;
+    }
+
+    &__button {
+      appearance: none;
+      background-color: transparent;
+      border: none;
+      border-radius: 50%;
+      color: inherit;
+      cursor: pointer;
+      display: grid;
+      flex: none;
+      height: var(--qc-plw-controls-buttons-size);
+      margin: 0;
+      padding: 0;
+      place-items: center;
+      width: var(--qc-plw-controls-buttons-size);
+
+      svg {
+        height: var(--qc-plw-controls-buttons-icon-size);
+        width: var(--qc-plw-controls-buttons-icon-size);
+      }
+
+      &:hover:not(:disabled),
+      &[aria-expanded='true'] {
+        background-color: var(--_qc-plw-hover-background);
+      }
+
+      &:active:not(:disabled) {
+        background-color: var(--_qc-plw-active-background);
+      }
+
+      &:focus-visible {
+        box-shadow: var(--_qc-plw-focus-ring);
+        outline: none;
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: .5;
+      }
+
+      &--play svg {
+        height: calc(var(--qc-plw-controls-buttons-icon-size) * 1.2);
+        width: calc(var(--qc-plw-controls-buttons-icon-size) * 1.2);
+      }
+    }
+
+    // the previous button uses the next icon, like the legacy widget
+    &__icon--flip {
+      transform: scaleX(-1);
+    }
+
+    // the slider shows when the volume is hovered or focused
+    &__volume {
+      align-items: center;
+      display: flex;
+
+      .qc-playlist-controls__volume-slider {
+        opacity: 0;
+        transition: opacity .2s, width .2s;
+        width: 0;
+      }
+
+      &:hover,
+      &:focus-within {
+        .qc-playlist-controls__volume-slider {
+          margin-inline: 4px;
+          opacity: 1;
+          width: 72px;
+        }
+      }
+    }
+
+    &--disabled {
+      pointer-events: none;
+    }
+
+    @container (max-width: 240px) {
+      .qc-playlist-controls__button {
+        --qc-plw-controls-buttons-icon-size: 22px;
+        --qc-plw-controls-buttons-size: 28px;
+      }
+
+      .qc-playlist-controls__volume-slider {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .qc-playlist-controls__volume-slider {
+        transition: none;
+      }
+    }
+  }
+}

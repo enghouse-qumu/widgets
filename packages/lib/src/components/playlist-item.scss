@@ -1,0 +1,110 @@
+// the rows of the playlist widget, see playlist-item.tsx. The fields are styled by info-field.scss
+.qc-widget {
+  .qc-playlist-item {
+    align-items: center;
+    background-color: var(--qc-plw-item-background-color);
+    border: var(--qc-plw-item-border);
+    border-radius: var(--qc-plw-item-border-radius);
+    box-shadow: var(--qc-plw-item-box-shadow);
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    padding: var(--qc-plw-item-padding);
+    width: 100%;
+
+    &:hover,
+    &:has(.qc-playlist-item__button:focus-visible) {
+      background-color: var(--qc-plw-item-hover-background-color, var(--qc-plw-item-background-color));
+      border: var(--qc-plw-item-hover-border, var(--qc-plw-item-border));
+
+      .qc-list-item__field {
+        color: var(--qc-lw-field-hover-color, var(--qc-lw-field-color, inherit));
+      }
+
+      .qc-list-item__label {
+        color: var(
+          --qc-lw-field-hover-label-color,
+          var(--qc-lw-field-label-color, color-mix(in srgb, currentColor 70%, transparent))
+        );
+      }
+    }
+
+    // the focus ring is drawn around the whole row rather than its button
+    &:has(.qc-playlist-item__button:focus-visible) {
+      outline: auto;
+      outline-offset: -2px;
+
+      .qc-playlist-item__button {
+        outline: none;
+      }
+    }
+
+    &--watched {
+      color: var(--qc-plw-item-watched-color);
+    }
+
+    &--active,
+    &--active:hover {
+      background-color: var(--qc-plw-item-active-background-color);
+      color: var(--qc-plw-item-active-color);
+    }
+
+    &:active {
+      border: var(--qc-plw-item-active-border, var(--qc-plw-item-hover-border, var(--qc-plw-item-border)));
+    }
+
+    &__button {
+      align-items: center;
+      appearance: none;
+      background: none;
+      border: none;
+      color: var(--qc-plw-item-status-icon-color);
+      cursor: pointer;
+      display: flex;
+      flex: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    &__status {
+      height: 24px;
+      width: 24px;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--qc-plw-item-field-gap);
+      margin: 0;
+      min-width: 0;
+
+      &--left {
+        flex: 1 1 0;
+      }
+
+      &--right {
+        flex: none;
+        margin-inline-start: auto;
+        text-align: end;
+      }
+    }
+
+    // one line per field by default, to keep the list compact; `lineClamp` allows more
+    .qc-list-item__field {
+      font-variant-numeric: tabular-nums;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      &--clamp {
+        white-space: normal;
+      }
+
+      &[data-field='title'] {
+        font-size: var(--qc-lw-field-font-size, 14px);
+        font-weight: var(--qc-lw-field-font-weight, 500);
+      }
+    }
+  }
+}

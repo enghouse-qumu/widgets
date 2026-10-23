@@ -1,19 +1,22 @@
 import { InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
 import { useI18n } from '@/i18n';
-import { getFieldStyle, MetadataStyle } from './list-item';
+import { getFieldStyle, MetadataStyle } from './info-field';
 
 interface Props {
   count: number;
-  item: ItemTemplateConfig;
-  layout: 'grid' | 'vertical';
+  item: Pick<ItemTemplateConfig, 'info'>;
+  // the list layout, or `playlist` for the rows of the PlaylistWidget
+  layout: 'grid' | 'vertical' | 'playlist';
   metadataStyle?: MetadataStyle;
+  // whether the items have a thumbnail, the playlist rows have none
+  thumbnail?: boolean;
 }
 
 /**
  * The "ghost" items shown while the presentations are loading. They use the classes of the real items, so they follow
  * the layout and the item styling (padding, border, thumbnail size…) and the page does not jump when the data arrives.
  */
-export function ListSkeletonComponent({ count, item, layout, metadataStyle }: Readonly<Props>) {
+export function ListSkeletonComponent({ count, item, layout, metadataStyle, thumbnail = true }: Readonly<Props>) {
   const i18n = useI18n();
 
   // a line per configured field, the title thicker. Each line is inside a field with its style,
@@ -52,7 +55,7 @@ export function ListSkeletonComponent({ count, item, layout, metadataStyle }: Re
               {renderSlot('top')}
               <div class="qc-list-item__body">
                 {renderSlot('left')}
-                <span class="qc-thumbnail qc-list-skeleton__thumbnail"/>
+                {thumbnail && <span class="qc-thumbnail qc-list-skeleton__thumbnail"/>}
                 {renderSlot('right')}
               </div>
               {renderSlot('bottom')}

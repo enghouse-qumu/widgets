@@ -120,6 +120,33 @@ export class ListConfigurationService {
   }
 
   private validateAndSanitize(initialConfiguration: ListWidgetConfiguration): ListWidgetConfiguration {
+    this.validateSelectorAndSource(initialConfiguration);
+
+    const configuration: ListWidgetConfiguration = {
+      ...initialConfiguration,
+      playerParameters: { ...initialConfiguration.playerParameters },
+      source: { ...initialConfiguration.source } as ListWidgetSource,
+      widgetOptions: { ...initialConfiguration.widgetOptions },
+    };
+
+    Object.keys(configuration).forEach((field) => {
+      if (!supportedConfigFields.has(field)) {
+        console.warn(`Unsupported field \`${field}\` in configuration`);
+        delete configuration[field as keyof ListWidgetConfiguration];
+      }
+    });
+
+    this.validateSource(configuration.source);
+    this.configurationService.validatePlayerParameters(configuration.playerParameters);
+    this.validateWidgetOptions(configuration.widgetOptions!);
+
+    return configuration;
+  }
+
+  /**
+   * Validates the configuration object, its selector and the presence of its source, shared with the PlaylistWidget
+   */
+  validateSelectorAndSource(initialConfiguration: Pick<ListWidgetConfiguration, 'selector' | 'source'>): void {
     if (!initialConfiguration || typeof initialConfiguration !== 'object') {
       throw new Error('Configuration must be a valid object');
     }
@@ -145,29 +172,12 @@ export class ListConfigurationService {
     if (!initialConfiguration.source || typeof initialConfiguration.source !== 'object') {
       throw new TypeError('`source` must be a valid object');
     }
-
-    const configuration: ListWidgetConfiguration = {
-      ...initialConfiguration,
-      playerParameters: { ...initialConfiguration.playerParameters },
-      source: { ...initialConfiguration.source } as ListWidgetSource,
-      widgetOptions: { ...initialConfiguration.widgetOptions },
-    };
-
-    Object.keys(configuration).forEach((field) => {
-      if (!supportedConfigFields.has(field)) {
-        console.warn(`Unsupported field \`${field}\` in configuration`);
-        delete configuration[field as keyof ListWidgetConfiguration];
-      }
-    });
-
-    this.validateSource(configuration.source);
-    this.configurationService.validatePlayerParameters(configuration.playerParameters);
-    this.validateWidgetOptions(configuration.widgetOptions!);
-
-    return configuration;
   }
 
-  private validateSource(validatedSource: ListWidgetSource): void {
+  /**
+   * Validates the data source, shared with the PlaylistWidget: unsupported fields are removed with a warning
+   */
+  validateSource(validatedSource: ListWidgetSource): void {
     // the configuration is not trusted: every property is checked, including the combinations the type does not allow
     const source = validatedSource as UncheckedSource;
 
@@ -285,13 +295,18 @@ export class ListConfigurationService {
       throw new Error('`widgetOptions.style.columns` must be either "auto" or a positive integer');
     }
 
-    const info = widgetOptions.item?.info;
+    this.validateItemInfo(widgetOptions.item?.info);
+  }
 
+  /**
+   * Validates the info fields of the item template, shared with the PlaylistWidget, which removes its unsupported slots first
+   */
+  validateItemInfo(info: Partial<Record<string, InfoFieldConfig[]>> | undefined): void {
     if (info === undefined) {
       return;
     }
 
-    if (!info || typeof info !== 'object') {
+    if (!info || typeof info !== 'object' || Array.isArray(info)) {
       throw new TypeError('`widgetOptions.item.info` must be an object');
     }
 

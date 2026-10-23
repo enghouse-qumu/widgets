@@ -12,6 +12,8 @@
     "./presentation-widget.css": "./dist/presentation-widget.css",
     "./list-widget.js": "./dist/list-widget.js",
     "./list-widget.css": "./dist/list-widget.css",
+    "./playlist-widget.js": "./dist/playlist-widget.js",
+    "./playlist-widget.css": "./dist/playlist-widget.css",
     "./locales/*": "./dist/locales/*"
   },
   "files": [
@@ -26,6 +28,9 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest watch"
+  },
+  "dependencies": {
+    "@qumu/player-sdk": "3.3.2"
   },
   "devDependencies": {
     "@qumu/eslint-config": "1.0.6",

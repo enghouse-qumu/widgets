@@ -88,17 +88,50 @@ function toDurationParts(durationMs: number) {
   };
 }
 
+// the formatters are reused: the times of the PlaylistWidget are formatted several times per second
+const durationFormats = new Map<string, InstanceType<DurationFormatConstructor>>();
+
+function getDurationFormat(locale: string, style: 'digital' | 'long', secondsDisplay?: 'always') {
+  const key = `${locale}|${style}|${secondsDisplay ?? ''}`;
+
+  let format = durationFormats.get(key);
+
+  if (!format) {
+    const { DurationFormat } = Intl as unknown as { DurationFormat: DurationFormatConstructor };
+
+    format = new DurationFormat(locale, {
+      style,
+      ...(style === 'digital' && { hoursDisplay: 'auto' }),
+      ...(secondsDisplay && { secondsDisplay }),
+    });
+    durationFormats.set(key, format);
+  }
+
+  return format;
+}
+
 /**
  * Formats a duration (in milliseconds) as a locale-aware digital clock value, e.g. "1:02:03" or "04:05"
  */
 export function formatDuration(durationMs: number): string {
   const { hours, minutes, seconds } = toDurationParts(durationMs);
-  const { DurationFormat } = Intl as unknown as { DurationFormat: DurationFormatConstructor };
 
-  return new DurationFormat(useI18n().getLocale(), {
-    hoursDisplay: 'auto',
-    style: 'digital',
-  }).format({
+  return getDurationFormat(useI18n().getLocale(), 'digital').format({
+    hours,
+    minutes,
+    seconds,
+  });
+}
+
+/**
+ * Formats a duration (in milliseconds) as words for the screen readers, e.g. "1 minute, 8 seconds"
+ */
+export function formatDurationText(durationMs: number): string {
+  const { hours, minutes, seconds } = toDurationParts(durationMs);
+  // "0 seconds" rather than an empty text
+  const format = getDurationFormat(useI18n().getLocale(), 'long', !hours && !minutes ? 'always' : undefined);
+
+  return format.format({
     hours,
     minutes,
     seconds,

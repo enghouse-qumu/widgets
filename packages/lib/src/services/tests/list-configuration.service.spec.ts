@@ -218,6 +218,7 @@ describe('ListConfigurationService', () => {
       [{ onItemClick: 'nope' }, '`widgetOptions.onItemClick` must be a function'],
       [{ onIframeLoad: 1 }, '`widgetOptions.onIframeLoad` must be a function'],
       [{ style: { columns: 0 } }, '`widgetOptions.style.columns` must be either "auto" or a positive integer'],
+      [{ item: { info: [] } }, '`widgetOptions.item.info` must be an object'],
       [{ item: { info: { over: [] } } }, '`widgetOptions.item.info.over` is not a supported slot'],
       [{ item: { info: { top: 'title' } } }, '`widgetOptions.item.info.top` must be an array'],
       [{ item: { info: { top: [{}] } } }, '`widgetOptions.item.info.top[0].field` must be a non-empty string'],

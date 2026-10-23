@@ -127,7 +127,7 @@ describe('PlayerComponent', () => {
     const iframe = screen.getByTitle('Test Presentation');
 
     expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute('src', 'https://example.com/player?autoplay=false');
+    expect(iframe.getAttribute('src')).toMatch(/^https:\/\/example\.com\/player\?autoplay=false&qcPlayerId=[a-z0-9]+-\d+$/);
     expect(iframe).toHaveAttribute('width', '100%');
     expect(iframe).toHaveAttribute('height', '100%');
     expect(iframe).toHaveAttribute('allow', 'autoplay; fullscreen');
@@ -229,10 +229,23 @@ describe('PlayerComponent', () => {
 
       const iframe = screen.getByTitle('Test Presentation');
 
-      expect(iframe).toHaveAttribute(
-        'src',
-        'https://example.com/player?autoplay=false&captions=en&debug=true&loop=true&playerConfigurationGuid=config-guid-123&pv=sbs&quality=720p&reporting=true&reportingId=my-reporting-id-12345&showControlPanel=true&sidebar=true&speech=&speechTerm=&start=45&volume=50',
-      );
+      expect(iframe.getAttribute('src')).toMatch(new RegExp(String.raw`^https://example\.com/player\?autoplay=false&captions=en&debug=true&loop=true&playerConfigurationGuid=config-guid-123&pv=sbs&quality=720p&reporting=true&reportingId=my-reporting-id-12345&showControlPanel=true&sidebar=true&speech=&speechTerm=&start=45&volume=50&qcPlayerId=[a-z0-9]+-\d+$`));
     });
+  });
+
+  it('should give each player of the same presentation its own URL, which the Player SDK identifies it by', () => {
+    const renderPlayer = () => render(createElement(PlayerComponent, {
+      playerParameters: {},
+      presentation: mockPresentation,
+      widgetOptions: { playbackMode: 'inline-autoload' },
+    }));
+
+    renderPlayer();
+    renderPlayer();
+
+    const [first, second] = screen.getAllByTitle('Test Presentation').map((iframe) => iframe.getAttribute('src'));
+
+    expect(first).not.toBe(second);
+    expect(new URL(first!).searchParams.get('qcPlayerId')).toBeTruthy();
   });
 });
