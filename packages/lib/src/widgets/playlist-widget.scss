@@ -1,0 +1,255 @@
+@use '../styles/variables.scss';
+@use '../styles/playlist-variables.scss';
+@use '../styles/screenreader.scss';
+@use '../components/icon.scss';
+@use '../components/player.scss';
+@use '../components/thumbnail.scss';
+@use '../components/not-found.scss';
+@use '../components/info-field.scss';
+@use '../components/list-skeleton.scss';
+@use '../components/menu-button.scss';
+@use '../components/playlist-controls.scss';
+@use '../components/playlist-item.scss';
+
+.qc-playlist-widget {
+  // the colors of the control bar, derived from its 4 colors like the player, see its variables and CssColorsService:
+  // https://github.com/enghouse-qumu/components/blob/master/src/sass/player/_variables.scss
+  --_qc-plw-background: var(--qc-plw-controls-general-background-color);
+  --_qc-plw-color: var(--qc-plw-controls-general-color);
+  --_qc-plw-primary-background: var(--qc-plw-controls-primary-background-color);
+  --_qc-plw-primary-color: var(--qc-plw-controls-primary-color);
+  // the transparent buttons and the menu items
+  --_qc-plw-hover-background: color-mix(in srgb, var(--_qc-plw-color) 13%, transparent);
+  --_qc-plw-active-background: color-mix(in srgb, var(--_qc-plw-color) 20%, transparent);
+  --_qc-plw-menu-background: color-mix(in srgb, var(--_qc-plw-background) 90%, transparent);
+  --_qc-plw-track-color: color-mix(in srgb, var(--_qc-plw-color) 30%, transparent);
+  // approximations of the lightness shifts below, for the browsers without relative colors
+  --_qc-plw-separator-color: color-mix(in srgb, var(--_qc-plw-color) 15%, var(--_qc-plw-background));
+  --_qc-plw-slider-hover-color: color-mix(in srgb, var(--_qc-plw-color) 92%, var(--_qc-plw-background));
+  --_qc-plw-slider-active-color: color-mix(in srgb, var(--_qc-plw-color) 85%, var(--_qc-plw-background));
+  // the keyboard focus ring of the controls and the menu items, like the player: a 3px ring 2px away from the element
+  --_qc-plw-focus-ring:
+    0 0 0 2px var(--_qc-plw-background),
+    0 0 0 5px var(--_qc-plw-primary-background);
+
+  border-radius: var(--qc-plw-border-radius);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: var(--qc-plw-height);
+  isolation: isolate;
+  width: var(--qc-plw-width);
+
+  // the lightness shifts of the player: darker for a light text color, lighter for a dark one
+  @supports (color: rgb(from red r g b)) {
+    // the alpha tells whether the text color is light (1) or dark (.5), with the brightness formula of the player
+    --_qc-plw-color-tagged: rgb(from var(--_qc-plw-color) r g b / calc(.5 + .5 * clamp(0, (r * .299 + g * .587 + b * .114 - 102) * 1000, 1)));
+    // -75% when light, +55% when dark
+    --_qc-plw-separator-color: hsl(from var(--_qc-plw-color-tagged) h s calc(l + 55 - 260 * (alpha - .5)) / 1);
+    // -7.5% and -15% when light, + when dark
+    --_qc-plw-slider-hover-color: hsl(from var(--_qc-plw-color-tagged) h s calc(l + 7.5 - 30 * (alpha - .5)) / 1);
+    --_qc-plw-slider-active-color: hsl(from var(--_qc-plw-color-tagged) h s calc(l + 15 - 60 * (alpha - .5)) / 1);
+  }
+
+  > .qc-not-found {
+    min-height: 200px;
+  }
+
+  // the player and the control bar, put in fullscreen together
+  .qc-playlist__player-area {
+    border-start-end-radius: inherit;
+    border-start-start-radius: inherit;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    overflow: visible;
+    position: relative;
+
+    &:fullscreen {
+      background-color: var(--qc-plw-player-background-color);
+      justify-content: center;
+
+      .qc-playlist__player {
+        aspect-ratio: auto;
+        flex: 1 1 auto;
+        max-height: none;
+      }
+
+      // more room from the edges of the screen
+      .qc-playlist-controls {
+        padding: 12px 24px;
+
+        .qc-menu__list {
+          inset-inline-end: 24px;
+        }
+      }
+    }
+  }
+
+  .qc-playlist__player {
+    aspect-ratio: var(--qc-plw-player-aspect-ratio, var(--_qc-plw-item-aspect-ratio, 16 / 9));
+    background-color: var(--qc-plw-player-background-color);
+    border-radius: inherit;
+    max-height: var(--qc-plw-player-max-height);
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    // kept loaded and controllable, but visually hidden
+    &--hidden {
+      aspect-ratio: auto;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      width: 1px;
+    }
+
+    // while a menu is open, the clicks must not disappear into the iframe
+    &--menu-open iframe {
+      pointer-events: none;
+    }
+
+    &--skeleton {
+      aspect-ratio: var(--qc-plw-player-aspect-ratio, 16 / 9);
+    }
+
+    // the packshot before the first item is loaded
+    .qc-thumbnail {
+      height: 100%;
+      inset: 0;
+      // the image is behind the play button, not behind the player background
+      isolation: isolate;
+      place-items: var(--qc-plw-player-play-button-position);
+      position: absolute;
+      width: 100%;
+
+      &__image {
+        object-fit: cover;
+      }
+
+      &__play-button {
+        height: var(--qc-plw-player-play-button-height);
+        margin: var(--qc-plw-player-play-button-margin);
+        width: var(--qc-plw-player-play-button-width);
+
+        &--default {
+          background-color: var(--qc-plw-player-play-button-background-color);
+          border-radius: var(--qc-plw-player-play-button-border-radius);
+          color: var(--qc-plw-player-play-button-color);
+          padding: var(--qc-plw-player-play-button-padding);
+        }
+      }
+
+      &:hover .qc-thumbnail__play-button--default {
+        background-color: var(--qc-plw-player-play-button-hover-background-color);
+        color: var(--qc-plw-player-play-button-hover-color);
+      }
+
+      &:active .qc-thumbnail__play-button--default,
+      &:focus-visible .qc-thumbnail__play-button--default {
+        background-color: var(--qc-plw-player-play-button-active-background-color);
+        color: var(--qc-plw-player-play-button-active-color);
+      }
+    }
+  }
+
+  .qc-playlist__frame {
+    inset: 0;
+    position: absolute;
+
+    // replaced by the next item, removed shortly after
+    &--retiring {
+      visibility: hidden;
+    }
+  }
+
+  // with a widget height, the list takes the remaining height and scrolls
+  .qc-playlist__list,
+  .qc-list-skeleton {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .qc-playlist__list,
+  .qc-list--playlist {
+    background-color: var(--qc-plw-list-background-color);
+    border-end-end-radius: inherit;
+    border-end-start-radius: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: var(--qc-plw-gap);
+    list-style: none;
+    margin: 0;
+    max-height: var(--qc-plw-list-max-height);
+    padding: 0;
+  }
+
+  .qc-playlist__list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    // the offsets of the rows, to scroll the current one into view
+    position: relative;
+  }
+
+  .qc-playlist__item,
+  .qc-list__item {
+    display: flex;
+    margin: 0;
+    min-width: 0;
+    padding: 0;
+  }
+
+  // the ghost rows, with the layout of the real rows
+  .qc-list-skeleton {
+    .qc-list-item {
+      align-items: center;
+      background-color: var(--qc-plw-item-background-color);
+      border: var(--qc-plw-item-border);
+      border-radius: var(--qc-plw-item-border-radius);
+      box-sizing: border-box;
+      display: flex;
+      padding: var(--qc-plw-item-padding);
+      width: 100%;
+    }
+
+    .qc-list-item__body {
+      align-items: center;
+      display: flex;
+      flex: 1 1 auto;
+      gap: 12px;
+      min-width: 0;
+
+      // the place of the status icon
+      &::before {
+        background-color: var(--_qc-lw-ghost-color);
+        border-radius: 50%;
+        content: '';
+        flex: none;
+        // the size of the status icon, the glyph is smaller than its box
+        height: 24px;
+        transform: scale(.75);
+        width: 24px;
+      }
+    }
+
+    .qc-list-item__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--qc-plw-item-field-gap);
+      min-width: 0;
+
+      &--left {
+        flex: 1 1 0;
+      }
+
+      &--right {
+        flex: 0 0 48px;
+      }
+    }
+
+    .qc-list-item__field[data-field='title'] {
+      font-size: var(--qc-lw-field-font-size, 14px);
+    }
+  }
+}

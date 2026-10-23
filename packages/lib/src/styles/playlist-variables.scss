@@ -1,0 +1,62 @@
+:root {
+  /**
+   * /!\ IMPORTANT /!\
+   *
+   * Playlist widget specific tokens. The not found tokens are shared with the
+   * presentation widget (`--qc-pw-*`, see variables.scss)
+   */
+
+  // Playlist widget style
+  --qc-plw-border-radius: 0;
+  --qc-plw-height: auto;
+  --qc-plw-width: 100%;
+  --qc-plw-gap: 0; // between the rows
+
+  // Player
+  --qc-plw-player-background-color: #000;
+  --qc-plw-player-max-height: none;
+
+  // Play button over the packshot
+  --qc-plw-player-play-button-background-color: rgb(0 0 0 / .8);
+  --qc-plw-player-play-button-border-radius: 100%;
+  --qc-plw-player-play-button-color: #fff;
+  --qc-plw-player-play-button-margin: 16px;
+  --qc-plw-player-play-button-padding: 8px;
+  --qc-plw-player-play-button-hover-background-color: #000;
+  --qc-plw-player-play-button-hover-color: #fff;
+  --qc-plw-player-play-button-active-background-color: rgb(0 0 0 / .9);
+  --qc-plw-player-play-button-active-color: #fff;
+  --qc-plw-player-play-button-height: 44px;
+  --qc-plw-player-play-button-width: 44px;
+  --qc-plw-player-play-button-position: center;
+
+  // Control bar: the 4 colors of the player, the other colors are derived from them, see playlist-widget.scss
+  --qc-plw-controls-general-background-color: #09091a;
+  --qc-plw-controls-general-color: #f5f8fa;
+  --qc-plw-controls-primary-background-color: #00b0ff;
+  --qc-plw-controls-primary-color: #013b55;
+  --qc-plw-controls-font-size: 12px;
+  --qc-plw-controls-gap: 4px;
+  --qc-plw-controls-padding: 8px 12px;
+  --qc-plw-controls-buttons-icon-size: 28px; // the UI kit icons have an inner margin
+  --qc-plw-controls-buttons-size: 36px;
+  --qc-plw-controls-menu-border-radius: 10px;
+  --qc-plw-controls-timeline-height: 4px;
+
+  // List
+  --qc-plw-list-background-color: transparent;
+  --qc-plw-list-max-height: none;
+
+  // Item style
+  --qc-plw-item-active-background-color: light-dark(rgb(0 0 0 / .1), rgb(255 255 255 / .16));
+  --qc-plw-item-active-color: inherit;
+  --qc-plw-item-background-color: transparent;
+  --qc-plw-item-border: none;
+  --qc-plw-item-border-radius: 0;
+  --qc-plw-item-box-shadow: none;
+  --qc-plw-item-field-gap: 2px; // between the fields of a slot
+  --qc-plw-item-hover-background-color: light-dark(rgb(0 0 0 / .05), rgb(255 255 255 / .08));
+  --qc-plw-item-padding: 8px 12px;
+  --qc-plw-item-status-icon-color: currentColor;
+  --qc-plw-item-watched-color: light-dark(rgb(0 0 0 / .6), rgb(255 255 255 / .6));
+}

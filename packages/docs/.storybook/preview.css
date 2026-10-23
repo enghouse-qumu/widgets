@@ -2,6 +2,28 @@
   width: 100%;
 }
 
+/*
+ * A multi-line code block in a table cell, styled like the inline code of the tables. A table row is a single line in
+ * MDX, so the line breaks are "\n" in a JSX string: <pre className="code-block"><code>{"{\n  …\n}"}</code></pre>
+ * `pre.code-block` is more specific than the reset of Storybook, `.css-… :where(pre…):not(.prismjs)`
+ */
+.sbdocs-content pre.code-block {
+  background-color: rgb(0 0 0 / .01);
+  border: 1px solid rgb(0 0 0 / .05);
+  border-radius: 3px;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0 2px;
+  padding: 3px 5px;
+}
+
+/* more specific than the narrow screens rule below, which lets the code of the tables wrap */
+.sbdocs-content pre.code-block code {
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+}
+
 /* Break the CSS variables default value column to give some space to the definitions */
 #css-variables ~ table td:nth-child(2) code {
   white-space: break-spaces;
