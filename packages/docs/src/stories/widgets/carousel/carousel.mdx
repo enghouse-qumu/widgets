@@ -80,7 +80,7 @@ The custom arrows of the first example can also go over the edges of the items, 
 
 ### Handle the click yourself
 
-`onItemClick` replaces the modal, or the inline playback, e.g. to open the presentation in a page of your own application.
+`onItemClick` replaces the modal, or the inline player in every inline mode, e.g. to open the presentation in a page of your own application.
 
 <Canvas of={Stories.ItemClick}/>
 
@@ -95,7 +95,7 @@ The custom arrows of the first example can also go over the edges of the items, 
 - **Right-to-left:** on a right-to-left page, e.g. with `dir="rtl"`, the pages go from right to left: the previous arrow is on the right, the next one on the left, and swiping to the right shows the next page.
 - **Motion:** the page slides in `transitionDuration` (`300ms`). With the [reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion) preference, the page changes without sliding.
 - **Players:** only the current page of the inline modes has a player: the one of the previous page is removed when the slide is over. Then the current page follows the playback mode: `inline` shows the thumbnail and plays on click, `inline-autoload` loads the player, `inline-autoplay` loads and plays it.
-- **Playback:** in the `modal` playback mode, clicking an item opens the presentation in a modal. `onItemClick`, when set, replaces the modal and the `inline` playback.
+- **Playback:** in the `modal` playback mode, clicking an item opens the presentation in a modal. `onItemClick`, when set, replaces the modal and the inline player: in `inline-autoload` and `inline-autoplay` too, the items then stay clickable thumbnails.
 - **Loading:** while the presentations are loading, the widget shows placeholder items, the size of the first page.
 - **No results:** the widget shows a "No presentations found" message when the source returns no presentations, or when they cannot be fetched.
 - **Destroy:** `destroy()` removes the widget, its player and its listeners, and restores the classes and the style of the container.

@@ -441,7 +441,10 @@ export const ItemClick: Story = {
       },
       widgetOptions: {
         onItemClick(presentation: Presentation) {
-          logs.innerHTML += `<li>${presentation.title} (${presentation.guid})</li>`;
+          const log = document.createElement('li');
+
+          log.textContent = `${presentation.title} (${presentation.guid})`;
+          logs.append(log);
         },
       },
     }, widget);

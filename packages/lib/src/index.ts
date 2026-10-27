@@ -9,6 +9,7 @@ export type { ListWidgetConfiguration, ListWidgetOptions } from '@/interfaces/li
 export type { ListWidgetSource, ListWidgetSourceBase } from '@/interfaces/list-widget-source';
 export type { ListWidgetStyle } from '@/interfaces/list-widget-style';
 export type {
+  CarouselInfoSlot,
   CarouselItemTemplateConfig,
   CarouselWidgetConfiguration,
   CarouselWidgetOptions,

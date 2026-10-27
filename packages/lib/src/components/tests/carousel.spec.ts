@@ -378,6 +378,29 @@ describe('CarouselComponent', () => {
         expect(currentPage(container)).toBe(0);
       });
 
+      it('should capture the pointer once the finger moves, not on a tap', () => {
+        const { container } = renderCarousel();
+        const viewport = container.querySelector<HTMLElement>('.qc-carousel__viewport')!;
+
+        let captured = false;
+
+        viewport.hasPointerCapture = () => captured;
+        viewport.setPointerCapture = vi.fn(() => {
+          captured = true;
+        });
+
+        fireEvent.pointerDown(viewport, pointer(500));
+        fireEvent.pointerMove(viewport, pointer(505));
+
+        expect(viewport.setPointerCapture).not.toHaveBeenCalled();
+
+        fireEvent.pointerMove(viewport, pointer(450));
+        fireEvent.pointerMove(viewport, pointer(400));
+
+        expect(viewport.setPointerCapture).toHaveBeenCalledOnce();
+        expect(viewport.setPointerCapture).toHaveBeenCalledWith(1);
+      });
+
       it('should not swipe with the mouse', () => {
         const { container } = renderCarousel();
 
@@ -574,6 +597,21 @@ describe('CarouselComponent', () => {
 
       expect(onItemClick).toHaveBeenCalledWith(presentations[0]);
       expect(players()).toHaveLength(0);
+    });
+
+    it.each(['inline-autoload', 'inline-autoplay'] as const)('should call onItemClick instead of loading the player in the %s mode', (playbackMode) => {
+      const onItemClick = vi.fn();
+      const { container } = renderCarousel({
+        onItemClick,
+        playbackMode,
+      });
+
+      expect(players()).toHaveLength(0);
+      expect(container.querySelector('.qc-carousel')).not.toHaveClass('qc-carousel--autoload');
+
+      fireEvent.click(screen.getByText('A'));
+
+      expect(onItemClick).toHaveBeenCalledWith(presentations[0]);
     });
 
     it.each(['inline-autoload', 'inline-autoplay'] as const)('should load the player of the current slide only in the %s mode', (playbackMode) => {

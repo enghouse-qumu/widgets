@@ -123,7 +123,7 @@ export class CarouselConfigurationService {
       return;
     }
 
-    if (!widgetOptions.navigation || typeof widgetOptions.navigation !== 'object') {
+    if (!widgetOptions.navigation || typeof widgetOptions.navigation !== 'object' || Array.isArray(widgetOptions.navigation)) {
       throw new TypeError('`widgetOptions.navigation` must be an object');
     }
 

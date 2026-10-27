@@ -161,6 +161,7 @@ describe('CarouselConfigurationService', () => {
 
     it('should reject an invalid navigation', () => {
       expect(() => withOptions({ navigation: 'none' })).toThrow('`widgetOptions.navigation` must be an object');
+      expect(() => withOptions({ navigation: [] })).toThrow('`widgetOptions.navigation` must be an object');
       expect(() => withOptions({ navigation: { arrows: 'no' } })).toThrow('`widgetOptions.navigation.arrows` must be a boolean');
     });
 

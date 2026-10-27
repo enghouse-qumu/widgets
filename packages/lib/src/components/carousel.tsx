@@ -94,6 +94,8 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
   const { navigation, playbackMode, style } = widgetOptions;
   // several items per page in the modal mode, a single one in the inline modes
   const multiItem = playbackMode === 'modal';
+  // the player loads on its own, unless `onItemClick` replaces the playback: the items stay clickable
+  const autoload = (playbackMode === 'inline-autoload' || playbackMode === 'inline-autoplay') && !widgetOptions.onItemClick;
   const total = presentations.length;
 
   const [carouselId] = useState(() => `${idNamespace}-${++carouselCount}`);
@@ -285,6 +287,11 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
 
     drag.distance = event.clientX - drag.startX;
 
+    // keeps the swipe once the finger leaves the viewport. Not on press: a tap would then click the viewport, not the item
+    if (Math.abs(drag.distance) >= SWIPE_MIN_DISTANCE && !event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    }
+
     // resists beyond the first and last pages
     // towards the next pages: to the left, or to the right on a right-to-left page
     const forward = rtl ? drag.distance > 0 : drag.distance < 0;
@@ -349,7 +356,7 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
 
   const renderPage = (index: number) => {
     const items = presentations.slice(index * perPage, (index + 1) * perPage);
-    const hasPlayer = !multiItem && index === settledPage && (playbackMode !== 'inline' || playingPage === index);
+    const hasPlayer = index === settledPage && (autoload || (playbackMode === 'inline' && playingPage === index));
 
     return (
       <div
@@ -438,8 +445,8 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
     carouselClasses.push('qc-carousel--rtl');
   }
 
-  // the player loads on its own: the packshot shown until then has no play button
-  if (playbackMode === 'inline-autoload' || playbackMode === 'inline-autoplay') {
+  // the packshot shown until the player loads has no play button
+  if (autoload) {
     carouselClasses.push('qc-carousel--autoload');
   }
 
