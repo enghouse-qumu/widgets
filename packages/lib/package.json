@@ -12,6 +12,8 @@
     "./presentation-widget.css": "./dist/presentation-widget.css",
     "./list-widget.js": "./dist/list-widget.js",
     "./list-widget.css": "./dist/list-widget.css",
+    "./carousel-widget.js": "./dist/carousel-widget.js",
+    "./carousel-widget.css": "./dist/carousel-widget.css",
     "./locales/*": "./dist/locales/*"
   },
   "files": [

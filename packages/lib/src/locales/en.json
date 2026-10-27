@@ -1,4 +1,11 @@
 {
+    "carousel": {
+        "Carousel": "Carousel",
+        "Next": "Next",
+        "PAGE": "Page {{page}}",
+        "Previous": "Previous",
+        "SLIDE": "{{current}} of {{total}}"
+    },
     "common": {
         "Close": "Close",
         "PLAY_PRESENTATION": "Play Presentation: {{title}}",

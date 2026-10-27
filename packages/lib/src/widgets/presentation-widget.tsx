@@ -8,6 +8,7 @@ import { PlayerComponent } from '@/components/player';
 import { NotFoundComponent } from '@/components/not-found';
 import { createI18n } from '@/i18n';
 import { positionToPlaceItems, setCssVariables } from '@/utils/css-variables';
+import { getAspectRatio } from '@/utils/presentation-fields';
 import 'virtual:svg-icons/register';
 import { version } from '../../../../package.json' with { type: 'json' };
 import './presentation-widget.scss';
@@ -100,9 +101,7 @@ export class PresentationWidget {
     };
     container.innerHTML = '';
 
-    const aspectRatio = this.presentation?.mediaDisplayWidth && this.presentation?.mediaDisplayHeight
-      ? `${this.presentation.mediaDisplayWidth} / ${this.presentation.mediaDisplayHeight}`
-      : '16 / 9';
+    const aspectRatio = getAspectRatio(this.presentation) ?? '16 / 9';
 
     this.container.classList.add('qc-widget', 'qc-presentation-widget');
     this.container.style.setProperty('--qc-pw-aspect-ratio', aspectRatio);

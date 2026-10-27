@@ -1,11 +1,18 @@
 {
+    "carousel": {
+        "Carousel": "Karussell",
+        "Next": "Nächste",
+        "PAGE": "Seite {{page}}",
+        "Previous": "Zurück",
+        "SLIDE": "{{current}} von {{total}}"
+    },
     "common": {
         "Close": "Schließen",
         "PLAY_PRESENTATION": "Präsentation spielen: {{title}}",
         "Presentation not found": "Präsentation nicht gefunden"
     },
     "list": {
-        "Loading presentations": "Präsentationen werden geladen…",
+        "Loading presentations": "Präsentationen werden geladen …",
         "No": "NEIN",
         "No presentations found": "Keine Präsentationen gefunden",
         "Yes": "Ja",

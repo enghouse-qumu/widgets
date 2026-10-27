@@ -16,8 +16,9 @@
     text-align: start;
     width: 100%;
 
-    // hovered, or its play button focused with the keyboard
-    &:hover,
+    // hovered, or its play button focused with the keyboard. Not the items with a player, which are not clickable:
+    // `:where()` keeps the specificity of `:active` below, which must take precedence
+    &:where(:not(.qc-list-item--media)):hover,
     &:has(.qc-thumbnail:focus-visible) {
       background-color: var(--qc-lw-item-hover-background-color, var(--qc-lw-item-background-color));
       border: var(--qc-lw-item-hover-border, var(--qc-lw-item-border));
@@ -37,6 +38,10 @@
         background-color: var(--qc-lw-item-play-button-hover-background-color);
         color: var(--qc-lw-item-play-button-hover-color);
       }
+
+      .qc-thumbnail__play-button--custom {
+        filter: var(--_qc-custom-icon-hover-filter);
+      }
     }
 
     // the focus ring is drawn around the whole item rather than its play button. Not `:focus-within`, which also
@@ -50,13 +55,26 @@
       }
     }
 
+    // with a player instead of the thumbnail, see the `media` prop: the item is not clickable
+    &--media {
+      cursor: auto;
+    }
+
     // pressed, after the hover and focus styles so it takes precedence
-    &:active {
+    &:where(:not(.qc-list-item--media)):active {
+      background-color: var(
+        --qc-lw-item-active-background-color,
+        var(--qc-lw-item-hover-background-color, var(--qc-lw-item-background-color))
+      );
       border: var(--qc-lw-item-active-border, var(--qc-lw-item-hover-border, var(--qc-lw-item-border)));
 
       .qc-thumbnail__play-button--default {
         background-color: var(--qc-lw-item-play-button-active-background-color);
         color: var(--qc-lw-item-play-button-active-color);
+      }
+
+      .qc-thumbnail__play-button--custom {
+        filter: var(--_qc-custom-icon-active-filter);
       }
     }
 

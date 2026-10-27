@@ -1,4 +1,11 @@
 {
+    "carousel": {
+        "Carousel": "カルーセル",
+        "Next": "次へ",
+        "PAGE": "ページ {{page}}",
+        "Previous": "前へ",
+        "SLIDE": "{{current}} / {{total}}"
+    },
     "common": {
         "Close": "閉じる",
         "PLAY_PRESENTATION": "プレゼンテーションを再生: {{title}}",

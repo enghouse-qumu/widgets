@@ -1,4 +1,11 @@
 {
+    "carousel": {
+        "Carousel": "Carrusel",
+        "Next": "Próximo",
+        "PAGE": "Página {{page}}",
+        "Previous": "Anterior",
+        "SLIDE": "{{current}} de {{total}}"
+    },
     "common": {
         "Close": "Cerca",
         "PLAY_PRESENTATION": "Presentación de la obra: {{title}}",
@@ -11,7 +18,7 @@
         "Yes": "Sí",
         "fields": {
             "duration": "Duración",
-            "publishOn": "Publicado el",
+            "publishOn": "Publicado él",
             "publisher": "Publicado por",
             "summary": "Resumen",
             "title": "Título"

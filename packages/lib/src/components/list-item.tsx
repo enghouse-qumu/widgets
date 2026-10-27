@@ -1,4 +1,4 @@
-import { JSX } from 'preact';
+import { ComponentChildren, JSX } from 'preact';
 import { Presentation } from '@/interfaces/presentation';
 import { InfoFieldConfig, InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
 import { ListWidgetStyle } from '@/interfaces/list-widget-style';
@@ -15,6 +15,8 @@ interface Props {
   // the id of the item, unique in the page; also prefixes the ids referenced by `aria-describedby`
   id: string;
   item: ItemTemplateConfig;
+  // replaces the thumbnail, e.g. the inline player of the carousel widget; the item is then not clickable
+  media?: ComponentChildren;
   metadataStyle?: MetadataStyle;
   playIconUrl?: string;
   presentation: Presentation;
@@ -53,7 +55,7 @@ export function getFieldStyle(style: MetadataStyle[string] | undefined): JSX.CSS
   return properties;
 }
 
-export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presentation, onClick }: Readonly<Props>) {
+export function ListItemComponent({ id, item, media, metadataStyle, playIconUrl, presentation, onClick }: Readonly<Props>) {
   const i18n = useI18n();
   // ids of the elements announced as the button's description: the info fields (but the title, already in the name)
   const descriptionIds: string[] = [];
@@ -146,6 +148,20 @@ export function ListItemComponent({ id, item, metadataStyle, playIconUrl, presen
 
     onClick(presentation);
   };
+
+  if (media) {
+    return (
+      <div id={id} class="qc-list-item qc-list-item--media">
+        {topSlot}
+        <div class="qc-list-item__body">
+          {leftSlot}
+          {media}
+          {rightSlot}
+        </div>
+        {bottomSlot}
+      </div>
+    );
+  }
 
   return (
     <div id={id} class="qc-list-item" onClick={handleClick}>

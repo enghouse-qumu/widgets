@@ -274,6 +274,7 @@ export const controls: Control[] = [
   // Item style
   style('Item', 'styleItemBackgroundColor', 'Background Color', 'item.backgroundColor', 'color', 'transparent'),
   style('Item', 'styleItemHoverBackgroundColor', 'Background Color (hover state)', 'item.hoverBackgroundColor', 'color'),
+  style('Item', 'styleItemActiveBackgroundColor', 'Background Color (active state)', 'item.activeBackgroundColor', 'color'),
   style('Item', 'styleItemBorder', 'Border', 'item.border', 'text', 'none'),
   style('Item', 'styleItemHoverBorder', 'Border (hover state)', 'item.hoverBorder'),
   style('Item', 'styleItemActiveBorder', 'Border (active state)', 'item.activeBorder'),

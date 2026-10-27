@@ -1,6 +1,11 @@
 // The structure of the thumbnail, shared by the widgets: the image covers the button, behind the play icon.
 // Each widget sets the rest, from its own style options: see presentation-widget.scss and list-item.scss
 .qc-widget {
+  // a custom icon image (play button, carousel arrows) cannot take the hover and active colors: it is brightened on
+  // hover and darkened when pressed instead, see the hover and active states of each widget
+  --_qc-custom-icon-hover-filter: brightness(1.1);
+  --_qc-custom-icon-active-filter: brightness(.9);
+
   .qc-thumbnail {
     background: none;
     border: none;

@@ -27,6 +27,18 @@ export function positionToPlaceItems(value: string): string {
 }
 
 /**
+ * The `grid-template-columns` of a list grid with at most `columns` columns, from the `--qc-lw-*` tokens.
+ * `columns` is a maximum, `minItemWidth` has priority: the column minimum is the widest of `minItemWidth`
+ * and the width of 1/N of the row, so at most N columns fit and fewer when the items would be too narrow.
+ * The percentages resolve against the grid, where the value is used.
+ */
+export function maxColumnsTemplate(columns: number): string {
+  const maxColumnWidth = `(100% - ${columns - 1} * var(--qc-lw-gap)) / ${columns}`;
+
+  return `repeat(auto-fill, minmax(min(max(var(--qc-lw-min-item-width), ${maxColumnWidth}), 100%), 1fr))`;
+}
+
+/**
  * Walks a (nested) style object and sets each leaf as a CSS custom property on the element,
  * e.g. `{ playButton: { backgroundColor: '#fff' } }` becomes `--{prefix}-play-button-background-color: #fff`.
  *

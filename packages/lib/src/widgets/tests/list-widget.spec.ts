@@ -124,6 +124,7 @@ describe('ListWidget', () => {
           dialog: { maxWidth: '800px' },
           gap: '24px',
           item: {
+            activeBackgroundColor: 'pink',
             activeBorder: '2px solid red',
             borderRadius: '8px',
             durationBadge: {
@@ -156,6 +157,7 @@ describe('ListWidget', () => {
     expect(style('--qc-lw-item-field-gap')).toBe('6px');
     expect(style('--qc-lw-item-thumbnail-gap')).toBe('20px');
     expect(style('--qc-lw-item-active-border')).toBe('2px solid red');
+    expect(style('--qc-lw-item-active-background-color')).toBe('pink');
     expect(style('--qc-lw-item-duration-badge-font-weight')).toBe('600');
     expect(style('--qc-lw-item-duration-badge-font-family')).toBe('monospace');
     expect(style('--qc-lw-item-duration-badge-letter-spacing')).toBe('1px');

@@ -7,6 +7,8 @@ export interface ListWidgetStyle extends Omit<WidgetStyle, 'playButton' | 'thumb
   columns: 'auto' | number;
   minItemWidth: string;
   item: Partial<{
+    // when pressed, falls back to `hoverBackgroundColor`
+    activeBackgroundColor: string;
     // when pressed, falls back to `hoverBorder`
     activeBorder: string;
     backgroundColor: string;

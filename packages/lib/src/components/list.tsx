@@ -3,7 +3,7 @@ import { Presentation } from '@/interfaces/presentation';
 import { PlayerParameters } from '@/interfaces/player-parameters';
 import { ResolvedListWidgetConfiguration } from '@/services/list-configuration.service';
 import { ListItemComponent } from './list-item';
-import { PlayerDialogComponent } from './dialog';
+import { ModalPlayerComponent } from './dialog';
 
 // Preact's `useId()` is only unique within a render root, and each widget is its own root: the ids are prefixed
 // with a counter, plus a random part in case several copies of the library are loaded in the same page
@@ -28,10 +28,6 @@ export function ListComponent({ presentations, playerParameters, widgetOptions }
     }
   };
 
-  const aspectRatio = selected?.mediaDisplayWidth && selected?.mediaDisplayHeight
-    ? `${selected.mediaDisplayWidth} / ${selected.mediaDisplayHeight}`
-    : '16 / 9';
-
   return (
     <>
       {/* `role="list"`: Safari drops the list semantics with `list-style: none` */}
@@ -51,15 +47,12 @@ export function ListComponent({ presentations, playerParameters, widgetOptions }
       </ul>
 
       {selected && (
-        <div class="qc-dialog" style={{ '--qc-pw-aspect-ratio': aspectRatio }}>
-          <PlayerDialogComponent
-            key={selected.guid}
-            presentation={selected}
-            playerParameters={playerParameters}
-            widgetOptions={{ onIframeLoad: widgetOptions.onIframeLoad, playbackMode: 'modal' }}
-            onClose={() => setSelected(null)}
-          />
-        </div>
+        <ModalPlayerComponent
+          presentation={selected}
+          playerParameters={playerParameters}
+          onIframeLoad={widgetOptions.onIframeLoad}
+          onClose={() => setSelected(null)}
+        />
       )}
     </>
   );
