@@ -3,8 +3,6 @@ import { WidgetStyle } from './widget-style';
 
 // `columns` and `minItemWidth` apply to the modal layout only: the max items per page and the min item width
 export interface CarouselWidgetStyle extends ListWidgetStyle {
-  // the page slide
-  transitionDuration: string;
   // the play button style, without its margin and with its own position. The padding is around the default icon,
   // which fills the rest of the arrow; it is not applied to a custom icon
   arrows: Omit<WidgetStyle['playButton'], 'margin' | 'position'> & Partial<{
@@ -29,4 +27,6 @@ export interface CarouselWidgetStyle extends ListWidgetStyle {
     // the spacing between the dots and the items
     verticalGap: string;
   }>;
+  // the page slide
+  transitionDuration: string;
 }

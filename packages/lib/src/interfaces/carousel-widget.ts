@@ -11,8 +11,6 @@ export interface CarouselWidgetConfiguration extends Omit<WidgetConfiguration, '
 }
 
 export interface CarouselWidgetOptions extends Omit<WidgetOptions, 'onThumbnailClick' | 'style'> {
-  // 'modal': several items per page, the player opens in a modal; the inline modes: one item per page
-  playbackMode: 'inline' | 'inline-autoload' | 'inline-autoplay' | 'modal';
   item: Partial<CarouselItemTemplateConfig>;
   navigation: Partial<{
     arrows: boolean;
@@ -20,6 +18,8 @@ export interface CarouselWidgetOptions extends Omit<WidgetOptions, 'onThumbnailC
   }>;
   // custom arrow icon images, like `playIconUrl`: they replace the default round buttons
   nextIconUrl: string;
+  // 'modal': several items per page, the player opens in a modal; the inline modes: one item per page
+  playbackMode: 'inline' | 'inline-autoload' | 'inline-autoplay' | 'modal';
   previousIconUrl: string;
   style: Partial<CarouselWidgetStyle>;
   // fired on a click on a packshot item; when set, it replaces the modal or the inline playback
@@ -30,6 +30,6 @@ export interface CarouselWidgetOptions extends Omit<WidgetOptions, 'onThumbnailC
 export type CarouselInfoSlot = 'top' | 'bottom';
 
 export interface CarouselItemTemplateConfig {
-  showDurationOverlay: boolean;
   info: Partial<Record<CarouselInfoSlot, InfoFieldConfig[]>>;
+  showDurationOverlay: boolean;
 }
