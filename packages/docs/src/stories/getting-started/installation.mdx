@@ -1,15 +1,48 @@
 import { Meta,  } from '@storybook/addon-docs/blocks';
 import { Tip } from '../../components/Tip.jsx';
+import { Pager } from '../../components/Pager.jsx'
 
-<Meta title="Getting Started/Installation/Via CDN"/>
+<Meta title="Getting Started/Installation"/>
 
-# Installation via CDN
+# Installation
+
+## via NPM
+
+Use this method if you use a bundler (Webpack, Rollup, Vite)
+
+### Installation
+
+```sh
+npm install @qumu/widgets
+```
+
+### Usage
+
+Add the following code to your main JavaScript file.
+
+```js
+// import the CSS
+import '@qumu/widgets/presentation-widget.css';
+
+// import the widget
+import { PresentationWidget } from '@qumu/widgets';
+
+// configure the widget
+const widget = await PresentationWidget.create({
+  guid: 'JN6JHrg17xpwF8klXSIfFj',
+  host: 'demo.qumucloud.com',
+  selector: '#widget', // make sure an element with this ID exists
+});
+```
+
+
+## Via CDN
 
 Use this method if you do not use a bundler.
 
 <Tip color="warning" title="Performance">Using the library via a CDN may impact performance. For optimal performance, we recommend bundling the widget with your application and serving the files directly from your own infrastructure.</Tip>
 
-## Usage
+### Usage
 
 <Tip title="Versioning">
   For stability, we recommend specifying a fixed version of the widget in your project. This ensures that updates to the widget won’t accidentally break your implementation.
@@ -34,28 +67,18 @@ Use this method if you do not use a bundler.
     <script type="module">
       import { PresentationWidget } from 'https://unpkg.com/@qumu/widgets/dist/presentation-widget.js';
 
-      const fr = await fetch(
-        "https://unpkg.com/@qumu/widgets/dist/locales/fr.json"
-      ).then((res) => res.json());
-
       PresentationWidget.create({
         selector: '#widget',
         guid: 'JN6JHrg17xpwF8klXSIfFj',
         host: 'demo.qumucloud.com',
-        // import extra locales (if needed)
-        locales: {
-          fr,
-        },
       });
     </script>
   </body>
 </html>
 ```
 
-## Example
+## Examples
 
-<iframe
-  src="https://codesandbox.io/embed/vnt6z8?view=split&module=%2Findex.html&fontsize=12"
-  style={{ width: '100%', height: '500px', border: '0', borderRadius: '4px', overflow: 'hidden' }}
-  title="presentation-widget-html"
-></iframe>
+[See examples in GitHub](https://github.com/enghouse-qumu/widgets/packages/examples)
+
+<Pager/>

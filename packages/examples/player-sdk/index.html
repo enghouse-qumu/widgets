@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Title</title>
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/@qumu/widgets/dist/presentation-widget.css"
+    />
+    <link rel="stylesheet" href="styles.css"/>
+
+    <style>
+      main {
+        display: grid;
+        grid-template-columns: 70% 30%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div id="widget"></div>
+      <ul id="logs"></ul>
+    </main>
+
+    <script type="module">
+      import { PresentationWidget } from 'https://unpkg.com/@qumu/widgets/dist/presentation-widget.js';
+      import { PlayerSdk } from 'https://unpkg.com/@enghouse-qumu/player-sdk@3.2.1/dist/index.modern.mjs';
+
+      PresentationWidget.create({
+        selector: '#widget',
+        guid: 'JN6JHrg17xpwF8klXSIfFj',
+        host: 'demo.qumucloud.com',
+        widgetOptions: {
+          onIframeLoad(iframe) {
+            const logsEl = document.querySelector('#logs');
+
+            const sdk = new PlayerSdk(iframe);
+
+            sdk.addEventListener('timeupdate', (newTime) => {
+              logsEl.innerHTML += `<li>timeupdate: ${newTime}</li>`;
+            });
+
+            sdk.getDuration().then((duration) => {
+              logsEl.innerHTML += `<li>duration: ${duration}</li>`;
+            });
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

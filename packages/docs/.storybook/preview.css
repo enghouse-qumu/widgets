@@ -25,3 +25,77 @@
     min-width: 16em;
   }
 }
+
+.pager {
+  margin-top: 32px !important;
+  display: grid;
+  grid-template-areas: "prev next";
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+
+  > .pager_link {
+    flex: 1;
+  }
+}
+
+.pager_link {
+  display: grid;
+  column-gap: 12px;
+  padding: 8px 16px;
+  border: 1px solid rgba(38, 74, 115, 0.25);
+  border-radius: 8px;
+
+  &::before {
+    display: block;
+    font-size: smaller;
+    color: rgba(38, 74, 115, 1);
+
+    grid-area: label;
+  }
+
+  &::after {
+    color: rgba(38, 74, 115, 1);
+    grid-area: arrow;
+  }
+
+  &:hover {
+    background-color: rgba(38, 74, 115, 0.05);
+    border-color: rgba(38, 74, 115, 0.5);
+  }
+}
+
+.pager_link--prev {
+  align-items: center;
+  grid-area: prev;
+  grid-template-areas:
+      "arrow label"
+      "arrow title";
+  grid-template-columns: auto 1fr;
+
+  &::before {
+    content: "Previous";
+  }
+
+  &::after {
+    content: "←"
+  }
+}
+
+.pager_link--next {
+  grid-area: next;
+  grid-template-areas:
+      "label arrow"
+      "title arrow";
+  grid-template-columns: 1fr auto;
+  grid-template-rows: repeat(2, 1fr);
+  align-items: center;
+  text-align: right;
+
+  &::before {
+    content: "Next";
+  }
+
+  &::after {
+    content: "→"
+  }
+}

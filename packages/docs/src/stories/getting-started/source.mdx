@@ -1,0 +1,147 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pager } from '../../components/Pager.jsx'
+import { Tip } from '../../components/Tip.jsx';
+
+<Meta title="Getting Started/Source"/>
+
+# Source
+
+Each widget takes a `source` property, indicating where the widget should find the presentations from. You can link the widgets to:
+
+  * a single presentation (for the Presentation widget only)
+  * a list of presentations
+  * a saved smart search guid
+  * a dynamic smart search
+
+<Tip color="warning" title="Presentation Widget">While the presentation widget allows all the sources, it will only show the first available presentation.</Tip>
+
+## Single presentation
+
+This is only available for the Presentation widget. It is used to display a single presentation based on its guid.
+
+```js
+// configure the widget
+const widget = await PresentationWidget.create({
+  selector: '#widget',
+  source: {
+    presentationGuid: 'guid',
+    host: 'demo.qumucloud.com',
+  },
+});
+```
+
+| Property         | Type     | Required | Default | Description                                                                            |
+|------------------|----------|----------|---------|----------------------------------------------------------------------------------------|
+| host             | `string` | **Yes**  | `''`    | Defines the Qumu Cloud tenant to get the presentations from (i.e: demo.qumucloud.com). |
+| presentationGuid | `string` | **Yes**  | `''`    | Defines the presentation 's GUID                                                       |
+
+
+## List of presentations
+
+Useful if you want a fixed list of presentations.
+
+```js
+// configure the widget
+const widget = await ListWidget.create({
+  selector: '#widget',
+  source: {
+    presentationGuids: ['guid1', 'guid2', 'guid3', 'guid4'],
+    host: 'demo.qumucloud.com',
+  },
+});
+```
+
+| Property          | Type            | Required | Default | Description                                                                            |
+|-------------------|-----------------|----------|---------|----------------------------------------------------------------------------------------|
+| host              | `string`        | **Yes**  | `''`    | Defines the Qumu Cloud tenant to get the presentations from (i.e: demo.qumucloud.com). |
+| presentationGuids | `Array<string>` | **Yes**  | `[]`    | Defines a list presentation GUIDs                                                      |
+
+
+## Saved Smart Search
+
+Useful if you want a dynamic list of presentations. The presentations may change based on what is in the smart search.
+
+```js
+// configure the widget
+const widget = await ListWidget.create({
+  selector: '#widget',
+  source: {
+    smartSearchGuid: 'guid',
+    host: 'demo.qumucloud.com',
+    limit: 12,
+    offset: 0,
+    sortBy: 'created',
+    sortOrder: 'DESCENDING'
+  },
+});
+```
+
+| Property        | Type     | Required | Default                          | Description                                                                                   |
+|-----------------|----------|----------|----------------------------------|-----------------------------------------------------------------------------------------------|
+| host            | `string` | **Yes**  | `''`                             | Defines the Qumu Cloud tenant to get the presentations from (i.e: demo.qumucloud.com).        |
+| smartSearchGuid | `string` | **Yes**  | `''`                             | Defines the saved Smart Search's GUID.                                                        |
+| limit           | `number` | No       | `12` (`grid`), `10` (`vertical`) | Defines the maximum number of presentations to show.                                          |
+| offset          | `number` | No       | `0`                              | Defines the number of presentations to skip.                                                  |
+| sortBy          | `string` | No       | `'created'`                      | Defines the property to sort the presentations by, e.g. `published` or `title`.               |
+| sortOrder       | `string` | No       | `'DESCENDING'`                   | Defines the order to sort the presentations. Value must be one of: `ASCENDING`, `DESCENDING`. |
+
+
+## Dynamic Smart Search
+
+You can build your own smart search on the fly
+
+```js
+// configure the widget
+const widget = await ListWidget.create({
+  selector: '#widget',
+  source: {
+    smartSearch: {
+      match: 'any',
+      rules: [
+        {
+          field: 'title',
+          comparator: 'contains',
+          value: 'CEO'
+        },
+        {
+          field: 'created',
+          comparator: 'in_the_last',
+          value: '7,DAYS'
+        },
+      ]
+    },
+    host: 'demo.qumucloud.com',
+    limit: 12,
+    offset: 0,
+    sortBy: 'created',
+    sortOrder: 'DESCENDING'
+  },
+});
+```
+
+| Property    | Type                          | Required | Default                          | Description                                                                                   |
+|-------------|-------------------------------|----------|----------------------------------|-----------------------------------------------------------------------------------------------|
+| host        | `string`                      | **Yes**  | `''`                             | Defines the Qumu Cloud tenant to get the presentations from (i.e: demo.qumucloud.com).        |
+| smartSearch | [SearchFilter](#searchfilter) | **Yes**  | `{}`                             | Defines the Smart Search rules.                                                               |
+| limit       | `number`                      | No       | `12` (`grid`), `10` (`vertical`) | Defines the maximum number of presentations to show.                                          |
+| offset      | `number`                      | No       | `0`                              | Defines the number of presentations to skip.                                                  |
+| sortBy      | `string`                      | No       | `'created'`                      | Defines the property to sort the presentations by, e.g. `published` or `title`.               |
+| sortOrder   | `string`                      | No       | `'DESCENDING'`                   | Defines the order to sort the presentations. Value must be one of: `ASCENDING`, `DESCENDING`. |
+
+### SearchFilter
+
+| Property | Type                        | Description                                                                                                     |
+|----------|-----------------------------|-----------------------------------------------------------------------------------------------------------------|
+| match    | `string`                    | Defines whether the presentations must match all the rules, or any of them. Value must be one of: `all`, `any`. |
+| rules    | [SearchRule[]](#searchrule) | Defines the rules.                                                                                              |
+
+### SearchRule
+
+| Property   | Type     | Description                                                                                                                                                                                                                                                                                                            |
+|------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| field      | `string` | Defines the field to search: a presentation property, e.g. `title` or `published`, or the GUID of a metadata field.                                                                                                                                                                                                    |
+| comparator | `string` | Defines how to compare the field with the value. Value must be one of: `is`, `is_not`, `contains`, `does_not_contain`, `contains_any`, `less_than`, `greater_than`, `greater_than_or_equal_to`, `less_than_or_equal_to`, `between`, `not_between`, `in_the_last`, `not_in_the_last`, `in_the_next`, `not_in_the_next`. |
+| value      | `string` | <p>Defines the value to compare the field with.</p><p>The relative date comparators (`in_the_last`, `in_the_next`…) take an offset and a unit, e.g. `30,DAYS`, `6,MONTHS` or `1,YEARS`.</p>                                                                                                                            |
+
+
+<Pager />

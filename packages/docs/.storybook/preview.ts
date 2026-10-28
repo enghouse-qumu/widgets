@@ -2,6 +2,8 @@ import type { Preview } from '@storybook/web-components-vite';
 import './preview.css';
 import { StoryContext } from 'storybook/internal/types';
 
+import theme from './theme';
+
 // Adds a locale switcher in the toolbar
 export const globalTypes = {
   locale: {
@@ -54,18 +56,21 @@ const preview: Preview = {
         headingSelector: 'h2, h3',
       },
       codePanel: true,
+      theme,
     },
     options: {
       storySort: {
         order: [
           'Getting Started',
           [
+            'Home',
             'Installation',
-            [
-              'Via NPM',
-              'Via CDN'
-            ],
-            'Localization'
+            'Localization',
+            'Source'
+          ],
+          'Advanced',
+          [
+            'Localization',
           ],
           'Widgets',
           [
