@@ -503,7 +503,7 @@ describe('CarouselComponent', () => {
       expect(pages(container).map(titles)).toEqual([['A'], ['B'], ['C'], ['D'], ['E']]);
     });
 
-    it('should use the aspect ratio of the presentation for the media', () => {
+    it('should not use the aspect ratio of the presentation, the pages would have different heights', () => {
       const { container } = renderCarousel({ playbackMode: 'inline' }, [
         {
           ...presentations[0],
@@ -512,7 +512,7 @@ describe('CarouselComponent', () => {
         },
       ]);
 
-      expect(container.querySelector<HTMLElement>('.qc-carousel__item')!.style.getPropertyValue('--_qc-cw-media-aspect-ratio')).toBe('4 / 3');
+      expect(container.querySelector('.qc-carousel__item')).not.toHaveAttribute('style');
     });
 
     it('should play the presentation inline on click', () => {

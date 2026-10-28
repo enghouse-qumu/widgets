@@ -28,7 +28,7 @@ By default, the widget uses the `modal` playback mode and shows the title and th
 
 ### Inline: one presentation per page
 
-The `inline` playback mode shows a single presentation per page, in the aspect ratio of the presentation. Clicking it replaces the thumbnail with the player.
+The `inline` playback mode shows a single presentation per page, in the thumbnail aspect ratio, `16:9` by default. Clicking it replaces the thumbnail with the player.
 
 <Canvas of={Stories.Inline}/>
 
@@ -223,7 +223,7 @@ The items are styled like the items of the list widget: see `item.*` in its [Lis
 
 - `item.thumbnailGap` defaults to `8px`, as the fields are above and below the thumbnail.
 - `item.thumbnail.width` does not apply: it is for the vertical layout of the list widget.
-- `item.thumbnail.aspectRatio` applies to the `modal` playback mode. The inline modes use the aspect ratio of each presentation, and this one when it is unknown.
+- `item.thumbnail.aspectRatio` applies to every playback mode, to the player of the inline modes too: all the pages have the same height. The player fits a presentation of another aspect ratio inside, with bars around it.
 
 #### Dialog, Close Button and Not Found
 

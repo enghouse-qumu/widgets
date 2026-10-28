@@ -5,7 +5,6 @@ import { PlayerParameters } from '@/interfaces/player-parameters';
 import { ResolvedCarouselWidgetConfiguration } from '@/services/carousel-configuration.service';
 import { useI18n } from '@/i18n';
 import Icon from '@/components/icon';
-import { getAspectRatio } from '@/utils/presentation-fields';
 import {
   computePerPage,
   pageAfterResize,
@@ -369,11 +368,7 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
       >
         <ul class="qc-carousel__items" role="list" style={{ '--_qc-cw-per-page': perPage }}>
           {items.map((presentation, itemIndex) => (
-            <li
-              key={presentation.guid ?? itemIndex}
-              class="qc-carousel__item"
-              style={multiItem ? undefined : { '--_qc-cw-media-aspect-ratio': getAspectRatio(presentation) }}
-            >
+            <li key={presentation.guid ?? itemIndex} class="qc-carousel__item">
               <ListItemComponent
                 id={`${carouselId}-${presentation.guid ?? index * perPage + itemIndex}`}
                 item={widgetOptions.item}
