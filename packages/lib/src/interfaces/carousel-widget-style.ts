@@ -15,6 +15,8 @@ export interface CarouselWidgetStyle extends ListWidgetStyle {
   dots: Partial<{
     // when pressed
     activeColor: string;
+    // 100% by default, round dots
+    borderRadius: string;
     color: string;
     // the spacing between the dots
     horizontalGap: string;

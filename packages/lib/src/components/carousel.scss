@@ -249,19 +249,25 @@
     }
 
     &__dot {
-      // a larger hit area than the dot itself
-      background-clip: content-box;
-      background-color: var(--qc-cw-dots-color);
+      background: none;
       border: none;
-      border-radius: 50%;
-      box-sizing: content-box;
       // the text color, for the default dot colors and the focus ring
       color: inherit;
       cursor: pointer;
-      height: var(--qc-cw-dots-size);
+      display: block;
+      // a larger hit area than the dot itself
       margin: -4px;
       padding: 4px;
-      width: var(--qc-cw-dots-size);
+
+      // the dot, drawn inside the hit area so that its border radius is not reduced by the padding
+      &::before {
+        background-color: var(--qc-cw-dots-color);
+        border-radius: var(--qc-cw-dots-border-radius);
+        content: '';
+        display: block;
+        height: var(--qc-cw-dots-size);
+        width: var(--qc-cw-dots-size);
+      }
 
       // the same focus ring as the items, in the text color, rather than the browser's accent color
       &:focus-visible {
@@ -269,16 +275,16 @@
         outline-offset: 2px;
       }
 
-      &:hover {
+      &:hover::before {
         background-color: var(--qc-cw-dots-hover-color);
       }
 
-      &:active {
+      &:active::before {
         background-color: var(--qc-cw-dots-active-color);
       }
 
       // the current page, after the hover and active states so it takes precedence
-      &[aria-current='true'] {
+      &[aria-current='true']::before {
         background-color: var(--qc-cw-dots-selected-color);
       }
     }

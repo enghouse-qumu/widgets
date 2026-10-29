@@ -335,6 +335,7 @@ export const controls: Control[] = [
   style('Dots', 'styleDotsHoverColor', 'Color (hover state)', 'dots.hoverColor', 'color', 'currentColor at 60%'),
   style('Dots', 'styleDotsActiveColor', 'Color (active state)', 'dots.activeColor', 'color', 'currentColor at 80%'),
   style('Dots', 'styleDotsSelectedColor', 'Color (current page)', 'dots.selectedColor', 'color', 'currentColor'),
+  style('Dots', 'styleDotsBorderRadius', 'Border Radius', 'dots.borderRadius', 'text', '100%'),
   style('Dots', 'styleDotsSize', 'Size', 'dots.size', 'text', '8px'),
   style('Dots', 'styleDotsHorizontalGap', 'Horizontal Gap', 'dots.horizontalGap', 'text', '8px'),
   style('Dots', 'styleDotsVerticalGap', 'Vertical Gap', 'dots.verticalGap', 'text', '12px'),

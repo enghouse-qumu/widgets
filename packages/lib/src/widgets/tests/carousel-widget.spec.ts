@@ -181,6 +181,7 @@ describe('CarouselWidget', () => {
           columns: 3,
           dots: {
             activeColor: 'blue',
+            borderRadius: '2px',
             horizontalGap: '6px',
             position: 'top',
             selectedColor: 'navy',
@@ -223,6 +224,7 @@ describe('CarouselWidget', () => {
     expect(style('--qc-cw-dots-vertical-gap')).toBe('20px');
     expect(style('--qc-cw-dots-active-color')).toBe('blue');
     expect(style('--qc-cw-dots-selected-color')).toBe('navy');
+    expect(style('--qc-cw-dots-border-radius')).toBe('2px');
     // shared with the presentation widget components
     expect(style('--qc-pw-close-button-color')).toBe('red');
     // the arrows and the dots positions are classes, the metadata styles are applied per field
