@@ -165,8 +165,8 @@ export class CarouselConfigurationService {
       throw new Error('`widgetOptions.style.arrows.position` must be either "overlay" or "outside"');
     }
 
-    if (style.dots?.placement !== undefined && !['bottom', 'top'].includes(style.dots.placement)) {
-      throw new Error('`widgetOptions.style.dots.placement` must be either "bottom" or "top"');
+    if (style.dots?.position !== undefined && !['bottom', 'top'].includes(style.dots.position)) {
+      throw new Error('`widgetOptions.style.dots.position` must be either "bottom" or "top"');
     }
   }
 }

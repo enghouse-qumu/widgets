@@ -182,7 +182,7 @@ describe('CarouselWidget', () => {
           dots: {
             activeColor: 'blue',
             horizontalGap: '6px',
-            placement: 'top',
+            position: 'top',
             selectedColor: 'navy',
             verticalGap: '20px',
           },
@@ -225,9 +225,9 @@ describe('CarouselWidget', () => {
     expect(style('--qc-cw-dots-selected-color')).toBe('navy');
     // shared with the presentation widget components
     expect(style('--qc-pw-close-button-color')).toBe('red');
-    // the arrows position and the dots placement are classes, the metadata styles are applied per field
+    // the arrows and the dots positions are classes, the metadata styles are applied per field
     expect(style('--qc-cw-arrows-position')).toBe('');
-    expect(container.getAttribute('style')).not.toContain('placement');
+    expect(style('--qc-cw-dots-position')).toBe('');
     expect(container.getAttribute('style')).not.toContain('metadata');
     expect(container.querySelector('.qc-carousel')).toHaveClass('qc-carousel--arrows-overlay');
     expect(container.querySelector<HTMLElement>('[data-field="title"]')!.style.getPropertyValue('--qc-lw-field-color')).toBe('blue');

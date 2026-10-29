@@ -20,7 +20,7 @@ export interface CarouselWidgetStyle extends ListWidgetStyle {
     horizontalGap: string;
     hoverColor: string;
     // below or above the items
-    placement: 'bottom' | 'top';
+    position: 'bottom' | 'top';
     // the dot of the current page
     selectedColor: string;
     size: string;

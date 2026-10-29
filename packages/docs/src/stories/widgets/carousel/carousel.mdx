@@ -66,7 +66,7 @@ In the `modal` playback mode, a page shows as many items as fit, at least `minIt
 
 ### Style the carousel
 
-Besides the items, the arrows and the dots can be styled and placed: the arrows `outside` the items (default) or `overlay` over their edges with `arrows.position`, and the dots at the `bottom` (default) or at the `top` with `dots.placement`. Like the play icon with `playIconUrl`, the arrows can be your own images with `previousIconUrl` and `nextIconUrl`: they replace the default buttons and fill `arrows.width` and `arrows.height`. Here, white tiles with custom play and arrow icons, bigger dots above them, and a slower slide.
+Besides the items, the arrows and the dots can be styled and placed: the arrows `outside` the items (default) or `overlay` over their edges with `arrows.position`, and the dots at the `bottom` (default) or at the `top` with `dots.position`. Like the play icon with `playIconUrl`, the arrows can be your own images with `previousIconUrl` and `nextIconUrl`: they replace the default buttons and fill `arrows.width` and `arrows.height`. Here, white tiles with custom play and arrow icons, bigger dots above them, and a slower slide.
 
 <Canvas of={Stories.Styling}/>
 
@@ -180,14 +180,14 @@ The fields are the same as the list widget's, see [InfoFieldConfig](?path=/docs/
 
 | Property             | Default                   | Description                                                   |
 |----------------------|---------------------------|---------------------------------------------------------------|
-| dots.placement       | `bottom`                  | Where the dots are placed: `bottom` (below the items) or `top` (above them). |
+| dots.position        | `bottom`                  | Where the dots are placed: `bottom` (below the items) or `top` (above them). |
 | dots.color           | the text color, at 25%    | The color of the dots.                                        |
 | dots.hoverColor      | the text color, at 60%    | The color of the dots on hover.                               |
 | dots.activeColor     | the text color, at 80%    | The color of the dots when pressed.                           |
 | dots.selectedColor   | the text color            | The color of the dot of the current page.                     |
 | dots.size            | `8px`                     | The diameter of the dots.                                     |
 | dots.horizontalGap   | `8px`                     | The spacing between the dots.                                 |
-| dots.verticalGap     | `12px`                    | The spacing between the dots and the items, whatever their placement. |
+| dots.verticalGap     | `12px`                    | The spacing between the dots and the items, whatever their position. |
 
 #### Items
 

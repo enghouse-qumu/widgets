@@ -388,10 +388,10 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
   const trackId = `${carouselId}-track`;
   const showArrows = navigation.arrows && pages > 1;
   const showDots = navigation.dots && pages > 1;
-  const dotsPlacement = style.dots?.placement ?? 'bottom';
+  const dotsPosition = style.dots?.position ?? 'bottom';
 
   const dots = showDots && (
-    <div class={`qc-carousel__dots qc-carousel__dots--${dotsPlacement}`}>
+    <div class={`qc-carousel__dots qc-carousel__dots--${dotsPosition}`}>
       {Array.from({ length: pages }, (_, index) => (
         <button
           key={index}
@@ -458,7 +458,7 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
         aria-roledescription="carousel"
         aria-label={i18n.t('carousel.Carousel')}
       >
-        {dotsPlacement === 'top' && dots}
+        {dotsPosition === 'top' && dots}
         <div ref={bodyRef} class="qc-carousel__body">
           {showArrows && renderArrow(-1)}
           <div
@@ -485,7 +485,7 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
           </div>
           {showArrows && renderArrow(1)}
         </div>
-        {dotsPlacement !== 'top' && dots}
+        {dotsPosition !== 'top' && dots}
         <div class="qc-sr-only" aria-live="polite">{announcement}</div>
       </section>
 

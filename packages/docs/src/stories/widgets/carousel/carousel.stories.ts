@@ -246,7 +246,7 @@ export const Styling: Story = example({
         color: 'rgb(67 56 202 / .2)',
         horizontalGap: '10px',
         hoverColor: 'rgb(67 56 202 / .5)',
-        placement: 'top',
+        position: 'top',
         selectedColor: '#4338ca',
         size: '10px',
         verticalGap: '20px',

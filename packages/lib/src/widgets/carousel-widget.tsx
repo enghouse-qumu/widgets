@@ -147,9 +147,9 @@ export class CarouselWidget {
       transitionDuration,
       ...listStyle
     } = this.configuration.widgetOptions.style;
-    // the arrows position and the dots placement are classes, see CarouselComponent
+    // the arrows and the dots positions are classes, see CarouselComponent
     const { position: _arrowsPosition, ...arrowsStyle } = arrows ?? {};
-    const { placement: _dotsPlacement, ...dotsStyle } = dots ?? {};
+    const { position: _dotsPosition, ...dotsStyle } = dots ?? {};
 
     // the layout and the items are shared with the ListWidget. The items per page are computed by the carousel,
     // `columns` only limits the ghost items to the first page

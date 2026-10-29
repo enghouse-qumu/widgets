@@ -330,7 +330,7 @@ export const controls: Control[] = [
   style('Arrows', 'styleArrowsWidth', 'Width', 'arrows.width', 'text', '40px'),
 
   // Dots style
-  style('Dots', 'styleDotsPlacement', 'Placement', 'dots.placement', 'select', 'bottom', ['bottom', 'top']),
+  style('Dots', 'styleDotsPosition', 'Position', 'dots.position', 'select', 'bottom', ['bottom', 'top']),
   style('Dots', 'styleDotsColor', 'Color', 'dots.color', 'color', 'currentColor at 25%'),
   style('Dots', 'styleDotsHoverColor', 'Color (hover state)', 'dots.hoverColor', 'color', 'currentColor at 60%'),
   style('Dots', 'styleDotsActiveColor', 'Color (active state)', 'dots.activeColor', 'color', 'currentColor at 80%'),

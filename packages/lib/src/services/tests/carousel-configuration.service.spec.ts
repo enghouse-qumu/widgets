@@ -198,11 +198,11 @@ describe('CarouselConfigurationService', () => {
       expect(console.warn).not.toHaveBeenCalled();
     });
 
-    it('should validate the arrows position and the dots placement', () => {
+    it('should validate the arrows and the dots positions', () => {
       expect(() => withOptions({ style: { arrows: { position: 'inside' } } }))
         .toThrow('`widgetOptions.style.arrows.position` must be either "overlay" or "outside"');
-      expect(() => withOptions({ style: { dots: { placement: 'left' } } }))
-        .toThrow('`widgetOptions.style.dots.placement` must be either "bottom" or "top"');
+      expect(() => withOptions({ style: { dots: { position: 'left' } } }))
+        .toThrow('`widgetOptions.style.dots.position` must be either "bottom" or "top"');
     });
   });
 });

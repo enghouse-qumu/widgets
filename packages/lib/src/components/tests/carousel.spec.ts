@@ -316,7 +316,7 @@ describe('CarouselComponent', () => {
       const { container } = renderCarousel({
         style: {
           arrows: { position: 'overlay' },
-          dots: { placement: 'top' },
+          dots: { position: 'top' },
         },
       });
 
