@@ -329,11 +329,12 @@ export const StylingInline: Story = example({
         width: '36px',
       },
       dots: {
+        borderRadius: '0',
         color: '#d6d3d1',
         horizontalGap: '6px',
         hoverColor: '#a8a29e',
         selectedColor: '#d42a20',
-        size: '6px',
+        size: '8px',
       },
       item: {
         metadata: {
