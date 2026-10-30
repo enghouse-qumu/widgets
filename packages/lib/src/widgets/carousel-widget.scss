@@ -1,0 +1,40 @@
+@use '../styles/variables.scss';
+@use '../styles/list-variables.scss';
+@use '../styles/carousel-variables.scss';
+@use '../styles/screenreader.scss';
+@use '../components/dialog.scss';
+@use '../components/icon.scss';
+@use '../components/player.scss';
+@use '../components/thumbnail.scss';
+@use '../components/not-found.scss';
+@use '../components/list.scss';
+@use '../components/list-item.scss';
+@use '../components/list-skeleton.scss';
+@use '../components/carousel.scss';
+
+.qc-carousel-widget {
+  border-radius: var(--qc-lw-border-radius);
+  display: block;
+  height: var(--qc-lw-height);
+  isolation: isolate;
+  width: var(--qc-lw-width);
+
+  > .qc-not-found {
+    min-height: 200px;
+  }
+
+  // the ghost items of the first page: a single row of the list grid
+  .qc-list-skeleton .qc-list {
+    grid-auto-rows: 0;
+    grid-template-rows: auto;
+    row-gap: 0;
+
+    > .qc-list__item {
+      overflow: hidden;
+    }
+  }
+
+  &.qc-carousel-widget--single .qc-list-skeleton .qc-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

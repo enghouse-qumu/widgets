@@ -1,0 +1,35 @@
+:root {
+  /**
+   * /!\ IMPORTANT /!\
+   *
+   * Carousel widget specific tokens. The layout and item tokens are shared with the list widget (`--qc-lw-*`,
+   * see list-variables.scss), the dialog, close button and not found tokens with the presentation widget
+   * (`--qc-pw-*`, see variables.scss)
+   */
+
+  // the page slide
+  --qc-cw-transition-duration: 300ms;
+
+  // Previous and next arrows
+  --qc-cw-arrows-active-background-color: rgb(0 0 0 / .9); // when pressed
+  --qc-cw-arrows-active-color: #fff; // when pressed
+  --qc-cw-arrows-background-color: rgb(0 0 0 / .8);
+  --qc-cw-arrows-border-radius: 100%;
+  --qc-cw-arrows-color: #fff;
+  --qc-cw-arrows-hover-background-color: #000;
+  --qc-cw-arrows-hover-color: #fff;
+  --qc-cw-arrows-horizontal-gap: 12px; // from the items (outside position) or from the widget edges (overlay)
+  --qc-cw-arrows-height: 40px;
+  --qc-cw-arrows-padding: 10px; // around the default icon
+  --qc-cw-arrows-width: 40px;
+
+  // Pagination dots
+  --qc-cw-dots-active-color: color-mix(in srgb, currentColor 80%, transparent); // when pressed
+  --qc-cw-dots-border-radius: 100%;
+  --qc-cw-dots-color: color-mix(in srgb, currentColor 25%, transparent);
+  --qc-cw-dots-horizontal-gap: 8px; // between the dots
+  --qc-cw-dots-hover-color: color-mix(in srgb, currentColor 60%, transparent);
+  --qc-cw-dots-selected-color: currentColor; // the current page
+  --qc-cw-dots-size: 8px;
+  --qc-cw-dots-vertical-gap: 12px; // between the dots and the items
+}

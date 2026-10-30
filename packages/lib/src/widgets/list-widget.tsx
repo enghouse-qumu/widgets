@@ -7,7 +7,14 @@ import { ListComponent } from '@/components/list';
 import { NotFoundComponent } from '@/components/not-found';
 import { ListSkeletonComponent } from '@/components/list-skeleton';
 import { createI18n } from '@/i18n';
-import { positionToPlaceItems, setCssVariables } from '@/utils/css-variables';
+import {
+  ContainerAttributes,
+  getContainer,
+  getContainerAttributes,
+  sendSourceWidgetTelemetry,
+  setListStyleVariables,
+  unmountWidget,
+} from '@/utils/widget-container';
 import 'virtual:svg-icons/register';
 import { version } from '../../../../package.json' with { type: 'json' };
 import './list-widget.scss';
@@ -21,8 +28,7 @@ export class ListWidget {
   private readonly presentationService;
   private presentations: Presentation[] = [];
   private container: HTMLElement | null = null;
-  // the class and style attributes of the container before the widget, restored on destroy
-  private originalContainerAttributes: { className: string; style: string | null } | null = null;
+  private originalContainerAttributes: ContainerAttributes | null = null;
   private destroyed = false;
 
   get version(): string {
@@ -57,13 +63,8 @@ export class ListWidget {
     }
 
     if (this.container) {
-      // Unmount the widget properly
-      render(null, this.container);
-
-      // Clear container HTML
-      this.container.innerHTML = '';
-
-      this.restoreContainerAttributes(this.container);
+      unmountWidget(this.container, this.originalContainerAttributes);
+      this.originalContainerAttributes = null;
     }
 
     // Prevent future usage
@@ -88,21 +89,12 @@ export class ListWidget {
   }
 
   private prepareContainer() {
-    const container = this.configuration.selector instanceof HTMLElement
-      ? this.configuration.selector
-      : document.querySelector<HTMLElement>(this.configuration.selector);
-
-    if (!container) {
-      throw new Error(`Element for selector "${this.configuration.selector}" not found`);
-    }
+    const container = getContainer(this.configuration.selector);
 
     createI18n(container, this.configuration.locales);
 
     this.container = container;
-    this.originalContainerAttributes ??= {
-      className: container.className,
-      style: container.getAttribute('style'),
-    };
+    this.originalContainerAttributes ??= getContainerAttributes(container);
     container.innerHTML = '';
 
     this.container.classList.add('qc-widget', 'qc-list-widget', `qc-list-widget--${this.configuration.widgetOptions.layout}`);
@@ -140,80 +132,11 @@ export class ListWidget {
   }
 
   private setStyles(container: HTMLElement) {
-    const {
-      closeButton,
-      columns,
-      dialog,
-      item,
-      notFound,
-      ...listStyle
-    } = this.configuration.widgetOptions.style;
-    // per-field styles are applied on each field element, see ListItemComponent
-    const { metadata: _metadata, ...itemStyle } = item ?? {};
-
-    // the dialog, close button and not found components are shared with the PresentationWidget
-    setCssVariables(container, { closeButton, dialog, notFound }, '--qc-pw');
-
-    setCssVariables(container, { ...listStyle, item: itemStyle }, '--qc-lw', (name, value) => {
-      switch (name) {
-        case '--qc-lw-item-play-button-position':
-        case '--qc-lw-item-duration-badge-position':
-          return positionToPlaceItems(String(value));
-        case '--qc-lw-item-thumbnail-aspect-ratio':
-          // accept both the "16:9" and the CSS "16 / 9" notations
-          return String(value).replace(':', '/');
-        default:
-          return String(value);
-      }
-    });
-
-    if (typeof columns === 'number') {
-      // `columns` is a maximum, `minItemWidth` has priority: the column minimum is the widest of `minItemWidth`
-      // and the width of 1/N of the row, so at most N columns fit and fewer when the items would be too narrow.
-      // The percentages resolve against the list, where the custom property is used.
-      const maxColumnWidth = `(100% - ${columns - 1} * var(--qc-lw-gap)) / ${columns}`;
-
-      container.style.setProperty(
-        '--qc-lw-grid-template-columns',
-        `repeat(auto-fill, minmax(min(max(var(--qc-lw-min-item-width), ${maxColumnWidth}), 100%), 1fr))`,
-      );
-    }
+    setListStyleVariables(container, this.configuration.widgetOptions.style);
   }
 
-  // removes the classes and the CSS custom properties set by the widget, and keeps those of the host page
-  private restoreContainerAttributes(container: HTMLElement) {
-    if (!this.originalContainerAttributes) {
-      return;
-    }
-
-    const { className, style } = this.originalContainerAttributes;
-
-    container.className = className;
-
-    if (style === null) {
-      container.removeAttribute('style');
-    } else {
-      container.setAttribute('style', style);
-    }
-
-    this.originalContainerAttributes = null;
-  }
-
-  private async sendTelemetry() {
-    const { widgetOptions } = this.configuration;
-    const telemetryConfig: any = {
-      ...(this.configuration.playerParameters && Object.keys(this.configuration.playerParameters).length && { playerParameters: this.configuration.playerParameters }),
-      source: this.configuration.source,
-      type: 'list',
-      version,
-      widgetOptions: {
-        ...widgetOptions,
-        onIframeLoad: widgetOptions.onIframeLoad ? true : undefined,
-        onItemClick: widgetOptions.onItemClick ? true : undefined,
-      },
-    };
-
-    navigator.sendBeacon(`https://${this.configuration.source.host}/telemetry/widgets`, JSON.stringify(telemetryConfig));
+  private sendTelemetry() {
+    sendSourceWidgetTelemetry(this.configuration, 'list');
   }
 }
 

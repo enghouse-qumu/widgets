@@ -1,0 +1,309 @@
+// the carousel, see carousel.tsx. The items are list items, see list-item.scss
+.qc-widget {
+  .qc-carousel {
+    // the viewport shows this much around the pages, for the focus ring of the items
+    --_qc-cw-viewport-padding: 4px;
+    // the spacing between the pages: never less than the viewport padding, or the next and previous pages would
+    // show in it with a small `gap`
+    --_qc-cw-page-gap: max(var(--qc-lw-gap), var(--_qc-cw-viewport-padding));
+
+    display: block;
+
+    &__body {
+      align-items: start;
+      column-gap: var(--qc-cw-arrows-horizontal-gap);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      position: relative;
+    }
+
+    &__viewport {
+      grid-column: 2;
+      // the slides beside the current one are hidden, the focus ring of the items stays visible. Only horizontally:
+      // what overflows the items vertically, e.g. their shadow, is not cut. `clip` rather than `hidden`, which would
+      // make the other axis scroll
+      margin: calc(-1 * var(--_qc-cw-viewport-padding));
+      overflow-x: clip;
+      overflow-y: visible;
+      padding: var(--_qc-cw-viewport-padding);
+      position: relative;
+    }
+
+    // resolves `minItemWidth` and `gap` into pixels, for the items per page
+    &__probe {
+      height: 0;
+      inset-inline-start: 0;
+      position: absolute;
+      visibility: hidden;
+      width: 100%;
+
+      > span {
+        display: block;
+      }
+
+      &-item {
+        width: var(--qc-lw-min-item-width);
+      }
+
+      &-gap {
+        width: var(--qc-lw-gap);
+      }
+    }
+
+    &__track {
+      display: flex;
+      gap: var(--_qc-cw-page-gap);
+      // vertical scrolling is left to the browser, the horizontal drag is the swipe
+      touch-action: pan-y;
+      transition: transform var(--qc-cw-transition-duration) ease;
+
+      &--instant {
+        transition: none;
+      }
+    }
+
+    &__page {
+      flex: 0 0 100%;
+      min-width: 0;
+    }
+
+    &__items {
+      display: grid;
+      gap: var(--qc-lw-gap);
+      // the last page can be partial, its items are start-aligned
+      grid-template-columns: repeat(var(--_qc-cw-per-page), minmax(0, 1fr));
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    &__item {
+      display: flex;
+      margin: 0;
+      min-width: 0;
+      padding: 0;
+    }
+
+    // the inline player, in place of the thumbnail. In the thumbnail aspect ratio rather than the one of the
+    // presentation: the pages are side by side, the carousel would be as high as the highest of them
+    &__player {
+      aspect-ratio: var(--qc-lw-item-thumbnail-aspect-ratio);
+      border: var(--qc-lw-item-thumbnail-border);
+      border-radius: var(--qc-lw-item-thumbnail-border-radius);
+      box-sizing: border-box;
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      position: relative;
+
+      // the thumbnail, behind the player
+      &-thumbnail,
+      iframe.qc-player {
+        height: 100%;
+        inset: 0;
+        position: absolute;
+        width: 100%;
+      }
+
+      &-thumbnail {
+        display: block;
+        object-fit: var(--qc-lw-item-thumbnail-image-fit);
+      }
+
+      // hidden until loaded, so the thumbnail shows rather than the empty player
+      iframe.qc-player {
+        opacity: 0;
+        transition: opacity .3s ease;
+      }
+
+      &--loaded iframe.qc-player {
+        opacity: 1;
+      }
+    }
+
+    &__arrow {
+      align-items: center;
+      background-color: var(--qc-cw-arrows-background-color);
+      border: none;
+      border-radius: var(--qc-cw-arrows-border-radius);
+      box-sizing: border-box;
+      // the text color, for the focus ring; the icon has its own color
+      color: inherit;
+      cursor: pointer;
+      display: flex;
+      height: var(--qc-cw-arrows-height);
+      justify-content: center;
+      margin: 0;
+      // like the play button: the icon fills the arrow inside the padding
+      padding: var(--qc-cw-arrows-padding);
+      // centred on the media area, measured by the component; centred on the body until then
+      position: relative;
+      top: calc(var(--_qc-cw-arrow-center, 50%) - var(--qc-cw-arrows-height) / 2);
+      width: var(--qc-cw-arrows-width);
+      z-index: 1;
+
+      &--prev {
+        grid-column: 1;
+      }
+
+      &--next {
+        grid-column: 3;
+      }
+
+      // the same focus ring as the items, in the text color, rather than the browser's accent color
+      &:focus-visible {
+        outline: auto;
+        outline-offset: 2px;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: var(--qc-cw-arrows-hover-background-color);
+
+        .qc-icon {
+          color: var(--qc-cw-arrows-hover-color);
+        }
+      }
+
+      // pressed, after the hover state so it takes precedence
+      &:active:not(:disabled) {
+        background-color: var(--qc-cw-arrows-active-background-color);
+
+        .qc-icon {
+          color: var(--qc-cw-arrows-active-color);
+        }
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: .35;
+      }
+
+      .qc-icon {
+        color: var(--qc-cw-arrows-color);
+        height: 100%;
+        width: 100%;
+      }
+
+      // a custom icon image, see `previousIconUrl` and `nextIconUrl`: it fills the arrow, without the default button
+      &--custom,
+      &--custom:hover:not(:disabled),
+      &--custom:active:not(:disabled) {
+        background: none;
+        border-radius: 0;
+        padding: 0;
+      }
+
+      &-icon {
+        display: block;
+        height: 100%;
+        object-fit: contain;
+        width: 100%;
+      }
+
+      // like a custom play icon, see thumbnail.scss: brightened on hover and darkened when pressed
+      &--custom:hover:not(:disabled) .qc-carousel__arrow-icon {
+        filter: var(--_qc-custom-icon-hover-filter);
+      }
+
+      &--custom:active:not(:disabled) .qc-carousel__arrow-icon {
+        filter: var(--_qc-custom-icon-active-filter);
+      }
+    }
+
+    // the arrows over the edges of the items, which take the whole width
+    &--arrows-overlay {
+      .qc-carousel__body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .qc-carousel__viewport {
+        grid-column: 1;
+      }
+
+      .qc-carousel__arrow {
+        position: absolute;
+
+        &--prev {
+          inset-inline-start: var(--qc-cw-arrows-horizontal-gap);
+        }
+
+        &--next {
+          inset-inline-end: var(--qc-cw-arrows-horizontal-gap);
+        }
+      }
+    }
+
+    &__dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--qc-cw-dots-horizontal-gap);
+      justify-content: center;
+
+      &--bottom {
+        margin-top: var(--qc-cw-dots-vertical-gap);
+      }
+
+      &--top {
+        margin-bottom: var(--qc-cw-dots-vertical-gap);
+      }
+    }
+
+    &__dot {
+      background: none;
+      border: none;
+      // the text color, for the default dot colors and the focus ring
+      color: inherit;
+      cursor: pointer;
+      display: block;
+      // a larger hit area than the dot itself
+      margin: -4px;
+      padding: 4px;
+
+      // the dot, drawn inside the hit area so that its border radius is not reduced by the padding
+      &::before {
+        background-color: var(--qc-cw-dots-color);
+        border-radius: var(--qc-cw-dots-border-radius);
+        content: '';
+        display: block;
+        height: var(--qc-cw-dots-size);
+        width: var(--qc-cw-dots-size);
+      }
+
+      // the same focus ring as the items, in the text color, rather than the browser's accent color
+      &:focus-visible {
+        outline: auto;
+        outline-offset: 2px;
+      }
+
+      &:hover::before {
+        background-color: var(--qc-cw-dots-hover-color);
+      }
+
+      &:active::before {
+        background-color: var(--qc-cw-dots-active-color);
+      }
+
+      // the current page, after the hover and active states so it takes precedence
+      &[aria-current='true']::before {
+        background-color: var(--qc-cw-dots-selected-color);
+      }
+    }
+
+    // a right-to-left page: the arrows are already on the reversed sides of the grid, their icons point the other way
+    &--rtl .qc-carousel__arrow > * {
+      transform: scaleX(-1);
+    }
+
+    // the inline-autoload and inline-autoplay modes, see CarouselComponent
+    &--autoload .qc-thumbnail__play-button {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &__track,
+      &__player iframe.qc-player {
+        transition: none;
+      }
+    }
+  }
+}

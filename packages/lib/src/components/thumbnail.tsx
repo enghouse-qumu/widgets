@@ -49,7 +49,7 @@ export function ThumbnailComponent({
       {widgetOptions.playIconUrl ? (
         <img
           alt=""
-          class="qc-thumbnail__play-button"
+          class="qc-thumbnail__play-button qc-thumbnail__play-button--custom"
           src={widgetOptions.playIconUrl}
         />
       ) : (

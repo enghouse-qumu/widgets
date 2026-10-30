@@ -1,0 +1,208 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import { Tip } from '../../../components/Tip.jsx';
+import * as Stories from './carousel.stories.ts';
+
+<Meta
+  title="Widgets/Carousel"
+/>
+
+
+# Carousel widget
+
+The carousel widget shows several presentations in a horizontal row, one page at a time, with **previous/next arrows** and **pagination dots**.
+
+It has two layouts, set by the playback mode:
+
+- **`modal`** (default): several items per page, as many as fit. Clicking an item plays the presentation in a modal.
+- **`inline`**, **`inline-autoload`** and **`inline-autoplay`**: a single item per page, played in place, like the presentation widget.
+
+The items are the same as the items of the [list widget](?path=/docs/widgets-list--docs): the thumbnail of a presentation and information fields like its title, publication date, publisher or any metadata.
+
+## Basic Usage
+
+By default, the widget uses the `modal` playback mode and shows the title and the publication date of each presentation. Here, the 12 presentations of a saved Smart Search: resize the window to see the number of items per page adapt.
+
+<Canvas of={Stories.Basic}/>
+
+## Recipes
+
+### Inline: one presentation per page
+
+The `inline` playback mode shows a single presentation per page, in the thumbnail aspect ratio, `16:9` by default. Clicking it replaces the thumbnail with the player.
+
+<Canvas of={Stories.Inline}/>
+
+### Inline: load or play the current presentation
+
+With `inline-autoload`, the player of the current page is loaded, and the user starts the playback. With `inline-autoplay`, it starts playing as soon as the page is shown. Changing the page removes the previous player once the slide is over, and loads the next one.
+
+<Canvas of={Stories.InlineAutoload}/>
+
+<Canvas of={Stories.InlineAutoplay}/>
+
+<Tip title="Autoplay">Browsers may block the autoplay of a presentation with sound. The example above is muted with the `volume` player parameter.</Tip>
+
+### Hide the arrows or the dots
+
+`navigation.arrows` and `navigation.dots` hide either one. Without arrows, the pages are changed with the dots, or by swiping on a touch screen.
+
+<Canvas of={Stories.DotsOnly}/>
+
+Without dots, only the arrows are shown.
+
+<Canvas of={Stories.ArrowsOnly}/>
+
+### Choose the information fields
+
+The fields are placed above (`top`) or below (`bottom`) the thumbnail; the carousel has no `left` and `right` slots. Each field shows its default label, except the title and the summary; property `label` hides it (`false`), shows it (`true`) or replaces it (a string).
+
+<Canvas of={Stories.InfoFields}/>
+
+### Limit the items per page
+
+In the `modal` playback mode, a page shows as many items as fit, at least `minItemWidth` wide. With a number, `columns` is the maximum number of items per page.
+
+<Canvas of={Stories.Columns}/>
+
+### Style the carousel
+
+Besides the items, the arrows and the dots can be styled and placed: the arrows `outside` the items (default) or `overlay` over their edges with `arrows.position`, and the dots at the `bottom` (default) or at the `top` with `dots.position`. Like the play icon with `playIconUrl`, the arrows can be your own images with `previousIconUrl` and `nextIconUrl`: they replace the default buttons and fill `arrows.width` and `arrows.height`. Here, white tiles with custom play and arrow icons, bigger dots above them, and a slower slide.
+
+<Canvas of={Stories.Styling}/>
+
+And a single presentation per page, with square red arrows, small red dots and a square play button.
+
+<Canvas of={Stories.StylingInline}/>
+
+The custom arrows of the first example can also go over the edges of the items, with `arrows.position: 'overlay'`.
+
+<Canvas of={Stories.OverlayArrows}/>
+
+### Handle the click yourself
+
+`onItemClick` replaces the modal, or the inline player in every inline mode, e.g. to open the presentation in a page of your own application.
+
+<Canvas of={Stories.ItemClick}/>
+
+
+
+## API
+
+### CarouselWidget
+
+| Property/Method                                                                           | Type                      | Description                              |
+|-------------------------------------------------------------------------------------------|---------------------------|------------------------------------------|
+| version                                                                                   | `string`                  | The widget's version.                    |
+| static create(configuration: [CarouselWidgetConfiguration](#carouselwidgetconfiguration)) | `Promise<CarouselWidget>` | Create the widget.                       |
+| destroy()                                                                                 | `void`                    | Destroy the widget and clean up the DOM. |
+
+
+### CarouselWidgetConfiguration
+
+| Property         | Type                                                                                       | Required | Default                                             | Description                                                                                                                                                                                          |
+|------------------|--------------------------------------------------------------------------------------------|----------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| selector         | `string \| HTMLElement`                                                                    | **Yes**  | `''`                                                | Defines the HTML element to create the widget into. It can be a HTMLElement or a string used by [document.querySelector()](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector). |
+| source           | [ListWidgetSource](?path=/docs/widgets-list--docs#listwidgetsource)                        | **Yes**  | `undefined`                                         | Defines the presentations to show, the same as the list widget. `limit` defaults to `12`, or the number of `presentationGuids`.                                                                     |
+| locales          | `Record<string, object>`                                                                   | No       | `undefined`                                         | Defines extra translations, see [Localization](?path=/docs/getting-started-localization--docs).                                                                                                      |
+| playerParameters | [Partial&lt;PlayerParameters&gt;](?path=/docs/widgets-presentation--docs#playerparameters) | No       | `undefined`                                         | Defines the parameters to add to the Qumu Cloud player, the same as the presentation widget.                                                                                                         |
+| widgetOptions    | [Partial&lt;CarouselWidgetOptions&gt;](#carouselwidgetoptions)                             | No       | See [CarouselWidgetOptions](#carouselwidgetoptions) | Defines the widget options.                                                                                                                                                                          |
+
+
+### CarouselWidgetOptions
+
+| Property        | Type                                                                     | Default                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|-----------------|--------------------------------------------------------------------------|---------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| item            | [Partial&lt;CarouselItemTemplateConfig&gt;](#carouselitemtemplateconfig) | See [CarouselItemTemplateConfig](#carouselitemtemplateconfig) | Defines the content of the items.                                                                                                                                                                                                                                                                                                                                                                                                    |
+| navigation      | [Partial&lt;CarouselNavigation&gt;](#carouselnavigation)                 | `{ arrows: true, dots: true }`                                | Defines the navigation controls to show.                                                                                                                                                                                                                                                                                                                                                                                             |
+| nextIconUrl     | `string`                                                                 | `undefined`                                                   | Defines the URL to a custom next arrow image, like `previousIconUrl`.                                                                                                                                                                                                                                                                                                                                                                |
+| playbackMode    | `string`                                                                 | `'modal'`                                                     | <p>Defines the layout and how the presentations are played.</p><ul><li>`modal`: several items per page. Clicking an item opens the player in a modal.</li><li>`inline`: one item per page. Clicking it replaces the thumbnail with the player.</li><li>`inline-autoload`: one item per page, its player loaded; the user starts the playback.</li><li>`inline-autoplay`: one item per page, its player loaded and playing.</li></ul> |
+| playIconUrl     | `string`                                                                 | `undefined`                                                   | Defines the URL to a custom play icon image. It is brightened on hover and darkened when pressed.                                                                                                                                                                                                                                                                                                                                    |
+| previousIconUrl | `string`                                                                 | `undefined`                                                   | Defines the URL to a custom previous arrow image. Like the play icon, it replaces the default round button, so the `arrows` colors and border radius do not apply to it; it fills `arrows.width` and `arrows.height`, without `arrows.padding`. It is brightened on hover and darkened when pressed.                                                                                                                                 |
+| style           | [Partial&lt;CarouselWidgetStyle&gt;](#carouselwidgetstyle)               | `undefined`                                                   | Defines the style of the widget.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| onIframeLoad    | `(iframe: HTMLIFrameElement) => void`                                    | `undefined`                                                   | Method triggered once a player iframe is loaded, in the modal or in the carousel. Useful to load our Player SDK.                                                                                                                                                                                                                                                                                                                     |
+| onItemClick     | `(presentation: Presentation) => void`                                   | `undefined`                                                   | Method triggered when an item is clicked, instead of opening the modal or playing it inline. Useful to bypass the default behaviour of the widget.                                                                                                                                                                                                                                                                                   |
+
+
+### CarouselNavigation
+
+| Property | Type      | Default | Description                                                                         |
+|----------|-----------|---------|-------------------------------------------------------------------------------------|
+| arrows   | `boolean` | `true`  | Defines whether the previous and next arrows are shown. Hidden with a single page.  |
+| dots     | `boolean` | `true`  | Defines whether the pagination dots are shown. Hidden with a single page.           |
+
+
+### CarouselItemTemplateConfig
+
+| Property            | Type                                                    | Default                                                                                                                          | Description                                                                                                                         |
+|---------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| info                | `Partial<Record<'top' \| 'bottom', InfoFieldConfig[]>>` | <pre className="code-block"><code>{"{\n  bottom: [\n    { field: 'title' },\n    { field: 'publishOn' },\n  ],\n}"}</code></pre> | <p>Defines the fields to show above and below the thumbnail, in order.</p><p>When set, it replaces the default fields entirely.</p> |
+| showDurationOverlay | `boolean`                                               | `true`                                                                                                                           | Defines whether the duration is shown in a badge over the thumbnail.                                                                |
+
+The fields are the same as the list widget's, see [InfoFieldConfig](?path=/docs/widgets-list--docs#infofieldconfig) and [Fields](?path=/docs/widgets-list--docs#fields).
+
+
+### CarouselWidgetStyle
+
+<Tip title="Colors">The `color` properties accept any CSS color, e.g. `#1d4ed8`, `rgb(0 0 0 / .8)` or `light-dark(#000, #fff)`.</Tip>
+
+#### Widget
+
+| Property           | Default  | Description                                                                                                                                                                                                                                         |
+|--------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| borderRadius       | `0`      | The border radius of the widget container.                                                                                                                                                                                                          |
+| height             | `auto`   | The height of the widget container.                                                                                                                                                                                                                 |
+| width              | `100%`   | The width of the widget container.                                                                                                                                                                                                                  |
+| gap                | `16px`   | The spacing between the items, and between the pages.                                                                                                                                                                                              |
+| columns            | `'auto'` | <p>`modal` playback mode only. The number of items per page.</p><ul><li>`'auto'`: as many items as fit, at least `minItemWidth` wide.</li><li>a number: at most this number of items, fewer when they would get narrower than `minItemWidth`.</li></ul> |
+| minItemWidth       | `240px`  | `modal` playback mode only. The minimum width of the items.                                                                                                                                                                                         |
+| transitionDuration | `300ms`  | The duration of the slide between two pages, e.g. `0s` to change the page without sliding.                                                                                                                                                          |
+
+<Tip color="warning" title="Inline modes">With the `inline`, `inline-autoload` and `inline-autoplay` playback modes, a page shows a single item: `columns` and `minItemWidth` are ignored, with a warning in the console.</Tip>
+
+#### Arrows
+
+| Property                    | Default           | Description                                                                                                                                          |
+|-----------------------------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| arrows.position             | `outside`         | <p>Where the arrows are placed, vertically centred on the thumbnails.</p><ul><li>`outside`: at the widget edges, beside the items.</li><li>`overlay`: over the edges of the items, which take the whole width.</li></ul> |
+| arrows.horizontalGap        | `12px`            | <p>The horizontal spacing of the arrows.</p><ul><li>`outside` position: between the arrows and the items.</li><li>`overlay` position: between the arrows and the widget edges.</li></ul> |
+| arrows.backgroundColor      | `rgb(0 0 0 / .8)` | The background color of the arrows.                                                                                                                  |
+| arrows.color                | `#fff`            | The color of the arrow icons.                                                                                                                        |
+| arrows.hoverBackgroundColor | `#000`            | The background color of the arrows on hover.                                                                                                         |
+| arrows.hoverColor           | `#fff`            | The color of the arrow icons on hover.                                                                                                               |
+| arrows.activeBackgroundColor | `rgb(0 0 0 / .9)` | The background color of the arrows when pressed.                                                                                                     |
+| arrows.activeColor          | `#fff`            | The color of the arrow icons when pressed.                                                                                                           |
+| arrows.borderRadius         | `100%`            | The border radius of the arrows, e.g. `0` for square arrows.                                                                                         |
+| arrows.width                | `40px`            | The width of the arrows.                                                                                                                             |
+| arrows.height               | `40px`            | The height of the arrows.                                                                                                                            |
+| arrows.padding              | `10px`            | The padding around the arrow icons, which fill the rest of the arrows. Not applied to a custom icon, see `previousIconUrl` and `nextIconUrl`.        |
+
+#### Dots
+
+| Property             | Default                   | Description                                                   |
+|----------------------|---------------------------|---------------------------------------------------------------|
+| dots.position        | `bottom`                  | Where the dots are placed: `bottom` (below the items) or `top` (above them). |
+| dots.color           | the text color, at 25%    | The color of the dots.                                        |
+| dots.hoverColor      | the text color, at 60%    | The color of the dots on hover.                               |
+| dots.activeColor     | the text color, at 80%    | The color of the dots when pressed.                           |
+| dots.selectedColor   | the text color            | The color of the dot of the current page.                     |
+| dots.borderRadius    | `100%`                    | The border radius of the dots, e.g. `0` for square dots. |
+| dots.size            | `8px`                     | The size of the dots.                                         |
+| dots.horizontalGap   | `8px`                     | The spacing between the dots.                                 |
+| dots.verticalGap     | `12px`                    | The spacing between the dots and the items, whatever their position. |
+
+#### Items
+
+The items are styled like the items of the list widget: see `item.*` in its [ListWidgetStyle](?path=/docs/widgets-list--docs#listwidgetstyle), with these differences:
+
+- `item.thumbnailGap` defaults to `8px`, as the fields are above and below the thumbnail.
+- `item.thumbnail.width` does not apply: it is for the vertical layout of the list widget.
+- `item.thumbnail.aspectRatio` applies to every playback mode, to the player of the inline modes too: all the pages have the same height. The player fits a presentation of another aspect ratio inside, with bars around it.
+
+#### Dialog, Close Button and Not Found
+
+These are the same as the presentation widget: see `dialog.*`, `closeButton.*` and `notFound.*` in its [WidgetStyle](?path=/docs/widgets-presentation--docs#widgetstyle).
+
+
+## Playground
+
+The [playground](?path=/story/stories-widgets-carousel--playground) offers a live editor to try out different configurations. You can find the different properties in the Controls panel.

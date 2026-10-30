@@ -155,6 +155,15 @@ function formatMetadataValue(value: unknown, type: MetadataType): string {
 }
 
 /**
+ * The aspect ratio of the presentation media, as a CSS `aspect-ratio` value, or `undefined` when it is unknown
+ */
+export function getAspectRatio(presentation: Presentation | null | undefined): string | undefined {
+  return presentation?.mediaDisplayWidth && presentation?.mediaDisplayHeight
+    ? `${presentation.mediaDisplayWidth} / ${presentation.mediaDisplayHeight}`
+    : undefined;
+}
+
+/**
  * Resolves the display value of an info field for a presentation.
  * `field` is either one of the standard fields or a metadata GUID.
  * Returns `null` when the field does not exist or has no value, so it can be skipped when rendering.

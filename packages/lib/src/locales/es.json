@@ -1,4 +1,11 @@
 {
+    "carousel": {
+        "Carousel": "Carrusel",
+        "Next": "Próximo",
+        "PAGE": "Página {{page}}",
+        "Previous": "Anterior",
+        "SLIDE": "{{current}} de {{total}}"
+    },
     "common": {
         "Close": "Cerca",
         "PLAY_PRESENTATION": "Presentación de la obra: {{title}}",

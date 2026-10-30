@@ -70,7 +70,8 @@ const preview: Preview = {
           'Widgets',
           [
             'Presentation',
-            'List'
+            'List',
+            'Carousel'
           ]
         ],
       },

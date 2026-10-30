@@ -1,4 +1,11 @@
 {
+    "carousel": {
+        "Carousel": "Carrossel",
+        "Next": "Próximo",
+        "PAGE": "Página {{page}}",
+        "Previous": "Anterior",
+        "SLIDE": "{{current}} de {{total}}"
+    },
     "common": {
         "Close": "Fechar",
         "PLAY_PRESENTATION": "Apresentação do jogo: {{title}}",

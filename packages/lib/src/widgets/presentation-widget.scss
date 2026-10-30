@@ -41,6 +41,10 @@
         background-color: var(--qc-pw-play-button-hover-background-color);
         color: var(--qc-pw-play-button-hover-color);
       }
+
+      .qc-thumbnail__play-button--custom {
+        filter: var(--_qc-custom-icon-hover-filter);
+      }
     }
 
     &:active,
@@ -48,6 +52,10 @@
       .qc-thumbnail__play-button--default {
         background-color: var(--qc-pw-play-button-active-background-color);
         color: var(--qc-pw-play-button-active-color);
+      }
+
+      .qc-thumbnail__play-button--custom {
+        filter: var(--_qc-custom-icon-active-filter);
       }
     }
   }

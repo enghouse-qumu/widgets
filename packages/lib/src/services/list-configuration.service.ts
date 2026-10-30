@@ -2,6 +2,7 @@ import { ListWidgetConfiguration, ListWidgetOptions } from '@/interfaces/list-wi
 import { ListWidgetSource, ListWidgetSourceBase } from '@/interfaces/list-widget-source';
 import { SearchFilter } from '@/interfaces/search-filter';
 import { InfoFieldConfig, InfoSlot, ItemTemplateConfig } from '@/interfaces/item-template-config';
+import { ListWidgetStyle } from '@/interfaces/list-widget-style';
 import { ConfigurationService } from '@/services/configuration.service';
 
 const supportedConfigFields = new Set([
@@ -97,15 +98,7 @@ export class ListConfigurationService {
     return {
       ...configuration,
       playerParameters: { ...configuration.playerParameters },
-      source: {
-        ...configuration.source,
-        host: configuration.source.host
-          .replace('https://', '')
-          .split('/')[0],
-        // all the listed presentations are shown by default, the layout default applies to the other sources
-        limit: configuration.source.limit
-          ?? ('presentationGuids' in configuration.source ? configuration.source.presentationGuids.length : defaults.limit),
-      },
+      source: this.resolveSource(configuration.source, defaults.limit),
       widgetOptions: {
         ...configuration.widgetOptions,
         item: {
@@ -119,7 +112,24 @@ export class ListConfigurationService {
     };
   }
 
-  private validateAndSanitize(initialConfiguration: ListWidgetConfiguration): ListWidgetConfiguration {
+  /**
+   * Normalizes the host and applies the default limit: all the listed presentations by default,
+   * `defaultLimit` for the other sources
+   */
+  resolveSource(source: ListWidgetSource, defaultLimit: number): ListWidgetSource {
+    return {
+      ...source,
+      host: source.host
+        .replace('https://', '')
+        .split('/')[0],
+      limit: source.limit ?? ('presentationGuids' in source ? source.presentationGuids.length : defaultLimit),
+    };
+  }
+
+  /**
+   * Checks the top-level `selector` and `source` fields, shared by the widgets fetching a source
+   */
+  validateSelectorAndSource(initialConfiguration: Pick<ListWidgetConfiguration, 'selector' | 'source'>): void {
     if (!initialConfiguration || typeof initialConfiguration !== 'object') {
       throw new Error('Configuration must be a valid object');
     }
@@ -145,6 +155,10 @@ export class ListConfigurationService {
     if (!initialConfiguration.source || typeof initialConfiguration.source !== 'object') {
       throw new TypeError('`source` must be a valid object');
     }
+  }
+
+  private validateAndSanitize(initialConfiguration: ListWidgetConfiguration): ListWidgetConfiguration {
+    this.validateSelectorAndSource(initialConfiguration);
 
     const configuration: ListWidgetConfiguration = {
       ...initialConfiguration,
@@ -167,7 +181,7 @@ export class ListConfigurationService {
     return configuration;
   }
 
-  private validateSource(validatedSource: ListWidgetSource): void {
+  validateSource(validatedSource: ListWidgetSource): void {
     // the configuration is not trusted: every property is checked, including the combinations the type does not allow
     const source = validatedSource as UncheckedSource;
 
@@ -279,14 +293,20 @@ export class ListConfigurationService {
       }
     });
 
-    const columns = widgetOptions.style?.columns;
+    this.validateColumns(widgetOptions.style?.columns);
+    this.validateItemInfo(widgetOptions.item?.info, infoSlots);
+  }
 
+  validateColumns(columns: ListWidgetStyle['columns'] | undefined): void {
     if (columns !== undefined && columns !== 'auto' && (!Number.isInteger(columns) || columns < 1)) {
       throw new Error('`widgetOptions.style.columns` must be either "auto" or a positive integer');
     }
+  }
 
-    const info = widgetOptions.item?.info;
-
+  /**
+   * Checks `widgetOptions.item.info`, which can only use the given slots
+   */
+  validateItemInfo(info: Partial<Record<string, InfoFieldConfig[]>> | undefined, slots: readonly string[]): void {
     if (info === undefined) {
       return;
     }
@@ -296,8 +316,10 @@ export class ListConfigurationService {
     }
 
     Object.entries(info).forEach(([slot, fields]) => {
-      if (!infoSlots.includes(slot as InfoSlot)) {
-        throw new Error(`\`widgetOptions.item.info.${slot}\` is not a supported slot, use "top", "left", "right" or "bottom"`);
+      if (!slots.includes(slot)) {
+        const names = slots.map((name) => `"${name}"`);
+
+        throw new Error(`\`widgetOptions.item.info.${slot}\` is not a supported slot, use ${names.slice(0, -1).join(', ')} or ${names.at(-1)}`);
       }
 
       if (!Array.isArray(fields)) {

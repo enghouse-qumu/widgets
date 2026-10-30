@@ -6,7 +6,7 @@ import { PlayerComponent } from './player';
 import { PlayerParameters } from '@/interfaces/player-parameters';
 import Icon from '@/components/icon';
 import { useI18n } from '@/i18n';
-import { decodeEntities } from '@/utils/presentation-fields';
+import { decodeEntities, getAspectRatio } from '@/utils/presentation-fields';
 
 interface Props {
   presentation: Presentation;
@@ -65,6 +65,30 @@ export function PlayerDialogComponent({ presentation, widgetOptions, playerParam
           widgetOptions={widgetOptions}
       />
     </dialog>
+  );
+}
+
+interface ModalPlayerProps {
+  presentation: Presentation;
+  playerParameters: Partial<PlayerParameters>;
+  onIframeLoad?: WidgetOptions['onIframeLoad'];
+  onClose(): void;
+}
+
+/**
+ * The player of an item of the list and carousel widgets, in a modal dialog sized to the presentation
+ */
+export function ModalPlayerComponent({ presentation, playerParameters, onIframeLoad, onClose }: Readonly<ModalPlayerProps>) {
+  return (
+    <div class="qc-dialog" style={{ '--qc-pw-aspect-ratio': getAspectRatio(presentation) ?? '16 / 9' }}>
+      <PlayerDialogComponent
+        key={presentation.guid}
+        presentation={presentation}
+        playerParameters={playerParameters}
+        widgetOptions={{ onIframeLoad, playbackMode: 'modal' }}
+        onClose={onClose}
+      />
+    </div>
   );
 }
 
