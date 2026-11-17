@@ -3,6 +3,7 @@
         "Carousel": "Carousel",
         "Next": "Next",
         "PAGE": "Page {{page}}",
+        "Pages": "Pages",
         "Previous": "Previous",
         "SLIDE": "{{current}} of {{total}}"
     },

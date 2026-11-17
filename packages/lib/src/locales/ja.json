@@ -3,6 +3,7 @@
         "Carousel": "カルーセル",
         "Next": "次へ",
         "PAGE": "ページ {{page}}",
+        "Pages": "ページ",
         "Previous": "前へ",
         "SLIDE": "{{current}} / {{total}}"
     },

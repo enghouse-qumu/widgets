@@ -284,7 +284,7 @@
       }
 
       // the current page, after the hover and active states so it takes precedence
-      &[aria-current='true']::before {
+      &[aria-selected='true']::before {
         background-color: var(--qc-cw-dots-selected-color);
       }
     }

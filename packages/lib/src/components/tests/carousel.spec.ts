@@ -138,9 +138,16 @@ describe('CarouselComponent', () => {
         page.getAttribute('aria-label'),
         page.hasAttribute('inert'),
       ])).toEqual([
-        ['group', 'slide', 'carousel.SLIDE 1 2', false],
-        ['group', 'slide', 'carousel.SLIDE 2 2', true],
+        ['tabpanel', 'slide', 'carousel.SLIDE 1 2', false],
+        ['tabpanel', 'slide', 'carousel.SLIDE 2 2', true],
       ]);
+    });
+
+    it('should render the pages as groups without the dots', () => {
+      const { container } = renderCarousel({ navigation: { arrows: true,
+        dots: false } });
+
+      expect(pages(container).map((page) => page.getAttribute('role'))).toEqual(['group', 'group']);
     });
 
     it('should label the arrows and the dots', () => {
@@ -148,8 +155,23 @@ describe('CarouselComponent', () => {
 
       expect(screen.getByRole('button', { name: 'carousel.Previous' })).toBeDisabled();
       expect(screen.getByRole('button', { name: 'carousel.Next' })).toBeEnabled();
-      expect(screen.getByRole('button', { name: 'carousel.PAGE 1' })).toHaveAttribute('aria-current', 'true');
-      expect(screen.getByRole('button', { name: 'carousel.PAGE 2' })).not.toHaveAttribute('aria-current');
+      expect(screen.getByRole('tablist')).toHaveAttribute('aria-label', 'carousel.Pages');
+    });
+
+    it('should render the dots as tabs controlling the pages, the selected one the only tab stop', () => {
+      const { container } = renderCarousel();
+      const [first, second] = pages(container);
+
+      expect(screen.getAllByRole('tab').map((tab) => [
+        tab.getAttribute('aria-label'),
+        tab.getAttribute('aria-selected'),
+        tab.getAttribute('tabindex'),
+      ])).toEqual([
+        ['carousel.PAGE 1', 'true', '0'],
+        ['carousel.PAGE 2', 'false', '-1'],
+      ]);
+      expect(screen.getByRole('tab', { name: 'carousel.PAGE 1' })).toHaveAttribute('aria-controls', first.id);
+      expect(screen.getByRole('tab', { name: 'carousel.PAGE 2' })).toHaveAttribute('aria-controls', second.id);
     });
 
     it('should announce the page changes', () => {
@@ -203,7 +225,7 @@ describe('CarouselComponent', () => {
       const { container } = renderCarousel();
 
       // one item per page, on the page of "D"
-      fireEvent.click(screen.getByRole('button', { name: 'carousel.PAGE 4' }));
+      fireEvent.click(screen.getByRole('tab', { name: 'carousel.PAGE 4' }));
 
       layout.width = 496;
       await act(() => resizeObserverCallback!());
@@ -258,10 +280,57 @@ describe('CarouselComponent', () => {
     it('should change the page with the dots', () => {
       const { container } = renderCarousel({ style: { columns: 1 } });
 
-      fireEvent.click(screen.getByRole('button', { name: 'carousel.PAGE 3' }));
+      fireEvent.click(screen.getByRole('tab', { name: 'carousel.PAGE 3' }));
 
       expect(currentPage(container)).toBe(2);
-      expect(screen.getByRole('button', { name: 'carousel.PAGE 3' })).toHaveAttribute('aria-current', 'true');
+      expect(screen.getByRole('tab', { name: 'carousel.PAGE 3' })).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should change the page and move the focus with the arrow keys on the dots, wrapping around', () => {
+      const { container } = renderCarousel({ style: { columns: 1 } });
+      const tabs = screen.getAllByRole('tab');
+
+      tabs[0].focus();
+      fireEvent.keyDown(tabs[0], { key: 'ArrowRight' });
+
+      expect(currentPage(container)).toBe(1);
+      expect(tabs[1]).toHaveFocus();
+      expect(tabs[1]).toHaveAttribute('tabindex', '0');
+      expect(tabs[0]).toHaveAttribute('tabindex', '-1');
+
+      fireEvent.keyDown(tabs[1], { key: 'ArrowLeft' });
+      fireEvent.keyDown(tabs[0], { key: 'ArrowLeft' });
+
+      expect(currentPage(container)).toBe(4);
+      expect(tabs[4]).toHaveFocus();
+
+      fireEvent.keyDown(tabs[4], { key: 'ArrowRight' });
+
+      expect(currentPage(container)).toBe(0);
+      expect(tabs[0]).toHaveFocus();
+    });
+
+    it('should go to the first and last pages with Home and End on the dots', () => {
+      const { container } = renderCarousel({ style: { columns: 1 } });
+      const tabs = screen.getAllByRole('tab');
+
+      fireEvent.keyDown(tabs[0], { key: 'End' });
+
+      expect(currentPage(container)).toBe(4);
+      expect(tabs[4]).toHaveFocus();
+
+      fireEvent.keyDown(tabs[4], { key: 'Home' });
+
+      expect(currentPage(container)).toBe(0);
+      expect(tabs[0]).toHaveFocus();
+    });
+
+    it('should ignore the other keys on the dots', () => {
+      const { container } = renderCarousel({ style: { columns: 1 } });
+      const tab = screen.getAllByRole('tab')[0];
+
+      expect(fireEvent.keyDown(tab, { key: 'ArrowDown' })).toBe(true);
+      expect(currentPage(container)).toBe(0);
     });
 
     it('should hide the arrows and the dots with a single page', () => {
@@ -454,6 +523,20 @@ describe('CarouselComponent', () => {
       const { container } = renderCarousel();
 
       expect(container.querySelector('.qc-carousel')).toHaveClass('qc-carousel--rtl');
+    });
+
+    it('should select the next page with the left arrow key on the dots', () => {
+      const { container } = renderCarousel();
+      const tabs = screen.getAllByRole('tab');
+
+      fireEvent.keyDown(tabs[0], { key: 'ArrowLeft' });
+
+      expect(currentPage(container)).toBe(1);
+      expect(tabs[1]).toHaveFocus();
+
+      fireEvent.keyDown(tabs[1], { key: 'ArrowRight' });
+
+      expect(currentPage(container)).toBe(0);
     });
 
     it('should move the track to the right for the next page', () => {

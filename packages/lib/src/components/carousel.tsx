@@ -360,8 +360,10 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
     return (
       <div
         key={index}
+        id={`${carouselId}-page-${index}`}
         class="qc-carousel__page"
-        role="group"
+        // the panels of the dots, which are tabs
+        role={showDots ? 'tabpanel' : 'group'}
         aria-roledescription="slide"
         aria-label={slideLabel(index)}
         inert={index !== page}
@@ -390,16 +392,47 @@ export function CarouselComponent({ presentations, playerParameters, widgetOptio
   const showDots = navigation.dots && pages > 1;
   const dotsPosition = style.dots?.position ?? 'bottom';
 
+  // the tabs of the WAI-ARIA carousel with tabs: the arrow keys select the previous and next pages, wrapping around,
+  // and move the focus with them
+  const handleDotsKeyDown = (event: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
+    // the next pages are on the left on a right-to-left page
+    const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
+    const backward = rtl ? 'ArrowRight' : 'ArrowLeft';
+    const targets: Record<string, number> = {
+      [backward]: (page - 1 + pages) % pages,
+      End: pages - 1,
+      [forward]: (page + 1) % pages,
+      Home: 0,
+    };
+    const target = targets[event.key];
+
+    if (target === undefined) {
+      return;
+    }
+
+    event.preventDefault();
+    goTo(target);
+    (event.currentTarget.children[target] as HTMLElement | undefined)?.focus();
+  };
+
   const dots = showDots && (
-    <div class={`qc-carousel__dots qc-carousel__dots--${dotsPosition}`}>
+    <div
+      class={`qc-carousel__dots qc-carousel__dots--${dotsPosition}`}
+      role="tablist"
+      aria-label={i18n.t('carousel.Pages')}
+      onKeyDown={handleDotsKeyDown}
+    >
       {Array.from({ length: pages }, (_, index) => (
         <button
           key={index}
           type="button"
           class="qc-carousel__dot"
-          aria-controls={trackId}
-          aria-current={index === page ? 'true' : undefined}
+          role="tab"
+          aria-controls={`${carouselId}-page-${index}`}
           aria-label={i18n.t('carousel.PAGE', { page: index + 1 })}
+          aria-selected={index === page}
+          // a single tab stop: the selected tab
+          tabIndex={index === page ? 0 : -1}
           onClick={() => goTo(index)}
         />
       ))}
